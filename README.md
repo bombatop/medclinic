@@ -1,8 +1,3 @@
-# medclinic
-project for bachelor's degree qualification
-# medclinic
-react + spring infosystem project for bachelor's degree qualification
-
 bugs to fix: 
   поменять длину pageable на нормальное число во фронте,
   изменять дату только если нет прайсов (фронт),
