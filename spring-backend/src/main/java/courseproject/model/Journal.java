@@ -51,4 +51,39 @@ public class Journal {
         joinColumns = @JoinColumn(name = "journal_id"),
         inverseJoinColumns = @JoinColumn(name = "treatment_price_id"))
     private Set <Price> prices;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "journal_complaints",
+        joinColumns = @JoinColumn(name = "journal_id"),
+        inverseJoinColumns = @JoinColumn(name = "complaint_id"))
+    private Set<Complaint> complaints;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "journal_anamnesis",
+        joinColumns = @JoinColumn(name = "journal_id"),
+        inverseJoinColumns = @JoinColumn(name = "anamnesis_id"))
+    private Set<Anamnesis> anamnesis;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "journal_objective_status",
+        joinColumns = @JoinColumn(name = "journal_id"),
+        inverseJoinColumns = @JoinColumn(name = "objective_status_id"))
+    private Set<ObjectiveStatus> objectiveStatus;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "journal_diagnoses",
+        joinColumns = @JoinColumn(name = "journal_id"),
+        inverseJoinColumns = @JoinColumn(name = "diagnosis_id"))
+    private Set<Diagnosis> diagnoses;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "journal_treatment_planning",
+        joinColumns = @JoinColumn(name = "journal_id"),
+        inverseJoinColumns = @JoinColumn(name = "treatment_planning_id"))
+    private Set<TreatmentPlanning> treatmentPlanning;
 }

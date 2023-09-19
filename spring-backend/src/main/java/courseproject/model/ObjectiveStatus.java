@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "diagnosis")
+@Table(name = "objective_status")
 @Getter
 @Setter
 @NoArgsConstructor
