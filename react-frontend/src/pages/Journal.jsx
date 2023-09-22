@@ -10,10 +10,12 @@ const Journal = () => {
     const [treatments, setTreatments] = useState(null);
 
     const handleDateChange = (event) => {
-        setJournal({
-            ...journal,
-            date: event.target.value
-        });
+        if (journal.prices.length > 0) {
+            setJournal({
+                ...journal,
+                date: event.target.value
+            });
+        }
     };
 
     const handleTreatmentChange = (event) => {
@@ -59,9 +61,10 @@ const Journal = () => {
         if (journal.date.indexOf("T") !== -1) {
             journal.date = journal.date.replace("T", " ");
         }
-        /// ADD SOME FINE VALIDATION LATER BRUH
-        if(journal.prices.length > 0)
+        // VALIDATION IS BOTH CLIENT AND SERVER SIDE HERE
+        if (journal.prices.length > 0) {
             return;
+        }
         http
             .post(`/updateJournal/${journalId}`, journal)
             .then((response) => {
@@ -154,7 +157,7 @@ const Journal = () => {
                                 <label htmlFor="date">Date</label>
                                 <input type="datetime-local" className="form-control" id="date" value={journal.date} onChange={handleDateChange} />
                             </div>
-                            <button type="submit" className="col-2 mt-4 btn btn-primary" onClick={updateJournal}>
+                            <button type="submit" className={`col-2 mt-4 btn ${journal.prices.length > 0 ? 'btn-secondary' : 'btn-primary'}`} onClick={updateJournal}>
                                 Update date
                             </button>
                         </div>

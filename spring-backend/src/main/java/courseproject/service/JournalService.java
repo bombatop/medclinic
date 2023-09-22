@@ -90,8 +90,21 @@ public class JournalService {
         }
     }
 
-    public ResponseEntity<?> saveJournal(Journal journal) {
+    public ResponseEntity<?> addJournal(Journal journal) {
         try {
+            journal.setDoctor(doctorRepo.findDoctorById(journal.getDoctor().getId()));
+            journal.setPatient(patientRepo.findPatientById(journal.getPatient().getId()));
+            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.save(journal));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> updateJournal(Journal journal) {
+        try {
+            if (!journal.getDate().equals(journalRepo.findJournalById(journal.getId()).getDate())) {
+                throw new IllegalArgumentException("Date cannot be changed after price has been established");
+            }
             journal.setDoctor(doctorRepo.findDoctorById(journal.getDoctor().getId()));
             journal.setPatient(patientRepo.findPatientById(journal.getPatient().getId()));
             return ResponseEntity.status(HttpStatus.OK).body(journalRepo.save(journal));

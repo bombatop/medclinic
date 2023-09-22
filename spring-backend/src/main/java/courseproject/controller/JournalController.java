@@ -63,7 +63,7 @@ public class JournalController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
-        return service.saveJournal(journal);
+        return service.updateJournal(journal);
     }
 
     @PostMapping("/addJournal")
@@ -72,7 +72,7 @@ public class JournalController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
-        return service.saveJournal(journal);
+        return service.addJournal(journal);
     }
 
     @DeleteMapping("/deleteJournal/{id}")
