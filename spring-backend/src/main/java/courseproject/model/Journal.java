@@ -85,5 +85,5 @@ public class Journal {
         name = "journal_treatment_planning",
         joinColumns = @JoinColumn(name = "journal_id"),
         inverseJoinColumns = @JoinColumn(name = "treatment_planning_id"))
-    private Set<TreatmentPlanning> treatmentPlanning;
+    private Set<TreatmentPlan> treatmentPlanning;
 }

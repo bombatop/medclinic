@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "treatment_planning")
+@Table(name = "treatment_plan")
 @Getter
 @Setter
 @NoArgsConstructor
-public class TreatmentPlanning {
+public class TreatmentPlan {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

@@ -16,11 +16,11 @@ public interface AnamnesisRepository extends JpaRepository<Anamnesis, Integer> {
     Anamnesis findAnamnesisById(Integer id);
 
     @Query("SELECT d FROM Anamnesis d")
-    List<Anamnesis> findAnamnesis();
+    List<Anamnesis> findAnamneses();
 
     @Query("SELECT d FROM Anamnesis d")
-    Page<Anamnesis> findAnamnesis(Pageable pageable);
+    Page<Anamnesis> findAnamneses(Pageable pageable);
 
     @Query("SELECT d FROM Anamnesis d WHERE d.firstName LIKE :searchQuery OR d.lastName LIKE :searchQuery")
-    Page<Anamnesis> findAnamnesis(@Param("searchQuery") String searchQuery, Pageable pageable);
+    Page<Anamnesis> findAnamneses(@Param("searchQuery") String searchQuery, Pageable pageable);
 }
