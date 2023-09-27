@@ -55,7 +55,7 @@ public class JournalService {
         }
     }
 
-    public ResponseEntity<?> getJournalsByDateRange(Date startDate) {
+    public ResponseEntity<?> getJournalsForWeek(Date startDate) {
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(startDate);
@@ -68,8 +68,7 @@ public class JournalService {
             Date endDate = calendar.getTime();
 
             return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findJournalsByDateRange(startDate, endDate));
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

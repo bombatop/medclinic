@@ -1,5 +1,6 @@
 package courseproject.controller;
 
+import java.util.Arrays;
 import java.util.Date;
 import javax.validation.Valid;
 
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import courseproject.model.*;
+import courseproject.service.FileUploadService;
 import courseproject.service.JournalService;
 
 @RestController
@@ -28,10 +31,19 @@ public class JournalController {
     @Autowired
     private JournalService service;
 
+    @Autowired
+    private FileUploadService fileService;
+
+    @PostMapping("/journalUpload/{id}")
+    public ResponseEntity<?> uploadFiles(@PathVariable Integer journalId,
+            @RequestParam("files") MultipartFile[] files) {
+        return fileService.uploadFilesByJournalId(journalId, Arrays.asList(files));
+    }
+    
     @GetMapping("/journalsByDateRange")
     public ResponseEntity<?> getJournalsByDateRange(
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
-        return service.getJournalsByDateRange(startDate);
+        return service.getJournalsForWeek(startDate);
     }
 
     @GetMapping("/journalsForPatient/{patientId}")

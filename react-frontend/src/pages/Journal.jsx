@@ -33,6 +33,35 @@ const Journal = () => {
         }
     }, [treatments]);
 
+    const [selectedFiles, setSelectedFiles] = useState(null);
+
+    const handleFileSelect = (event) => {
+        setSelectedFiles(event.target.files);
+    };
+
+    const handleFileUpload = () => {
+        if (selectedFiles && selectedFiles.length > 0) {
+            const formData = new FormData();
+            for (let i = 0; i < selectedFiles.length; i++) {
+                formData.append('files', selectedFiles[i]);
+            }
+            http
+                .post(`/journalUpload/${journalId}/`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                })
+                .then((response) => {
+                    console.log('File upload successful:', response.data);
+                    // Optionally, you can update the UI or trigger a refresh here
+                })
+                .catch((error) => {
+                    console.log('File upload ERROR:', error);
+                });
+        }
+    };
+
+
     const getJournal = () => {
         http
             .get(`/journal/${journalId}`)
@@ -165,6 +194,16 @@ const Journal = () => {
 
                     <button type="button" className="mt-3 btn btn-danger" onClick={deleteJournal}>
                         Delete Journal
+                    </button>
+                </div>
+                
+                <div className="file-upload-container">
+                    <div className="form-group">
+                        <label htmlFor="fileUpload">Upload Files</label>
+                        <input type="file" className="form-control" id="fileUpload" multiple onChange={handleFileSelect} />
+                    </div>
+                    <button type="button" className="btn btn-primary" onClick={handleFileUpload}>
+                        Upload
                     </button>
                 </div>
 

@@ -3,6 +3,9 @@ package courseproject.model;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -86,4 +89,11 @@ public class Journal {
         joinColumns = @JoinColumn(name = "journal_id"),
         inverseJoinColumns = @JoinColumn(name = "treatment_planning_id"))
     private Set<TreatmentPlan> treatmentPlanning;
+
+    @ElementCollection
+    @CollectionTable(
+        name = "journal_files",
+        joinColumns = @JoinColumn(name = "journal_id"))
+    @Column(name = "name")
+    private Set<String> filePaths;
 }

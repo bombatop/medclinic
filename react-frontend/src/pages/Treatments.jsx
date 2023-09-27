@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import http from '../http-common';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Treatments = () => {
-    const navigate = useNavigate();
     const [treatments, setTreatments] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
@@ -14,7 +13,7 @@ const Treatments = () => {
     }, [currentPage, searchQuery]);
 
     const getTreatments = () => {
-        const pageSize = 5;
+        const pageSize = 8;
         const params = {
             page: currentPage,
             size: pageSize,
