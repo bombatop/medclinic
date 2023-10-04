@@ -21,6 +21,6 @@ public interface ObjectiveStatusRepository extends JpaRepository<ObjectiveStatus
     @Query("SELECT d FROM ObjectiveStatus d")
     Page<ObjectiveStatus> findObjectiveStatuses(Pageable pageable);
 
-    @Query("SELECT d FROM ObjectiveStatus d WHERE d.firstName LIKE :searchQuery OR d.lastName LIKE :searchQuery")
+    @Query("SELECT d FROM ObjectiveStatus d WHERE d.name LIKE :searchQuery")
     Page<ObjectiveStatus> findObjectiveStatuses(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

@@ -21,6 +21,6 @@ public interface DiagnosisRepository extends JpaRepository<Diagnosis, Integer> {
     @Query("SELECT d FROM Diagnosis d")
     Page<Diagnosis> findDiagnoses(Pageable pageable);
 
-    @Query("SELECT d FROM Diagnosis d WHERE d.firstName LIKE :searchQuery OR d.lastName LIKE :searchQuery")
+    @Query("SELECT d FROM Diagnosis d WHERE d.name LIKE :searchQuery")
     Page<Diagnosis> findDiagnoses(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

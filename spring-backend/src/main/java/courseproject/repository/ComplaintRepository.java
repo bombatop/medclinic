@@ -21,6 +21,6 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Integer> {
     @Query("SELECT d FROM Complaint d")
     Page<Complaint> findComplaints(Pageable pageable);
 
-    @Query("SELECT d FROM Complaint d WHERE d.firstName LIKE :searchQuery OR d.lastName LIKE :searchQuery")
+    @Query("SELECT d FROM Complaint d WHERE d.name LIKE :searchQuery")
     Page<Complaint> findComplaints(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

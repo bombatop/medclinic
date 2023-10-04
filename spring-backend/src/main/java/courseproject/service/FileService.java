@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.ws.rs.core.Response;
 
@@ -28,7 +30,7 @@ import courseproject.repository.JournalRepository;
 import lombok.Value;
 
 @Service
-public class FileUploadService {
+public class FileService {
     @Autowired
     private JournalRepository journalRepo;
     @Autowired
@@ -48,18 +50,36 @@ public class FileUploadService {
             Set<String> updatedFilePaths = journal.getFilePaths();
 
             for (MultipartFile file : multipartFiles) {
-                Path filePath = Paths.get(journalFolderPath, file.getOriginalFilename());
+                String originalFilename = file.getOriginalFilename();
+                String uniqueFilename = generateUniqueFilename(originalFilename);
+
+                Path filePath = Paths.get(journalFolderPath, uniqueFilename);
                 file.transferTo(filePath.toFile());
-                updatedFilePaths.add(journalId + File.separator + file.getOriginalFilename());
+
+                updatedFilePaths.add(journalId + File.separator + uniqueFilename);
             }
 
             journal.setFilePaths(updatedFilePaths);
             journalRepo.save(journal);
-            
             return ResponseEntity.status(HttpStatus.OK).body("All files uploaded successfully");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    private String generateUniqueFilename(String originalFilename) {
+        String timestamp = Instant.now().toString().replace(":", "_").replace(".", "_");
+        String randomString = UUID.randomUUID().toString().replace("-", "");
+        String extension = extractFileExtension(originalFilename);
+
+        return timestamp + "_" + randomString + extension;
+    }
+
+    private String extractFileExtension(String filename) {
+        int dotIndex = filename.lastIndexOf('.');
+        if (dotIndex > 0 && dotIndex < filename.length() - 1) {
+            return filename.substring(dotIndex);
+        }
+        return "";
     }
 }

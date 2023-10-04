@@ -21,6 +21,6 @@ public interface TreatmentPlanRepository extends JpaRepository<TreatmentPlan, In
     @Query("SELECT d FROM TreatmentPlan d")
     Page<TreatmentPlan> findTreatmentPlans(Pageable pageable);
 
-    @Query("SELECT d FROM TreatmentPlan d WHERE d.firstName LIKE :searchQuery OR d.lastName LIKE :searchQuery")
+    @Query("SELECT d FROM TreatmentPlan d WHERE d.name LIKE :searchQuery")
     Page<TreatmentPlan> findTreatmentPlans(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

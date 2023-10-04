@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import courseproject.model.*;
-import courseproject.service.FileUploadService;
+import courseproject.service.FileService;
 import courseproject.service.JournalService;
 
 @RestController
@@ -31,19 +31,19 @@ public class JournalController {
     @Autowired
     private JournalService service;
 
-    @Autowired
-    private FileUploadService fileService;
+    // @Autowired
+    // private FileService fileService;
 
-    @PostMapping("/journalUpload/{id}")
-    public ResponseEntity<?> uploadFiles(@PathVariable Integer journalId,
-            @RequestParam("files") MultipartFile[] files) {
-        return fileService.uploadFilesByJournalId(journalId, Arrays.asList(files));
-    }
+    // @PostMapping("/journalUpload/{id}")
+    // public ResponseEntity<?> uploadFiles(@PathVariable Integer journalId,
+    //         @RequestParam("files") MultipartFile[] files) {
+    //     return fileService.uploadFilesByJournalId(journalId, Arrays.asList(files));
+    // }
     
     @GetMapping("/journalsByDateRange")
     public ResponseEntity<?> getJournalsByDateRange(
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
-        return service.getJournalsForWeek(startDate);
+        return service.getJournalsByDateRange(startDate);
     }
 
     @GetMapping("/journalsForPatient/{patientId}")
@@ -51,8 +51,10 @@ public class JournalController {
         return service.getJournalsForPatient(patientId);
     }
     @PostMapping("/reportPricesForDoctors")
-    public ResponseEntity<?> getReportPricesForDoctors(@Valid @RequestBody RequestReportProfitsForDoctors req,
-            BindingResult bindingResult) {
+    public ResponseEntity<?> getReportPricesForDoctors(
+            @Valid @RequestBody RequestReportProfitsForDoctors req,
+            BindingResult bindingResult) 
+    {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }

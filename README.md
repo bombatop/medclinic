@@ -11,6 +11,8 @@ bugs to fix:
   допилить отображение валидации на асболютно всех страницах, отключить ошибки при прохождении валидации,
   переписать на компонентный bootstrap,
   сортировать таблицы на клиенте;
+  journalsbydaterange переименовать в journalsforweek
+  во всех exception возвращать message log
 
 features to add:
   drag and drop на списке журналов,

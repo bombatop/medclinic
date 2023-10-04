@@ -21,6 +21,6 @@ public interface AnamnesisRepository extends JpaRepository<Anamnesis, Integer> {
     @Query("SELECT d FROM Anamnesis d")
     Page<Anamnesis> findAnamneses(Pageable pageable);
 
-    @Query("SELECT d FROM Anamnesis d WHERE d.firstName LIKE :searchQuery OR d.lastName LIKE :searchQuery")
+    @Query("SELECT d FROM Anamnesis d WHERE d.name LIKE :searchQuery")
     Page<Anamnesis> findAnamneses(@Param("searchQuery") String searchQuery, Pageable pageable);
 }
