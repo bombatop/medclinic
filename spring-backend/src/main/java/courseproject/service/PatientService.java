@@ -17,7 +17,7 @@ public class PatientService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(patientRepo.findPatients());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage().toString());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -25,14 +25,14 @@ public class PatientService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(patientRepo.findPatients(pageable));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage().toString());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     public ResponseEntity<?> getPatients(String searchQuery, Pageable pageable) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(patientRepo.findPatients("%" + searchQuery + "%", pageable));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage().toString());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -40,7 +40,7 @@ public class PatientService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(patientRepo.findPatientById(id));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage().toString());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -48,7 +48,7 @@ public class PatientService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(patientRepo.save(patient));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage().toString());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -57,7 +57,7 @@ public class PatientService {
             patientRepo.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body(id);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage().toString());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

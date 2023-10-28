@@ -20,6 +20,6 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
     @Query("SELECT p FROM Patient p")
     Page<Patient> findPatients(Pageable pageable);
 
-    @Query("SELECT p FROM Patient p WHERE p.firstName LIKE :searchQuery OR p.lastName LIKE :searchQuery")
+    @Query("SELECT p FROM Patient p WHERE p.name LIKE :searchQuery")
     Page<Patient> findPatients(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

@@ -8,16 +8,10 @@ const Doctor = () => {
     const [doctor, setDoctor] = useState(null);
     const [errorMessages, setErrorMessages] = useState('');
 
-    const handleFirstNameChange = (event) => {
+    const handleNameChange = (event) => {
         setDoctor({
             ...doctor,
-            firstName: event.target.value
-        })
-    };
-    const handleLastNameChange = (event) => {
-        setDoctor({
-            ...doctor,
-            lastName: event.target.value
+            name: event.target.value
         })
     };
     const handlePhoneNumberChange = (event) => {
@@ -76,12 +70,8 @@ const Doctor = () => {
 
             <div className="doctor-container">
                 <div className="form-group col-6 mb-2">
-                    <label htmlFor="firstname">First name</label>
-                    <input type="text" className="form-control" id="firstname" value={doctor?.firstName || ''} onChange={handleFirstNameChange} />
-                </div>
-                <div className="form-group col-6 mb-2">
-                    <label htmlFor="lastname">Last name</label>
-                    <input type="text" className="form-control" id="lastname" value={doctor?.lastName || ''} onChange={handleLastNameChange} />
+                    <label htmlFor="name">Full name</label>
+                    <input type="text" className="form-control" id="name" value={doctor?.name || ''} onChange={handleNameChange} />
                 </div>
                 <div className="form-group col-6 mb-2">
                     <label htmlFor="phonenumber">Phone number</label>

@@ -5,23 +5,16 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 const NewPatient = () => {
     const navigate = useNavigate();
     const [patient, setPatient] = useState({
-        firstName: "",
+        name: "",
         lastName: "",
         phoneNumber: ""
     });
     const [errorMessages, setErrorMessages] = useState('');
 
-    const handleFirstNameChange = (event) => {
+    const handleNameChange = (event) => {
         setPatient({
             ...patient,
-            firstName: event.target.value
-        })
-    };
-
-    const handleLastNameChange = (event) => {
-        setPatient({
-            ...patient,
-            lastName: event.target.value
+            name: event.target.value
         })
     };
 
@@ -55,12 +48,8 @@ const NewPatient = () => {
 
             <div className="patient-container">
                 <div className="form-group mb-2">
-                    <label htmlFor="firstname">First name</label>
-                    <input type="text" className="form-control" id="firstname" value={patient?.firstName || ''} onChange={handleFirstNameChange} />
-                </div>
-                <div className="form-group mb-2">
-                    <label htmlFor="lastname">Last name</label>
-                    <input type="text" className="form-control" id="lastname" value={patient?.lastName || ''} onChange={handleLastNameChange} />
+                    <label htmlFor="firstname">Name</label>
+                    <input type="text" className="form-control" id="firstname" value={patient?.name || ''} onChange={handleNameChange} />
                 </div>
                 <div className="form-group mb-2">
                     <label htmlFor="phonenumber">Phone number</label>

@@ -21,6 +21,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     @Query("SELECT d FROM Doctor d")
     Page<Doctor> findDoctors(Pageable pageable);
 
-    @Query("SELECT d FROM Doctor d WHERE d.firstName LIKE :searchQuery OR d.lastName LIKE :searchQuery")
+    @Query("SELECT d FROM Doctor d WHERE d.name LIKE :searchQuery")
     Page<Doctor> findDoctors(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

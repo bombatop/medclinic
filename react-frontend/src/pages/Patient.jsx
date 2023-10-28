@@ -39,17 +39,10 @@ const Patient = () => {
             });
     };
 
-    const handleFirstNameChange = (event) => {
+    const handleNameChange = (event) => {
         setPatient({
             ...patient,
-            firstName: event.target.value
-        })
-    };
-
-    const handleLastNameChange = (event) => {
-        setPatient({
-            ...patient,
-            lastName: event.target.value
+            name: event.target.value
         })
     };
 
@@ -94,23 +87,13 @@ const Patient = () => {
 
             <div className="patient-container">
                 <div className="form-group col-6 mb-2">
-                    <label htmlFor="firstname">First name</label>
+                    <label htmlFor="firstname">Full name</label>
                     <input
                         type="text"
                         className="form-control"
                         id="firstname"
-                        value={patient?.firstName || ''}
-                        onChange={handleFirstNameChange}
-                    />
-                </div>
-                <div className="form-group col-6 mb-2">
-                    <label htmlFor="lastname">Last name</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="lastname"
-                        value={patient?.lastName || ''}
-                        onChange={handleLastNameChange}
+                        value={patient?.name || ''}
+                        onChange={handleNameChange}
                     />
                 </div>
                 <div className="form-group col-6 mb-2">
@@ -152,7 +135,7 @@ const Patient = () => {
                                     to={`/journal/${journal.id}`}
                                     style={{ textDecoration: 'none', color: 'black' }}
                                 >
-                                    {journal.date} {journal.doctor.firstName} {journal.doctor.lastName}
+                                    {journal.date} {journal.doctor.name}
                                 </Link>
                             </li>
                         ))}

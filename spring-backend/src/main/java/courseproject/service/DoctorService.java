@@ -17,7 +17,7 @@ public class DoctorService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(doctorRepo.findDoctors());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     
@@ -25,7 +25,7 @@ public class DoctorService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(doctorRepo.findDoctors(pageable));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     public ResponseEntity<?> getDoctors(String searchQuery, Pageable pageable) {
@@ -33,7 +33,7 @@ public class DoctorService {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(doctorRepo.findDoctors("%" + searchQuery + "%", pageable));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -41,7 +41,7 @@ public class DoctorService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(doctorRepo.findDoctorById(id));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -49,7 +49,7 @@ public class DoctorService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(doctorRepo.save(doctor));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -58,7 +58,7 @@ public class DoctorService {
             doctorRepo.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body(id);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

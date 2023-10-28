@@ -24,15 +24,10 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotBlank(message = "First name is required")
-    @Column(name = "first_name")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "First name should contain only letters")
-    private String firstName;
-
-    @NotBlank(message = "Last name is required")
-    @Column(name = "last_name")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name should contain only letters")
-    private String lastName;
+    @NotBlank(message = "Name is required")
+    @Column(name = "name")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Name should contain only letters")
+    private String name;
 
     @NotBlank(message = "Phone number is required")
     @Column(name = "phone_number")

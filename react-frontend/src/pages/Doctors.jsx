@@ -38,8 +38,7 @@ const Doctors = () => {
 
     const filteredDoctors = doctors
         ? doctors.filter((doctor) =>
-            doctor.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            doctor.lastName.toLowerCase().includes(searchQuery.toLowerCase())
+            doctor.name.toLowerCase().includes(searchQuery.toLowerCase())
         )
         : [];
 
@@ -88,7 +87,7 @@ const Doctors = () => {
                 {filteredDoctors.map(doctor =>
                     <li className="col-10 list-group-item" key={doctor.id}>
                         <Link to={`/doctor/${doctor.id}`} style={{ textDecoration: 'none', color: 'black' }}> 
-                            {doctor.firstName} {doctor.lastName}
+                            {doctor.name}
                         </Link>
                     </li>
                 )}

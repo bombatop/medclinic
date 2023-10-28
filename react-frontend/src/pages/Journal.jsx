@@ -194,7 +194,7 @@ const Journal = () => {
                                 className="form-control"
                                 id="doctor"
                                 readOnly
-                                value={journal.doctor ? journal.doctor.firstName + ' ' + journal.doctor.lastName : ''}
+                                value={journal.doctor ? journal.doctor.name : ''}
                             />
                         </div>
 
@@ -205,7 +205,7 @@ const Journal = () => {
                                 className="form-control"
                                 id="patient"
                                 readOnly
-                                value={journal.patient ? journal.patient.firstName + ' ' + journal.patient.lastName : ''}
+                                value={journal.patient ? journal.patient.name : ''}
                             />
                         </div>
 
