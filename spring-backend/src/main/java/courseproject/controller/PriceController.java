@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,6 @@ import courseproject.model.*;
 import courseproject.service.PriceService;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api")
 public class PriceController {
     @Autowired
@@ -46,7 +44,7 @@ public class PriceController {
     @PostMapping("/addPriceForJournal/{journal_id}")
     public ResponseEntity<?> addPriceForJournal(
             @PathVariable("journal_id") Integer journal_id,
-            @Valid @RequestBody RequestAddPriceForJournal req,
+            @Valid @RequestBody RequestDTO_AddPriceForJournal req,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());

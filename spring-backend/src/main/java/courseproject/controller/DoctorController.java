@@ -22,7 +22,6 @@ import courseproject.model.*;
 import courseproject.service.DoctorService;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api")
 public class DoctorController {
     

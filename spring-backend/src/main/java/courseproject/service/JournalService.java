@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import courseproject.controller.ResponseReportProfitsForDoctors;
+import courseproject.controller.ResponseDTO_ReportProfitsForDoctors;
 import courseproject.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,13 +31,13 @@ public class JournalService {
         try {
             List<Object[]> data = journalRepo.getReportPricesForDoctors(doctorIds, startDate, endDate);
 
-            List<ResponseReportProfitsForDoctors> report = new ArrayList<>();
+            List<ResponseDTO_ReportProfitsForDoctors> report = new ArrayList<>();
             for (Object[] row : data) {
                 Doctor doctor = (Doctor) row[0];
                 Long numberOfJournals = (Long) row[1];
                 Long sumOfPrices = (Long) row[2];
 
-                ResponseReportProfitsForDoctors dto = new ResponseReportProfitsForDoctors(doctor, numberOfJournals,
+                ResponseDTO_ReportProfitsForDoctors dto = new ResponseDTO_ReportProfitsForDoctors(doctor, numberOfJournals,
                         sumOfPrices);
                 report.add(dto);
             }

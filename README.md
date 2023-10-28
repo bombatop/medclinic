@@ -17,7 +17,6 @@ bugs to fix / microfeatures to add:
   пометка на удаление (доктор, мб что-то еще),
   напоминалка о предварительной записи?
   CorsOrigin аннотации повсюду, сделать отдельный файл конфигурации/bean?
-  GET http://localhost:4200/favicon.ico [HTTP/1.1 403 Forbidden 0ms]
 
 features to add:
   печатная форма записи со всеми данными по ней в виде pdf,

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RequestAddPriceForJournal {
+public class RequestDTO_AddPriceForJournal {
     Treatment treatment;
     
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")

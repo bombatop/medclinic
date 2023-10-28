@@ -8,12 +8,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ResponseReportProfitsForDoctors {
+public class ResponseDTO_ReportProfitsForDoctors {
     private Doctor doctor;
     private Long numberOfJournals;
     private Long sumOfPrices;
 
-    public ResponseReportProfitsForDoctors(Doctor doctor, Long numberOfJournals, Long sumOfPrices) {
+    public ResponseDTO_ReportProfitsForDoctors(Doctor doctor, Long numberOfJournals, Long sumOfPrices) {
         this.doctor = doctor;
         this.numberOfJournals = numberOfJournals;
         this.sumOfPrices = sumOfPrices;

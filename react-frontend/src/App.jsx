@@ -25,6 +25,7 @@ import ErrorPage from './pages/ErrorPage';
 function App() {
     return (
         <div>
+            <link rel="icon" href="favicon.png" type="image/x-icon"></link>
             <BrowserRouter>
                 <Header />
                 <Routes>

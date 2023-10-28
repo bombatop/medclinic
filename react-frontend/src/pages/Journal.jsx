@@ -57,7 +57,7 @@ const Journal = () => {
                 document.getElementById('fileUpload').value = '';
             })
             .catch((error) => {
-                console.log(error.response.data);
+                console.log(error);
             });
     };
 
@@ -68,7 +68,7 @@ const Journal = () => {
                 setJournal({ ...journal, files: response.data });
             })
             .catch((error) => {
-                console.log(error.response.data);
+                console.log(error);
             });
     };
 
@@ -99,7 +99,7 @@ const Journal = () => {
                 console.log('Journal fetch successful:', response.data);
             })
             .catch((error) => {
-                console.log(error.response.data);
+                console.log(error);
             });
     };
 
@@ -111,7 +111,7 @@ const Journal = () => {
                 console.log('Treatments fetch successful:', response.data);
             })
             .catch((error) => {
-                console.log(error.response.data);
+                console.log(error);
             });
     };
 
@@ -129,7 +129,7 @@ const Journal = () => {
                 console.log('Journal updated:', response.data);
             })
             .catch((error) => {
-                console.log(error.response.data);
+                console.log(error);
             });
     };
 
@@ -149,7 +149,7 @@ const Journal = () => {
                 setJournal(updatedJournal);
             })
             .catch((error) => {
-                console.log(error.response.data);
+                console.log(error);
             });
     };
 
@@ -162,7 +162,7 @@ const Journal = () => {
                 setJournal({ ...journal, prices: updatedPrices });
             })
             .catch((error) => {
-                console.log(error.response.data);
+                console.log(error);
             });
     };
 
@@ -174,7 +174,7 @@ const Journal = () => {
                 navigate('/journals');
             })
             .catch((error) => {
-                console.log(error.response.data);
+                console.log(error);
             });
     };
 

@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RequestReportProfitsForDoctors {
+public class RequestDTO_ReportProfitsForDoctors {
     private List<Integer> doctors;
 
     @JsonFormat(pattern = "yyyy-MM-dd")

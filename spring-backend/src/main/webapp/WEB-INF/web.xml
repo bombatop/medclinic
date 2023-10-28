@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          id="WebApp_ID" version="3.1">
 
-  <display-name>Journal Manager</display-name>
+  <display-name>Medclinic Manager</display-name>
 
   <absolute-ordering />
 
@@ -41,18 +41,8 @@
       <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-
-  <!-- <context-param>
-    <param-name>contextConfigLocation</param-name>
-    <param-value>classpath:application.properties</param-value>
-  </context-param> -->
-
-  <!-- <listener>
-      <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-  </listener>
-   -->
   <error-page>
     <location>/error</location>
   </error-page>
-  
+
 </web-app>
