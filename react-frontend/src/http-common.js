@@ -7,11 +7,16 @@ export default axios.create({
   }
 });
 
-const multipartAxios = axios.create({
+const uploadAxios = axios.create({
   baseURL: 'http://localhost:8080/courseproject-1.0-SNAPSHOT/api/files',
   headers: {
       'Content-Type': 'multipart/form-data',
   }
 });
 
-export { multipartAxios };
+const downloadAxios = axios.create({
+  baseURL: 'http://localhost:8080/courseproject-1.0-SNAPSHOT/api/files',
+  responseType: 'blob',
+});
+
+export { downloadAxios, uploadAxios };

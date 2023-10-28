@@ -51,7 +51,6 @@ public class JournalService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findJournalsForPatient(patientId));
         } catch (Exception e) {
-            // System.out.print("#######################\n" + e.getMessage() + "\n#############");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -79,7 +78,7 @@ public class JournalService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findJournals());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -87,7 +86,7 @@ public class JournalService {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findJournalById(id));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -119,7 +118,7 @@ public class JournalService {
             journalRepo.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body(id);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

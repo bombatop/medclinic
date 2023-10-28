@@ -16,7 +16,7 @@
         http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
         http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
-
+    <context:property-placeholder location="classpath:application.properties" />
     <context:component-scan base-package="courseproject" />
 
     <!--Repository package-->
@@ -38,8 +38,8 @@
         <property name="jpaProperties">
             <props>
                 <!--<prop key="hibernate.hbm2ddl.auto">validate</prop>-->
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
-                <!--<prop key="hibernate.hbm2ddl.import_files">init.sql</prop>-->                            
+                <!--<prop key="hibernate.hbm2ddl.import_files">init.sql</prop>-->       
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>                      
             </props>
         </property>
     </bean>
@@ -71,7 +71,7 @@
         </mvc:argument-resolvers>
     </mvc:annotation-driven>
 
-    <bean id="templateResolver"
+    <!-- <bean id="templateResolver"
           class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
         <property name="prefix" value="/WEB-INF/views/" />
         <property name="suffix" value=".html" />
@@ -83,20 +83,19 @@
           class="org.thymeleaf.spring5.SpringTemplateEngine">
         <property name="templateResolver" ref="templateResolver" />
         <property name="enableSpringELCompiler" value="true" />
-        <!--Temporals addon -->
         <property name="additionalDialects">
             <set>
                 <bean class="org.thymeleaf.extras.java8time.dialect.Java8TimeDialect"/>
             </set>
         </property>
-    </bean>
+    </bean> 
 
     <bean id="viewResolver" class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
         <property name="templateEngine" ref="templateEngine" />
         <property name="characterEncoding" value="UTF-8"/>
         <property name="order" value="1" />
         <property name="viewNames" value="*" />
-    </bean>
+    </bean> -->
 
     <mvc:resources location="/resources/" mapping="/resources/**"/>
 

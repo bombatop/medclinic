@@ -83,15 +83,7 @@ public class PriceService {
     public ResponseEntity<?> deletePriceForJournal(Integer journal_id, Integer price_id) {
         try {
             Journal journal = journalRepo.findJournalById(journal_id);
-            Set <Price> prices = journal.getPrices();
-            Iterator<Price> iterator = prices.iterator();
-            while (iterator.hasNext()) {
-                Price p = iterator.next();
-                if (p.getId().equals(price_id)) {
-                    iterator.remove();
-                    break;
-                }
-            }
+            journal.getPrices().removeIf(price -> price.getId().equals(price_id));
             journalRepo.save(journal);
             return ResponseEntity.status(HttpStatus.OK).body(price_id);
         } catch (Exception e) {

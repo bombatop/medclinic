@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import http, { multipartAxios } from '../http-common';
+import http, { uploadAxios, downloadAxios } from '../http-common';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Journal = () => {
@@ -39,22 +39,55 @@ const Journal = () => {
     };
 
     const handleFileUpload = () => {
-        if (selectedFiles && selectedFiles.length > 0) {
-            const formData = new FormData();
-            for (let i = 0; i < selectedFiles.length; i++) {
-                formData.append('files', selectedFiles[i]);
-            }
-            console.log(formData);
-            multipartAxios
-                .post(`/upload/${journalId}`, formData)
-                .then((response) => {
-                    console.log('File upload successful:', response.data);
-                    //update the UI or trigger a refresh here
-                })
-                .catch((error) => {
-                    console.log('File upload ERROR:', error);
-                });
+        if (!selectedFiles || selectedFiles.length === 0) {
+            return;
         }
+
+        const formData = new FormData();
+        for (let i = 0; i < selectedFiles.length; i++) {
+            formData.append('files', selectedFiles[i]);
+        }
+
+        uploadAxios
+            .post(`/upload/${journalId}`, formData)
+            .then((response) => {
+                const updatedJournal = { ...journal, files: response.data };
+                setJournal(updatedJournal);
+                setSelectedFiles([]);
+                document.getElementById('fileUpload').value = '';
+            })
+            .catch((error) => {
+                console.log(error.response.data);
+            });
+    };
+
+    const deleteFile = (fileId) => {
+        http
+            .delete(`/files/delete/${journalId}/${fileId}`)
+            .then((response) => {
+                setJournal({ ...journal, files: response.data });
+            })
+            .catch((error) => {
+                console.log(error.response.data);
+            });
+    };
+
+    const downloadFile = (file) => {
+        downloadAxios
+            .get(`/download/${journal.id}/${file.id}`, {
+                responseType: 'arraybuffer',
+            })
+            .then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', file.name);
+                document.body.appendChild(link);
+                link.click();
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
 
@@ -66,7 +99,7 @@ const Journal = () => {
                 console.log('Journal fetch successful:', response.data);
             })
             .catch((error) => {
-                console.log(error);
+                console.log(error.response.data);
             });
     };
 
@@ -78,7 +111,7 @@ const Journal = () => {
                 console.log('Treatments fetch successful:', response.data);
             })
             .catch((error) => {
-                console.log(error);
+                console.log(error.response.data);
             });
     };
 
@@ -96,7 +129,7 @@ const Journal = () => {
                 console.log('Journal updated:', response.data);
             })
             .catch((error) => {
-                console.log(error);
+                console.log(error.response.data);
             });
     };
 
@@ -110,13 +143,13 @@ const Journal = () => {
         http
             .post(`/addPriceForJournal/${journalId}`, { treatment: treatment, date: journal.date })
             .then((response) => {
-                console.log('Journal updated:', response.data);
+                console.log('Journal updated with new price:', response.data);
                 const updatedJournal = { ...journal };
                 updatedJournal.prices.push(response.data);
                 setJournal(updatedJournal);
             })
             .catch((error) => {
-                console.log(error);
+                console.log(error.response.data);
             });
     };
 
@@ -125,12 +158,11 @@ const Journal = () => {
             .delete(`/deletePriceForJournal/${journalId}/${priceId}`)
             .then((response) => {
                 console.log('Price deleted:', response.data);
-                const updatedJournal = { ...journal };
-                updatedJournal.prices = updatedJournal.prices.filter((price) => price.id !== priceId);
-                setJournal(updatedJournal);
+                const updatedPrices = journal.prices.filter((price) => price.id !== priceId);
+                setJournal({ ...journal, prices: updatedPrices });
             })
             .catch((error) => {
-                console.log(error);
+                console.log(error.response.data);
             });
     };
 
@@ -142,7 +174,7 @@ const Journal = () => {
                 navigate('/journals');
             })
             .catch((error) => {
-                console.log(error);
+                console.log(error.response.data);
             });
     };
 
@@ -188,19 +220,50 @@ const Journal = () => {
                         </div>
                     </div>
 
-                    <button type="button" className="mt-3 btn btn-danger" onClick={deleteJournal}>
+                    <button type="button" className="mt-3 mb-4 btn btn-danger" onClick={deleteJournal}>
                         Delete Journal
                     </button>
                 </div>
-                
+
                 <div className="file-upload-container">
-                    <div className="form-group">
-                        <label htmlFor="fileUpload">Upload Files</label>
-                        <input type="file" className="form-control" id="fileUpload" multiple onChange={handleFileSelect} />
+
+                    <div className="form-group row">
+                        {journal.files.length > 0 && (
+                            <div className="col-7">
+                                <label htmlFor="files">Uploaded files</label>
+                                <ul className="list-group">
+                                    {journal.files.map((file) => (
+                                        <a className="list-group-item" key={file.id} onClick={() => downloadFile(file)}>
+                                            {file.name}
+                                            <button
+                                                type="button"
+                                                className="btn btn-danger"
+                                                onClick={() => deleteFile(file.id)}
+                                                style={{
+                                                    color: 'red',
+                                                    background: 'none',
+                                                    border: 'none',
+                                                    cursor: 'pointer',
+                                                }}
+                                            >
+                                                &times; Delete
+                                            </button>
+                                        </a>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
-                    <button type="button" className="btn btn-primary" onClick={handleFileUpload}>
-                        Upload
-                    </button>
+
+                    <div className="form-group row mt-2">
+                        <div className="col-5">
+                            {/* <label htmlFor="fileUpload">Upload Files</label> */}
+                            <input type="file" className="form-control" id="fileUpload" multiple onChange={handleFileSelect} />
+                        </div>
+                        <button type="submit" className="col-2 btn btn-primary" onClick={handleFileUpload}>
+                            Upload
+                        </button>
+                    </div>
                 </div>
 
                 <div className="treatments-container row mt-5">

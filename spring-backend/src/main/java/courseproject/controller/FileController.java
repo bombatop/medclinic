@@ -31,10 +31,24 @@ public class FileController {
     @Autowired
     private FileService service;
 
-    @PostMapping("/upload/{journalId}")
+    @RequestMapping("/download/{journal_id}/{file_id}")
+    public ResponseEntity<?> downloadFilesByJournalId(
+            @PathVariable("journal_id") Integer journal_id,
+            @PathVariable("file_id") Integer file_id) {
+        return service.downloadFileByJournalId(journal_id, file_id);
+    }
+    
+    @PostMapping("/upload/{journal_id}")
     public ResponseEntity<?> uploadFilesByJournalId(
-            @PathVariable ("journalId") Integer journalId,
+            @PathVariable ("journal_id") Integer journal_id,
             @RequestParam("files") List<MultipartFile> multipartFiles) {
-        return service.uploadFilesByJournalId(journalId, multipartFiles);
+        return service.uploadFilesByJournalId(journal_id, multipartFiles);
+    }
+
+    @DeleteMapping("/delete/{journal_id}/{file_id}")
+    public ResponseEntity<?> deletePriceForJournal(
+            @PathVariable("journal_id") Integer journal_id,
+            @PathVariable("file_id") Integer file_id) {
+        return service.deleteFileForJournal(journal_id, file_id);
     }
 }

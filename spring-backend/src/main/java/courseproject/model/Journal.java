@@ -56,27 +56,19 @@ public class Journal {
         inverseJoinColumns = @JoinColumn(name = "treatment_price_id"))
     private Set <Price> prices;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "journal_files", 
+        joinColumns = @JoinColumn(name = "journal_id"),
+        inverseJoinColumns = @JoinColumn(name = "file_id"))
+    private Set<Filepath> files;
+
     // @ManyToMany(fetch = FetchType.EAGER)
     // @JoinTable(
     //     name = "journal_diagnoses",
     //     joinColumns = @JoinColumn(name = "journal_id"),
     //     inverseJoinColumns = @JoinColumn(name = "diagnosis_id"))
     // private Set<Diagnosis> diagnoses;
-
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-    @CollectionTable(
-        name = "journal_files",
-        joinColumns = @JoinColumn(name = "journal_id"))
-    @Column(name = "filepath")
-    private Set<String> filePaths;
-
-            // @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-            // @CollectionTable(name = "journal_files", joinColumns = {
-            //         @JoinColumn(name = "journal_id", referencedColumnName = "id"),
-            //         @JoinColumn(name = "filepath")
-            // })
-            // @Column(name = "filepath")
-            // private Set<String> filePaths;
             
     // @ManyToMany(fetch = FetchType.EAGER)
     // @JoinTable(

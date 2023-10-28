@@ -1,6 +1,7 @@
 package courseproject.service;
 
 import courseproject.configuration.ApplicationConfig;
+import courseproject.model.Filepath;
 import courseproject.model.Journal;
 
 import java.io.File;
@@ -11,6 +12,7 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -20,12 +22,14 @@ import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import courseproject.repository.DoctorRepository;
+import courseproject.repository.FilepathRepository;
 import courseproject.repository.JournalRepository;
 import lombok.Value;
 
@@ -34,34 +38,91 @@ public class FileService {
     @Autowired
     private JournalRepository journalRepo;
     @Autowired
+    private FilepathRepository fileRepo;
+    @Autowired
     private ApplicationConfig applicationConfig;
 
+    // public ResponseEntity<?> downloadFileByJournalId(Integer journal_id, Integer file_id) {
+    //     try {
+    //         Filepath file = fileRepo.findFilepathById(file_id);
+    //         File fileToDownload = new File(file.getPath());
+    //         byte[] fileContent = Files.readAllBytes(fileToDownload.toPath());
+    //         HttpHeaders headers = new HttpHeaders();
+    //         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    //         headers.setContentDispositionFormData("attachment", file.getName());
+    //         return new ResponseEntity<>(fileContent, headers, HttpStatus.OK);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    //     }
+    // }
+
+    public ResponseEntity<?> downloadFileByJournalId(Integer journal_id, Integer file_id) {
+        try {
+            String path = fileRepo.findFilepathById(file_id).getPath();
+            byte[] fileData = Files.readAllBytes(Paths.get(path));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", fileRepo.findFilepathById(file_id).getName());
+            headers.setContentLength(fileData.length);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(fileData);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    
     public ResponseEntity<?> uploadFilesByJournalId(Integer journalId, List<MultipartFile> multipartFiles) {
         try {
             String uploadPath = applicationConfig.getUploadPath();
-            String journalFolderPath = uploadPath + File.separator + journalId;
-
-            File journalFolder = new File(journalFolderPath);
+            String storageFolderPath = uploadPath + File.separator + journalId + File.separator;
+            File journalFolder = new File(storageFolderPath);
             if (!journalFolder.exists()) {
                 journalFolder.mkdirs();
             }
 
             Journal journal = journalRepo.findJournalById(journalId);
-            Set<String> updatedFilePaths = journal.getFilePaths();
+            Set<Filepath> updatedJournal = journal.getFiles();
 
-            for (MultipartFile file : multipartFiles) {
-                String originalFilename = file.getOriginalFilename();
+            for (MultipartFile uploadedFile : multipartFiles) {
+                String originalFilename = uploadedFile.getOriginalFilename();
                 String uniqueFilename = generateUniqueFilename(originalFilename);
 
-                Path filePath = Paths.get(journalFolderPath, uniqueFilename);
-                file.transferTo(filePath.toFile());
-
-                updatedFilePaths.add(journalId + File.separator + uniqueFilename);
+                Path path = Paths.get(storageFolderPath, uniqueFilename);
+                uploadedFile.transferTo(path.toFile());
+ 
+                Filepath newFile = new Filepath();
+                newFile.setPath(storageFolderPath + uniqueFilename);
+                newFile.setName(originalFilename);
+                newFile = fileRepo.save(newFile);
+                updatedJournal.add(newFile);
             }
 
-            journal.setFilePaths(updatedFilePaths);
+            journal.setFiles(updatedJournal);
             journalRepo.save(journal);
-            return ResponseEntity.status(HttpStatus.OK).body("All files uploaded successfully");
+
+            return ResponseEntity.status(HttpStatus.OK).body(journal.getFiles());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> deleteFileForJournal(Integer journal_id, Integer file_id) {
+        try {
+            String pathToDelete = fileRepo.findFilepathById(file_id).getPath();
+            Journal journal = journalRepo.findJournalById(journal_id);
+            journal.getFiles().removeIf(file -> file.getId().equals(file_id));
+            journalRepo.save(journal);
+
+            File dir = new File(pathToDelete);
+            if (dir.exists()) {
+                dir.delete();
+            }
+            fileRepo.deleteById(file_id);
+
+            return ResponseEntity.status(HttpStatus.OK).body(journal.getFiles());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -71,7 +132,6 @@ public class FileService {
         String timestamp = Instant.now().toString().replace(":", "_").replace(".", "_");
         String randomString = UUID.randomUUID().toString().replace("-", "");
         String extension = extractFileExtension(originalFilename);
-
         return timestamp + "_" + randomString + extension;
     }
 
