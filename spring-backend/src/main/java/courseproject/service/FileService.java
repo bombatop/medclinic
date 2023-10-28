@@ -5,23 +5,15 @@ import courseproject.model.Filepath;
 import courseproject.model.Journal;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.ws.rs.core.Response;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import courseproject.repository.FilepathRepository;
 import courseproject.repository.JournalRepository;
-import lombok.Value;
 
 @Service
 public class FileService {
@@ -41,20 +32,6 @@ public class FileService {
     private FilepathRepository fileRepo;
     @Autowired
     private ApplicationConfig applicationConfig;
-
-    // public ResponseEntity<?> downloadFileByJournalId(Integer journal_id, Integer file_id) {
-    //     try {
-    //         Filepath file = fileRepo.findFilepathById(file_id);
-    //         File fileToDownload = new File(file.getPath());
-    //         byte[] fileContent = Files.readAllBytes(fileToDownload.toPath());
-    //         HttpHeaders headers = new HttpHeaders();
-    //         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-    //         headers.setContentDispositionFormData("attachment", file.getName());
-    //         return new ResponseEntity<>(fileContent, headers, HttpStatus.OK);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-    //     }
-    // }
 
     public ResponseEntity<?> downloadFileByJournalId(Integer journal_id, Integer file_id) {
         try {
@@ -73,7 +50,7 @@ public class FileService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    
+
     public ResponseEntity<?> uploadFilesByJournalId(Integer journalId, List<MultipartFile> multipartFiles) {
         try {
             String uploadPath = applicationConfig.getUploadPath();
@@ -92,7 +69,7 @@ public class FileService {
 
                 Path path = Paths.get(storageFolderPath, uniqueFilename);
                 uploadedFile.transferTo(path.toFile());
- 
+
                 Filepath newFile = new Filepath();
                 newFile.setPath(storageFolderPath + uniqueFilename);
                 newFile.setName(originalFilename);

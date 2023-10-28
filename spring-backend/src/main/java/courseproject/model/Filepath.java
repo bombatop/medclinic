@@ -6,9 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +23,7 @@ public class Filepath {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    // @NotBlank(message = "Appropriate name is required")
+    @JsonIgnore
     @Column(name = "path")
     private String path;
 

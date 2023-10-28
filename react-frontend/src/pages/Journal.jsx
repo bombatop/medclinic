@@ -233,8 +233,9 @@ const Journal = () => {
                                 <label htmlFor="files">Uploaded files</label>
                                 <ul className="list-group">
                                     {journal.files.map((file) => (
-                                        <a className="list-group-item" key={file.id} onClick={() => downloadFile(file)}>
-                                            {file.name}
+                                        <li className="list-group-item" key={file.id}>
+                                            <a className="link-dark link-offset-2 link-underline link-underline-opacity-0"
+                                                onClick={() => downloadFile(file)}>{file.name}</a>
                                             <button
                                                 type="button"
                                                 className="btn btn-danger"
@@ -248,7 +249,7 @@ const Journal = () => {
                                             >
                                                 &times; Delete
                                             </button>
-                                        </a>
+                                        </li>
                                     ))}
                                 </ul>
                             </div>

@@ -1,8 +1,6 @@
 package courseproject.service;
 
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Set;
 
 import courseproject.model.*;
 import org.springframework.beans.factory.annotation.Autowired;

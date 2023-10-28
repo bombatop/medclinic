@@ -1,6 +1,5 @@
 package courseproject.controller;
 
-import java.util.Arrays;
 import java.util.Date;
 import javax.validation.Valid;
 
@@ -18,10 +17,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import courseproject.model.*;
-import courseproject.service.FileService;
 import courseproject.service.JournalService;
 
 @RestController
@@ -30,15 +27,6 @@ import courseproject.service.JournalService;
 public class JournalController {
     @Autowired
     private JournalService service;
-
-    // @Autowired
-    // private FileService fileService;
-
-    // @PostMapping("/journalUpload/{id}")
-    // public ResponseEntity<?> uploadFiles(@PathVariable Integer journalId,
-    //         @RequestParam("files") MultipartFile[] files) {
-    //     return fileService.uploadFilesByJournalId(journalId, Arrays.asList(files));
-    // }
     
     @GetMapping("/journalsByDateRange")
     public ResponseEntity<?> getJournalsByDateRange(
@@ -82,7 +70,6 @@ public class JournalController {
 
     @PostMapping("/addJournal")
     public ResponseEntity<?> addJournal(@Valid @RequestBody Journal journal, BindingResult bindingResult) {
-    // public ResponseEntity<?> addJournal(@RequestBody Journal journal) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
