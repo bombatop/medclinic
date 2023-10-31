@@ -13,11 +13,10 @@ const Doctors = () => {
     }, [currentPage, searchQuery]);
 
     const getDoctors = () => {
-        const pageSize = 5;
         const params = {
             page: currentPage,
-            size: pageSize,
             searchQuery: searchQuery,
+            size: 10,
         };
         http
             .get(`/doctors`, { params })

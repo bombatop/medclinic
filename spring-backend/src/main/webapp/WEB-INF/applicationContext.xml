@@ -60,8 +60,6 @@
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
-    
-
 
     <!-- Enable Spring MVC with argument resolvers and resources -->
     <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean" />
@@ -81,6 +79,14 @@
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="41943040" /> <!-- Set the maximum file size in bytes (e.g., 10MB) -->
     </bean>
+
+    <mvc:cors>
+        <mvc:mapping path="/api/**"
+            allowed-origins="http://localhost:4200"
+            allowed-headers="Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Authorization, X-Requested-With, requestId, Correlation-Id"
+            allowed-methods="GET, PUT, POST, DELETE"/>
+    </mvc:cors>
+
     
     <!-- Enable logger settings at log4j.properties -->
 

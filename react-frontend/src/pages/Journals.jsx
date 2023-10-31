@@ -18,7 +18,9 @@ const Journals = () => {
     };
 
     useEffect(() => {
-        setDatesList(getNextDates());
+        if(!isNaN(new Date(date))) {
+            setDatesList(getNextDates());
+        }
     }, [date]);
 
     function getNextDates() {
@@ -132,7 +134,7 @@ const Journals = () => {
                                                         to={`/doctor/${journal.doctor.id}`}
                                                         style={{ textDecoration: 'none', color: 'black', fontWeight: 600 }}
                                                     >
-                                                        {journal.doctor.firstName} {journal.doctor.lastName}
+                                                        {journal.doctor.name}
                                                     </Link>
                                                 </div>
                                                 <div className="card-text" style={{ fontSize: '14px' }}>
@@ -140,7 +142,7 @@ const Journals = () => {
                                                         to={`/patient/${journal.patient.id}`}
                                                         style={{ textDecoration: 'none', color: 'black' }}
                                                     >
-                                                        {journal.patient.firstName} {journal.patient.lastName}
+                                                        {journal.patient.name}
                                                     </Link>
                                                 </div>
                                             </div>

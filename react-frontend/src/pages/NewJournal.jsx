@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import AsyncSelect from 'react-select/async';
 import http from '../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const NewJournal = () => {
     const navigate = useNavigate();
     const [journal, setJournal] = useState({
-        date: getCurrentDatetime()
+        date: getCurrentDatetime(),
+        patient: null,
+        doctor: null
     });
-    const [patients, setPatients] = useState(null);
-    const [doctors, setDoctors] = useState(null);
     const [errorMessages, setErrorMessages] = useState('');
     
     function getCurrentDatetime() {
@@ -21,17 +22,19 @@ const NewJournal = () => {
         return `${year}-${month}-${day} ${hours}:${minutes}`;
     }
 
-    const handleDoctorChange = (event) => {
+    const handleDoctorChange = (selectedOption) => {
+        if (!selectedOption) return;
         setJournal({
             ...journal,
-            doctor: doctors[event.target.value]
+            doctor: selectedOption.value
         })
     };
 
-    const handlePatientChange = (event) => {
+    const handlePatientChange = (selectedOption) => {
+        if (!selectedOption) return;
         setJournal({
             ...journal,
-            patient: patients[event.target.value]
+            patient: selectedOption.value
         })
     };
     
@@ -40,45 +43,6 @@ const NewJournal = () => {
             ...journal,
             date: event.target.value
         })
-    };
-
-    useEffect(() => {
-        getPatients();
-        getDoctors();
-    }, [])
-
-    useEffect(() => {
-        if (doctors && doctors.length > 0 && patients && patients.length > 0) {
-            setJournal({
-                ...journal,
-                doctor: doctors[0],
-                patient: patients[0]
-            })
-        }
-    }, [doctors, patients])
-    
-    const getDoctors = () => {
-        http
-            .get(`/doctors`)
-            .then((response) => {
-                setDoctors(response.data);
-                console.log('Doctors fetch successful:', response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-
-    const getPatients = () => {
-        http
-            .get(`/patients`)
-            .then((response) => {
-                setPatients(response.data);
-                console.log('Patients fetch successful:', response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
     };
 
     const addJournal = () => {
@@ -92,11 +56,52 @@ const NewJournal = () => {
                 console.log('Journal added:', response.data);
                 navigate("/journal/" + response.data.id);
             })
-            .catch ((error) => {
+            .catch((error) => {
                 console.log(error);
             });
     };
 
+    const loadDoctors = (inputValue, callback) => {
+        const params = {
+            searchQuery: inputValue,
+            size: 10,
+            page: 0,
+        };
+        http
+            .get(`/doctors`, { params })
+            .then((response) => {
+                const options = response.data.content.map((doctor) => ({
+                    value: doctor,
+                    label: doctor.name,
+                }));
+                callback(options);
+                console.log('Doctors fetch on query {' + inputValue + '} successful: ', options);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const loadPatients = (inputValue, callback) => {
+        const params = {
+            searchQuery: inputValue,
+            size: 10,
+            page: 0,
+        };
+        http
+            .get(`/patients`, { params })
+            .then((response) => {
+                const options = response.data.content.map((patient) => ({
+                    value: patient,
+                    label: patient.name,
+                }));
+                callback(options);
+                console.log('Patients fetch on query {' + inputValue + '} successful: ', options);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
 
     return (
         <div className="container">
@@ -105,30 +110,34 @@ const NewJournal = () => {
             <div className="journal-container">
                 <div className="form-group mb-2">
                     <label htmlFor="doctor">Doctor</label>
-                    <select id="doctor" className="form-select" onChange={handleDoctorChange}>
-                        {doctors && doctors.map((doctor, index) => (
-                            <option key={index} value={index}>
-                                {doctor.firstName} {doctor.lastName}
-                            </option>
-                        ))}
-                    </select>
+                    <AsyncSelect
+                        loadOptions={loadDoctors}
+                        isClearable={true}
+                        onChange={handleDoctorChange}
+                    />
                 </div>
                 <div className="form-group mb-2">
                     <label htmlFor="patient">Patient</label>
-                    <select id="patient" className="form-select" onChange={handlePatientChange}>
-                        {patients && patients.map((patient, index) => (
-                            <option key={index} value={index}>
-                                {patient.firstName} {patient.lastName}
-                            </option>
-                        ))}
-                    </select>
+                    <AsyncSelect
+                        options={loadPatients}
+                        isClearable={true}
+                        onChange={handlePatientChange}
+                    />
                 </div>
                 <div className="form-group mb-2">
                     <label htmlFor="date">Date</label>
-                    <input type="datetime-local" className="form-control" id="date" value={journal.date} onChange={handleDateChange}></input>
+                    <input
+                        type="datetime-local"
+                        className="form-control"
+                        id="date"
+                        value={journal.date}
+                        onChange={handleDateChange}
+                    ></input>
                 </div>
             </div>
-            <button type="submit" className="btn btn-primary" onClick={addJournal}>Add new journal</button>
+            <button type="submit" className="btn btn-primary" onClick={addJournal}>
+                Add new journal
+            </button>
         </div>
     );
 };
