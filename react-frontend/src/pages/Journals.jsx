@@ -3,27 +3,32 @@ import http from '../http-common';
 import { Link } from 'react-router-dom';
 import Header from '../pages/Header'
 
+import DatePicker from 'react-datepicker';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import "react-datepicker/dist/react-datepicker.css";
+
 const Journals = () => {
     const [journals, setJournals] = useState(null);
     const [datesList, setDatesList] = useState(null);
-    const [date, setDate] = useState(getCurrentDate());
+    const [date, setDate] = useState(null);
     const [table, setTable] = useState({});
 
-    function getCurrentDate() {
-        return formatDate(new Date());
-    }
+    useEffect(() => {
+        setDate(new Date());
+    }, [])
 
-    const handleDateChange = (event) => {
-        setDate(event.target.value);
+    const handleDateChange = (date) => {
+        setDate(date);
     };
 
     useEffect(() => {
-        if(!isNaN(new Date(date))) {
-            setDatesList(getNextDates());
-        }
-    }, [date]);
+        setDatesList(getDateList(date));
+        getJournals();
+    }, [date])
 
-    function getNextDates() {
+    function getDateList() {
+        if (date === null) return;
         let d = new Date(date);
         let lst = [formatDate(d)];
         for (let i = 0; i < 6; i++) {
@@ -49,10 +54,6 @@ const Journals = () => {
     }
 
     useEffect(() => {
-        getJournals();
-    }, [datesList]);
-
-    useEffect(() => {
         if (journals === null) return;
 
         const updatedTable = {};
@@ -74,7 +75,7 @@ const Journals = () => {
 
     const getJournals = () => {
         http
-            .get(`/journalsByDateRange?startDate=${date}`)
+            .get(`/journalsByDateRange?startDate=${formatDate(date)}`)
             .then((response) => {
                 setJournals(response.data);
                 console.log('Journals fetch successful:', response.data);
@@ -87,18 +88,21 @@ const Journals = () => {
     return (
         <div className="mt-4 mx-4">
             <div className="row">
-                <div className="col-3 form-group">
-                    <label htmlFor="date">Start of the week date select</label>
-                    <input
-                        type="date"
-                        className="form-control"
-                        id="date"
-                        value={date}
-                        onChange={handleDateChange}
-                        style={{
-                            height: 40
-                        }}
-                    />
+                <div className="col-2 form-group">
+                    <label htmlFor="date-picker-div">Date</label>
+                    <div className="date-picker-div">
+                        <DatePicker
+                            selected={date}
+                            onChange={handleDateChange}
+                            showTimeSelect
+                            timeFormat="HH:mm"
+                            timeIntervals={10}
+                            dateFormat="d MMMM, yyyy HH:mm"
+                            className="form-control"
+                            locale={ru}
+                            timeCaption="время"
+                        />
+                    </div>
                 </div>
 
                 <Link
@@ -113,7 +117,7 @@ const Journals = () => {
             </div>
 
             <div className="row mt-5">
-                {datesList &&
+                {date && datesList &&
                     datesList.map((date) => (
                         <div className="col" style={{ maxWidth: 260 }} key={date}>
                             <h6 className="text-center">{date}</h6>

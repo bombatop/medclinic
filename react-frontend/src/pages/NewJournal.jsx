@@ -1,31 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import AsyncSelect from 'react-select/async';
 import http from '../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+
+import AsyncSelect from 'react-select/async';
+import DatePicker from 'react-datepicker';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import "react-datepicker/dist/react-datepicker.css";
 
 const NewJournal = () => {
     const navigate = useNavigate();
     const [journal, setJournal] = useState({
-        date: getCurrentDatetime(),
+        date: new Date(),
         patient: null,
         doctor: null
     });
+
+    const formattedDate = format(journal.date, 'yyyy-MM-dd HH:mm');
     const [errorMessages, setErrorMessages] = useState('');
-    
-    function getCurrentDatetime() {
-        var now = new Date();
-        var year = now.getFullYear();
-        var month = (now.getMonth() + 1).toString().padStart(2, "0");
-        var day = now.getDate().toString().padStart(2, "0");
-        var hours = now.getHours().toString().padStart(2, "0");
-        var minutes = now.getMinutes().toString().padStart(2, "0");
-        return `${year}-${month}-${day} ${hours}:${minutes}`;
-    }
 
     const handleDoctorChange = (selectedOption) => {
         if (!selectedOption) return;
         setJournal({
-            ...journal,
+            ...journal, 
             doctor: selectedOption.value
         })
     };
@@ -38,20 +35,20 @@ const NewJournal = () => {
         })
     };
     
-    const handleDateChange = (event) => {
+    const handleDateChange = (date) => {
         setJournal({
             ...journal,
-            date: event.target.value
+            date: date
         })
     };
 
     const addJournal = () => {
-        if (journal.date.indexOf("T") != -1) {
-            journal.date = journal.date.replace("T", " ");
+        let formattedDateJournal = {
+            ...journal,
+            date: formattedDate
         }
-        console.log(journal);
         http
-            .post(`/addJournal`, journal)
+            .post(`/addJournal`, formattedDateJournal)
             .then((response) => {
                 console.log('Journal added:', response.data);
                 navigate("/journal/" + response.data.id);
@@ -74,8 +71,8 @@ const NewJournal = () => {
                     value: doctor,
                     label: doctor.name,
                 }));
-                callback(options);
                 console.log('Doctors fetch on query {' + inputValue + '} successful: ', options);
+                callback(options);
             })
             .catch((error) => {
                 console.log(error);
@@ -95,13 +92,14 @@ const NewJournal = () => {
                     value: patient,
                     label: patient.name,
                 }));
+                console.log('Patients fetch on query ' + inputValue + ' successful: ', options);
                 callback(options);
-                console.log('Patients fetch on query {' + inputValue + '} successful: ', options);
             })
             .catch((error) => {
                 console.log(error);
             });
     };
+
 
     return (
         <div className="container">
@@ -119,20 +117,26 @@ const NewJournal = () => {
                 <div className="form-group mb-2">
                     <label htmlFor="patient">Patient</label>
                     <AsyncSelect
-                        options={loadPatients}
+                        loadOptions={loadPatients}
                         isClearable={true}
                         onChange={handlePatientChange}
                     />
                 </div>
                 <div className="form-group mb-2">
-                    <label htmlFor="date">Date</label>
-                    <input
-                        type="datetime-local"
-                        className="form-control"
-                        id="date"
-                        value={journal.date}
-                        onChange={handleDateChange}
-                    ></input>
+                    <label htmlFor="date-picker-div">Date</label>
+                    <div className="date-picker-div">
+                        <DatePicker
+                            selected={journal.date}
+                            onChange={handleDateChange}
+                            showTimeSelect
+                            timeFormat="HH:mm"
+                            timeIntervals={10}
+                            dateFormat="d MMMM, yyyy HH:mm"
+                            className="form-control"
+                            locale={ru}
+                            timeCaption="время"
+                        />
+                    </div>
                 </div>
             </div>
             <button type="submit" className="btn btn-primary" onClick={addJournal}>

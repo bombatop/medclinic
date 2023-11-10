@@ -82,7 +82,7 @@
 
     <mvc:cors>
         <mvc:mapping path="/api/**"
-            allowed-origins="http://localhost:4200"
+            allowed-origins="*"
             allowed-headers="Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Authorization, X-Requested-With, requestId, Correlation-Id"
             allowed-methods="GET, PUT, POST, DELETE"/>
     </mvc:cors>

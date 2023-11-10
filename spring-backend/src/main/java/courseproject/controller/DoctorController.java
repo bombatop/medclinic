@@ -24,7 +24,6 @@ import courseproject.service.DoctorService;
 @RestController
 @RequestMapping("/api")
 public class DoctorController {
-    
     @Autowired
     private DoctorService service;
 

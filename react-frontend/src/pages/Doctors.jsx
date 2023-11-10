@@ -92,15 +92,19 @@ const Doctors = () => {
                 )}
             </ul>
 
-            <div className="pagination">
-                <button className="btn btn-secondary" onClick={handlePreviousPage} disabled={currentPage === 0}>
-                    Previous
-                </button>
-                <span className="mx-2 mt-1">Page {currentPage + 1 - (totalPages === 0)} of {totalPages}</span>
-                <button className="btn btn-secondary" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>
-                    Next
-                </button>
-            </div>
+            {(totalPages > 0 ? (
+                <div className="pagination">
+                    <button className="btn btn-secondary" onClick={handlePreviousPage} disabled={currentPage === 0}>
+                        Previous
+                    </button>
+                    <span className="mx-2 mt-1">Page {currentPage + 1 - (totalPages === 0)} of {totalPages}</span>
+                    <button className="btn btn-secondary" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>
+                        Next
+                    </button>
+                </div>
+            ) : (
+                <p>No results found.</p>)
+            )}
         </div>
     );
 };

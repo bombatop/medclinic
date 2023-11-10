@@ -84,7 +84,7 @@ const ProfitsReport = () => {
                 >
                     {doctors.map((doctor) => (
                         <option key={doctor.id} value={doctor.id}>
-                            {doctor.firstName} {doctor.lastName}
+                            {doctor.name} 
                         </option>
                     ))}
                 </select>
@@ -130,7 +130,7 @@ const ProfitsReport = () => {
                     <tbody>
                         {data.map((item) => (
                             <tr key={item.doctorId}>
-                                <td>{item.doctor.firstName} {item.doctor.lastName}</td>
+                                <td>{item.doctor.name} </td>
                                 <td>{item.numberOfJournals}</td>
                                 <td>{item.sumOfPrices}</td>
                             </tr>

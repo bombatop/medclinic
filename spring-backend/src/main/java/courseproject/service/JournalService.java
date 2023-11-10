@@ -102,7 +102,7 @@ public class JournalService {
 
     public ResponseEntity<?> updateJournal(Journal journal) {
         try {
-            if (!journal.getDate().equals(journalRepo.findJournalById(journal.getId()).getDate())) {
+            if (!journal.getPrices().isEmpty() && !journal.getDate().equals(journalRepo.findJournalById(journal.getId()).getDate())) {
                 throw new IllegalArgumentException("Date cannot be changed after price has been established");
             }
             journal.setDoctor(doctorRepo.findDoctorById(journal.getDoctor().getId()));
