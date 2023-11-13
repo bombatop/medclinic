@@ -1,12 +1,8 @@
 package courseproject.model;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -69,32 +65,4 @@ public class Journal {
     //     joinColumns = @JoinColumn(name = "journal_id"),
     //     inverseJoinColumns = @JoinColumn(name = "diagnosis_id"))
     // private Set<Diagnosis> diagnoses;
-            
-    // @ManyToMany(fetch = FetchType.EAGER)
-    // @JoinTable(
-    // name = "journal_treatment_planning",
-    // joinColumns = @JoinColumn(name = "journal_id"),
-    // inverseJoinColumns = @JoinColumn(name = "treatment_planning_id"))
-    // private Set<TreatmentPlan> treatmentPlannings;
-
-    // @ManyToMany(fetch = FetchType.EAGER)
-    // @JoinTable(
-    // name = "journal_complaints",
-    // joinColumns = @JoinColumn(name = "journal_id"),
-    // inverseJoinColumns = @JoinColumn(name = "complaint_id"))
-    // private Set<Complaint> complaints;
-
-    // @ManyToMany(fetch = FetchType.EAGER)
-    // @JoinTable(
-    // name = "journal_anamnesis",
-    // joinColumns = @JoinColumn(name = "journal_id"),
-    // inverseJoinColumns = @JoinColumn(name = "anamnesis_id"))
-    // private Set<Anamnesis> anamneses;
-
-    // @ManyToMany(fetch = FetchType.EAGER)
-    // @JoinTable(
-    // name = "journal_objective_status",
-    // joinColumns = @JoinColumn(name = "journal_id"),
-    // inverseJoinColumns = @JoinColumn(name = "objective_status_id"))
-    // private Set<ObjectiveStatus> objectiveStatuses;
 }

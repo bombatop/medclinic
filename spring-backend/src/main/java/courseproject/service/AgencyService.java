@@ -6,53 +6,55 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import courseproject.repository.PatientRepository;
+import courseproject.repository.AgencyRepository;
 
 @Service
-public class PatientService {
+public class AgencyService {
     @Autowired
-    private PatientRepository repo;
+    private AgencyRepository repo;
 
-    public ResponseEntity<?> getAllPatients() {
+    public ResponseEntity<?> getAllAgencies() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findPatients());
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findAgencies());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    public ResponseEntity<?> getAllPatients(Pageable pageable) {
+    public ResponseEntity<?> getAllAgencies(Pageable pageable) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findPatients(pageable));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-    public ResponseEntity<?> getPatients(String searchQuery, Pageable pageable) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findPatients("%" + searchQuery + "%", pageable));
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findAgencies(pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    public ResponseEntity<?> getPatientById(Integer id) {
+    public ResponseEntity<?> getAgencies(String searchQuery, Pageable pageable) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findPatientById(id));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(repo.findAgencies("%" + searchQuery + "%", pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    public ResponseEntity<?> savePatient(Patient patient) {
+    public ResponseEntity<?> getAgencyById(Integer id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.save(patient));
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findAgencyById(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    public ResponseEntity<?> deletePatient(Integer id) {
+    public ResponseEntity<?> saveAgency(Agency doctor) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(repo.save(doctor));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> deleteAgency(Integer id) {
         try {
             repo.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body(id);

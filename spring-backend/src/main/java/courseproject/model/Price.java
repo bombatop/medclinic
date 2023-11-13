@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "treatment_price")
+@Table(name = "treatment_agency_price_id")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -41,4 +41,9 @@ public class Price {
     @ManyToOne(targetEntity = Treatment.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "treatment_id", referencedColumnName = "id")
     private Treatment treatment;
+
+    @NotNull(message = "Agency is required")
+    @ManyToOne(targetEntity = Agency.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "agency_id", referencedColumnName = "id")
+    private Agency agency;
 }

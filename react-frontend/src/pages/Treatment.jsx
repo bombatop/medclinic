@@ -2,24 +2,20 @@ import React, { useState, useEffect } from 'react';
 import http from '../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
+import DatePicker from 'react-datepicker';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import "react-datepicker/dist/react-datepicker.css";
+
 const Treatment = () => {
     const navigate = useNavigate();
     const { treatmentId } = useParams();
     const [treatment, setTreatment] = useState(null);
     const [price, setPrice] = useState({
-        date: getCurrentDatetime()
+        date: new Date()
     });
     const [prices, setPrices] = useState(null);
-
-    function getCurrentDatetime() {
-        var now = new Date();
-        var year = now.getFullYear();
-        var month = (now.getMonth() + 1).toString().padStart(2, "0");
-        var day = now.getDate().toString().padStart(2, "0");
-        var hours = now.getHours().toString().padStart(2, "0");
-        var minutes = now.getMinutes().toString().padStart(2, "0");
-        return `${year}-${month}-${day}T${hours}:${minutes}`;
-    }
+    const formattedDate = format(price.date, 'yyyy-MM-dd HH:mm');
 
     const handleNameChange = (event) => {
         setTreatment({
@@ -83,12 +79,8 @@ const Treatment = () => {
     };
 
     const addPrice = () => {
-        if (price.date.indexOf("T") !== -1) {
-            price.date = price.date.replace("T", " ");
-        }
-        price.treatment = treatment;
         http
-            .post(`/addPriceForTreatment`, price)
+            .post(`/addPriceForTreatment`, { ...price, date: formattedDate, treatment: treatment })
             .then((response) => {
                 console.log('Price added:', response.data);
                 const sortedPrices = [...prices, response.data].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -143,9 +135,21 @@ const Treatment = () => {
                     <input type="text" className="form-control" id="price" value={price?.price || ''} onChange={handlePriceChange} />
                 </div>
 
-                <div className="col-3">
-                    <label htmlFor="date">Date</label>
-                    <input type="datetime-local" className="form-control" id="date" value={price?.date || ''} onChange={handleDateChange} />
+                <div className="form-group mb-2">
+                    <label htmlFor="date-picker-div">Date</label>
+                    <div className="date-picker-div">
+                        <DatePicker
+                            selected={price.date}
+                            onChange={handleDateChange}
+                            showTimeSelect
+                            timeFormat="HH:mm"
+                            timeIntervals={10}
+                            dateFormat="d MMMM, yyyy HH:mm"
+                            className="form-control"
+                            locale={ru}
+                            timeCaption="время"
+                        />
+                    </div>
                 </div>
 
                 <button type="submit" className="btn btn-primary col-2 mt-4" onClick={addPrice}>Add new price</button>

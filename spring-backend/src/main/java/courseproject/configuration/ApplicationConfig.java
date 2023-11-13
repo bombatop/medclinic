@@ -16,20 +16,4 @@ public class ApplicationConfig {
     public String getUploadPath() {
         return uploadPath;
     }
-
-
-    //configuration only works when specified in xml, IDK HOW TO FIX THIS
-    
-    // @Bean
-    // public WebMvcConfigurer corsConfigurer() {
-    //     return new WebMvcConfigurer() {
-    //         @Override
-    //         public void addCorsMappings(CorsRegistry registry) {
-    //             registry.addMapping("/api/**")
-    //             .allowedOrigins("http://localhost:4200")
-    //             .allowedMethods("*")
-    //             .allowedHeaders("Content-Type");
-    //         }
-    //     };
-    // }
 }

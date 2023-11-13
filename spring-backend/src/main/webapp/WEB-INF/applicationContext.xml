@@ -37,13 +37,8 @@
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
                 <property name="generateDdl" value="true" />
                 <property name="showSql" value="true" />
+                <property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
             </bean>
-        </property>
-        <property name="jpaProperties">
-            <props>
-                <!-- Hibernate dialect for MySQL -->
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
-            </props>
         </property>
     </bean>
 

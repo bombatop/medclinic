@@ -16,8 +16,8 @@ const Journal = () => {
         doctor: null,
         prices: []
     });
-    const [treatment, setTreatment] = useState(null);
-    const [treatments, setTreatments] = useState(null);
+    // const [treatment, setTreatment] = useState(null);
+    // const [treatments, setTreatments] = useState(null);
     const [selectedFiles, setSelectedFiles] = useState(null);
 
     const formattedDate = format(journal.date, 'yyyy-MM-dd HH:mm');
@@ -38,21 +38,21 @@ const Journal = () => {
         }
     }, [journal.date]);
 
-    const handleTreatmentChange = (event) => {
-        setTreatment(treatments[event.target.value]);
-    };
+    // const handleTreatmentChange = (event) => {
+    //     setTreatment(treatments[event.target.value]);
+    // };
 
     useEffect(() => {
         getJournal();
-        getTreatments();
+        // getTreatments();
     }, []);
     
     //set treatment select
-    useEffect(() => {
-        if (treatments && treatments.length > 0) {
-            setTreatment(treatments[0]);
-        }
-    }, [treatments]);
+    // useEffect(() => {
+    //     if (treatments && treatments.length > 0) {
+    //         setTreatment(treatments[0]);
+    //     }
+    // }, [treatments]);
 
     const handleFileSelect = (event) => {
         setSelectedFiles(event.target.files);
@@ -126,17 +126,17 @@ const Journal = () => {
             });
     };
 
-    const getTreatments = () => {
-        http
-            .get(`/treatments`)
-            .then((response) => {
-                setTreatments(response.data);
-                console.log('Treatments fetch successful:', response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
+    // const getTreatments = () => {
+    //     http
+    //         .get(`/treatments`)
+    //         .then((response) => {
+    //             setTreatments(response.data);
+    //             console.log('Treatments fetch successful:', response.data);
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         });
+    // };
 
     const updateJournal = () => {
         // VALIDATION IS BOTH CLIENT AND SERVER SIDE HERE
@@ -153,32 +153,32 @@ const Journal = () => {
             });
     };
 
-    const addPrice = () => {
-        http
-            .post(`/addPriceForJournal/${journalId}`, { treatment: treatment, date: formattedDate})
-            .then((response) => {
-                console.log('Journal updated with new price:', response.data);
-                const updatedJournal = { ...journal };
-                updatedJournal.prices.push(response.data);
-                setJournal(updatedJournal);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
+    // const addPrice = () => {
+    //     http
+    //         .post(`/addPriceForJournal/${journalId}`, { treatment: treatment, date: formattedDate})
+    //         .then((response) => {
+    //             console.log('Journal updated with new price:', response.data);
+    //             const updatedJournal = { ...journal };
+    //             updatedJournal.prices.push(response.data);
+    //             setJournal(updatedJournal);
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         });
+    // };
 
-    const deletePrice = (priceId) => {
-        http
-            .delete(`/deletePriceForJournal/${journalId}/${priceId}`)
-            .then((response) => {
-                console.log('Price deleted:', response.data);
-                const updatedPrices = journal.prices.filter((price) => price.id !== priceId);
-                setJournal({ ...journal, prices: updatedPrices });
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
+    // const deletePrice = (priceId) => {
+    //     http
+    //         .delete(`/deletePriceForJournal/${journalId}/${priceId}`)
+    //         .then((response) => {
+    //             console.log('Price deleted:', response.data);
+    //             const updatedPrices = journal.prices.filter((price) => price.id !== priceId);
+    //             setJournal({ ...journal, prices: updatedPrices });
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         });
+    // };
 
     const deleteJournal = () => {
         http
@@ -295,7 +295,7 @@ const Journal = () => {
                 </div>
             </div>
 
-            <div className="treatments-container row mt-5">
+            {/* <div className="treatments-container row mt-5">
                 <div className="col-5 form-group">
                     <label htmlFor="treatment">Select treatment to add</label>
                     <select id="treatment" className="form-select" onChange={handleTreatmentChange}>
@@ -310,8 +310,9 @@ const Journal = () => {
                 <button type="submit" className="col-2 btn btn-primary mt-4" onClick={addPrice}>
                     Add new treatment
                 </button>
-            </div>
-            {journal.prices && journal.prices.length > 0 && (
+            </div> */}
+
+            {/* {journal.prices && journal.prices.length > 0 && (
                 <div className="prices-container">
                     <div className="form-group">
                         <table className="table mt-2">
@@ -350,7 +351,7 @@ const Journal = () => {
                         </table>
                     </div>
                 </div>
-            )}
+            )} */}
         </div>
     );
 }

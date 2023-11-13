@@ -11,11 +11,11 @@ import courseproject.repository.DoctorRepository;
 @Service
 public class DoctorService {
     @Autowired
-    private DoctorRepository doctorRepo;
+    private DoctorRepository repo;
     
     public ResponseEntity<?> getAllDoctors() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(doctorRepo.findDoctors());
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findDoctors());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -23,7 +23,7 @@ public class DoctorService {
     
     public ResponseEntity<?> getAllDoctors(Pageable pageable) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(doctorRepo.findDoctors(pageable));
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findDoctors(pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -31,7 +31,7 @@ public class DoctorService {
     public ResponseEntity<?> getDoctors(String searchQuery, Pageable pageable) {
         try {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(doctorRepo.findDoctors("%" + searchQuery + "%", pageable));
+                    .body(repo.findDoctors("%" + searchQuery + "%", pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -39,7 +39,7 @@ public class DoctorService {
 
     public ResponseEntity<?> getDoctorById(Integer id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(doctorRepo.findDoctorById(id));
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findDoctorById(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -47,7 +47,7 @@ public class DoctorService {
 
     public ResponseEntity<?> saveDoctor(Doctor doctor) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(doctorRepo.save(doctor));
+            return ResponseEntity.status(HttpStatus.OK).body(repo.save(doctor));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -55,7 +55,7 @@ public class DoctorService {
 
     public ResponseEntity<?> deleteDoctor(Integer id) {
         try {
-            doctorRepo.deleteById(id);
+            repo.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body(id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
