@@ -15,7 +15,7 @@ import courseproject.model.Treatment;
 public interface PriceRepository extends JpaRepository<Price, Integer> {
     Price findPriceById(Integer id);
     
-    @Query("SELECT p FROM Price p JOIN p.treatment t WHERE t.id = :id ORDER BY p.date DESC")
+    @Query("SELECT p FROM Price p JOIN p.agency a JOIN p.treatment t WHERE t.id = :id ORDER BY p.date DESC")
     List<Price> findPricesByTreatmentId(@Param("id") Integer id);
     
     @Query("SELECT p FROM Price p WHERE p.treatment = :treatment AND p.date < :date AND p.date = " +

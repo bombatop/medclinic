@@ -1,47 +1,59 @@
 import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Button, Form, FormGroup } from 'react-bootstrap';
 import http from '../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-
-import DatePicker from 'react-datepicker';
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
-import "react-datepicker/dist/react-datepicker.css";
 
 const Treatment = () => {
     const navigate = useNavigate();
     const { treatmentId } = useParams();
     const [treatment, setTreatment] = useState(null);
-    const [price, setPrice] = useState({
-        date: new Date()
+    const [prices, setPrices] = useState([]);
+
+    const [newPrice, setNewPrice] = useState({
+        agency: null,
+        treatment: null,
+        price: 0,
     });
-    const [prices, setPrices] = useState(null);
-    const formattedDate = format(price.date, 'yyyy-MM-dd HH:mm');
-
-    const handleNameChange = (event) => {
-        setTreatment({
-            ...treatment,
-            name: event.target.value
-        })
-    };
-
-    const handlePriceChange = (event) => {
-        setPrice({
-            ...price,
-            price: Number(event.target.value)
-        })
-    };
-
-    const handleDateChange = (event) => {
-        setPrice({
-            ...price,
-            date: event.target.value
-        });
-    };
+    
+    const [errorMessages, setErrorMessages] = useState('');
 
     useEffect(() => {
         getTreatment();
+    }, []);
+
+    useEffect(() => {
         getPrices();
-    }, [])
+    }, [treatment])
+
+    const handleNewPriceChange = (e) => {
+        const { property, value } = e.target;
+        setNewPrice((prev) => ({ ...prev, [property]: value }));
+    };
+
+
+    // this piece of code essentially turns list of prices into map with agency as key
+    // mapping it by object itself does not work, so I map it by stringifying object
+    // and then parsing it back (my best solution, considering this map is immutable)
+    function priceArrayToMap(pricesArray) {
+        const pricesMap = pricesArray.reduce((map, price) => {
+            const { agency, ...rest } = price;
+            const key = JSON.stringify(agency);
+
+            if (map.has(key)) {
+                map.get(key).push(rest);
+            } else {
+                map.set(key, [rest]);
+            }
+            return map;
+        }, new Map());
+
+        const map = new Map();
+        pricesMap.forEach((values, key) => {
+            const agencyObject = JSON.parse(key);
+            map.set(agencyObject, values);
+        });
+        return map;
+    }
 
     const getTreatment = () => {
         http
@@ -59,45 +71,20 @@ const Treatment = () => {
         http
             .get(`/prices/${treatmentId}`)
             .then((response) => {
-                setPrices(response.data);
-                console.log('Prices fetch successful:', response.data);
+                setPrices(priceArrayToMap(response.data));
+                console.log('Prices fetch successful:', prices);
             })
             .catch((error) => {
                 console.log(error);
             });
     };
-
-    const updateTreatment = () => {
-        http
-            .post(`/updateTreatment/${treatmentId}`, treatment)
-            .then((response) => {
-                console.log('Treatment updated:', response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-
-    const addPrice = () => {
-        http
-            .post(`/addPriceForTreatment`, { ...price, date: formattedDate, treatment: treatment })
-            .then((response) => {
-                console.log('Price added:', response.data);
-                const sortedPrices = [...prices, response.data].sort((a, b) => new Date(b.date) - new Date(a.date));
-                setPrices(sortedPrices);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-
 
     const deletePrice = (priceId) => {
         http
             .delete(`/deletePrice/${priceId}`)
             .then((response) => {
                 console.log('Price deleted:', response.data);
-                getPrices();
+                getTreatment();
             })
             .catch((error) => {
                 console.log(error);
@@ -116,30 +103,116 @@ const Treatment = () => {
             });
     };
 
+    const addPrice = () => {
+        http
+            .post(`/addPriceForTreatment`, newPrice)
+            .then((response) => {
+                console.log('Price added:', response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+                if (error.response && error.response.data) {
+                    const errorObjects = error.response.data.map((error) => error.defaultMessage);
+                    setErrorMessages(errorObjects);
+                }
+            });
+    };
+
+
     return (
-        <div className="container">
-            <h2 className="text-info">Treatment page</h2>
+        <Container className="mt-4">
+            <h2 mb={4}>Treatment page</h2>
 
-            <div className="row">
-                <div className="form-group col-6 mb-2">
-                    <label htmlFor="name">Treatment name</label>
-                    <input type="text" className="form-control" style={{height: 40}} id="name" value={treatment?.name || ''} onChange={handleNameChange} />
+            <Row mb={2}>
+                <Col md={6}>
+                    <FormGroup>
+                        <label htmlFor="name">Treatment name</label>
+                        <input type="text" className="form-control" style={{ height: 40 }} id="name" value={treatment?.name || ''} readOnly />
+                    </FormGroup>
+                </Col>
+                <Col md={2}>
+                    <Button variant="danger" className="mb-2 mt-4" style={{ height: 40 }} onClick={deleteTreatment}>
+                        Delete Treatment
+                    </Button>
+                </Col>
+            </Row>
+
+            <h2 className="mb-4">Prices by Agency</h2>
+            {prices && (
+                <Row>
+                    {Array.from(prices).map(([agency, pricesList]) => (
+                        <Col key={agency.id} md={6} lg={4} className="mb-4">
+                            <Card>
+                                <Card.Header>
+                                    <h3>{agency.name}</h3>
+                                </Card.Header>
+                                <Card.Body>
+                                    <ul className="list-group">
+                                        {pricesList.map((price) => (
+                                            <li key={price.id} className="list-group-item">
+                                                {price.price} at {price.date} for {price.treatment.name}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            )}
+
+            <h4 className="mb-4">Add New Price</h4>
+            {/* <Form onSubmit={addPrice}>
+                <Row>
+                    <Col md={4}>
+                        <Form.Group controlId="newPriceAgency">
+                            <Form.Label>Select Agency</Form.Label>
+                        </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                        <Form.Group controlId="newPriceTreatment">
+                            <Form.Label>Select Treatment</Form.Label>
+                        </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                        <Form.Group controlId="newPriceAmount">
+                            <Form.Label>Price</Form.Label>
+                            <Form.Control
+                                type="number"
+                                placeholder="Enter price"
+                                name="price"
+                                value={newPrice.price}
+                                onChange={handleNewPriceChange}
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Button variant="primary" type="submit">
+                    Add Price
+                </Button>
+            </Form> */}
+            {/* <div className = "journal-container" >
+                <div className="form-group mb-2">
+                    <label htmlFor="doctor">Doctor</label>
+                    <AsyncSelect
+                        loadOptions={loadDoctors}
+                        isClearable={true}
+                        onChange={handleDoctorChange}
+                    />
                 </div>
-                <button type="submit" className="btn btn-primary col-2 mb-2 mt-4" style={{height: 40}} onClick={updateTreatment}>Update info</button>
-                <button type="button" className="btn btn-danger col-2 mb-2 mt-4 mx-2" style={{height: 40}} onClick={deleteTreatment}>Delete Treatment</button>
-            </div>
-
-            <div className="row mt-4">
-                <div className="col-3">
-                    <label htmlFor="price">Price</label>
-                    <input type="text" className="form-control" id="price" value={price?.price || ''} onChange={handlePriceChange} />
+                <div className="form-group mb-2">
+                    <label htmlFor="patient">Patient</label>
+                    <AsyncSelect
+                        loadOptions={loadPatients}
+                        isClearable={true}
+                        onChange={handlePatientChange}
+                    />
                 </div>
-
                 <div className="form-group mb-2">
                     <label htmlFor="date-picker-div">Date</label>
                     <div className="date-picker-div">
                         <DatePicker
-                            selected={price.date}
+                            selected={journal.date}
                             onChange={handleDateChange}
                             showTimeSelect
                             timeFormat="HH:mm"
@@ -151,35 +224,9 @@ const Treatment = () => {
                         />
                     </div>
                 </div>
-
-                <button type="submit" className="btn btn-primary col-2 mt-4" onClick={addPrice}>Add new price</button>
-            </div>
-
-            <table className="table mt-3">
-                <tbody>
-                    {prices &&
-                        prices.map((price) => (
-                            <tr key={price.id}>
-                                <td className="col-3">{price.price}</td>
-                                <td className="col-3">{price.date}</td>
-                                <button
-                                    type="button"
-                                    className="btn btn-danger"
-                                    onClick={() => deletePrice(price.id)}
-                                    style={{
-                                        color: 'red',
-                                        background: 'none',
-                                        border: 'none',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    &times; Delete
-                                </button>
-                            </tr>
-                        ))}
-                </tbody>
-            </table>
-        </div>
+            </div > */}
+            
+        </Container>
     );
 };
 

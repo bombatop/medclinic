@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +23,9 @@ public class PriceController {
     @Autowired
     private PriceService service;
 
-    @GetMapping("/prices/{id}")
-    public ResponseEntity<?> getPricesByTreatmentId(@PathVariable("id") Integer id) {
-        return service.getPricesByTreatmentId(id);
+    @GetMapping("/prices/{treatment_id}")
+    public ResponseEntity<?> getPricesByTreatmentId(@PathVariable("treatment_id") Integer treatment_id) {
+        return service.getPricesByTreatmentId(treatment_id);
     }
     
     @DeleteMapping("/deletePrice/{id}")

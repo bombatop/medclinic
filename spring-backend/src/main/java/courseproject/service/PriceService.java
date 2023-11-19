@@ -1,6 +1,8 @@
 package courseproject.service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import courseproject.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +36,9 @@ public class PriceService {
         }
     }
 
-
     public ResponseEntity<?> savePrice(Price price) {
         try {
-            price.setTreatment(treatmentRepo.findTreatmentById(price.getTreatment().getId()));
+            // price.setTreatment(treatmentRepo.findTreatmentById(price.getTreatment().getId()));
             return ResponseEntity.status(HttpStatus.OK).body(priceRepo.save(price));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
@@ -55,8 +56,8 @@ public class PriceService {
 
     public ResponseEntity<?> addPriceForTreatment(Price price) {
         try {
-            Treatment t = treatmentRepo.findTreatmentById(price.getTreatment().getId());
-            price.setTreatment(t);
+            // Treatment t = treatmentRepo.findTreatmentById(price.getTreatment().getId());
+            // price.setTreatment(t);
             return ResponseEntity.status(HttpStatus.OK).body(priceRepo.save(price));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");

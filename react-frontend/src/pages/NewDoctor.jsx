@@ -5,22 +5,16 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 const NewDoctor = () => {
     const navigate = useNavigate();
     const [doctor, setDoctor] = useState({
-        name: "",
-        phoneNumber: ""
+        name: null,
+        phoneNumber: null
     });
-    const [errorMessages, setErrorMessages] = useState('');
+    const [errorMessages, setErrorMessages] = useState(null);
 
-    const handleNameChange = (event) => {
+    const handleInputChange = (event, property) => {
         setDoctor({
             ...doctor,
-            name: event.target.value
-        })
-    };
-    const handlePhoneNumberChange = (event) => {
-        setDoctor({
-            ...doctor,
-            phoneNumber: event.target.value
-        })
+            [property]: event.target.value,
+        });
     };
 
     useEffect(() => { }, [])
@@ -46,15 +40,28 @@ const NewDoctor = () => {
             <h2 className="text-info">Doctor page</h2>
 
             <div className="doctor-container">
-                <div className="form-group mb-2">
-                    <label htmlFor="name">Name</label>
-                    <input type="text" className="form-control" id="name" value={doctor?.name || ''} onChange={handleNameChange} />
+                <div className="form-group col-6 mb-2">
+                    <label htmlFor="fullname">Full name</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="fullname"
+                        value={doctor?.name || ''}
+                        onChange={(event) => handleInputChange(event, 'name')}
+                    />
                 </div>
-                <div className="form-group mb-2">
+                <div className="form-group col-6 mb-2">
                     <label htmlFor="phonenumber">Phone number</label>
-                    <input type="text" className="form-control" id="phonenumber" value={doctor?.phoneNumber || ''} onChange={handlePhoneNumberChange} />
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="phonenumber"
+                        value={doctor?.phoneNumber || ''}
+                        onChange={(event) => handleInputChange(event, 'phoneNumber')}
+                    />
                 </div>
             </div>
+
             <button type="submit" className="btn btn-primary" onClick={addDoctor}>Add new doctor</button>
             
             {errorMessages && (

@@ -9,6 +9,12 @@ const Patient = () => {
     const [journals, setJournals] = useState([]);
     const [errorMessages, setErrorMessages] = useState('');
 
+    const handleInputChange = (event, property) => {
+        setPatient({
+            ...patient,
+            [property]: event.target.value,
+        });
+    };
 
     useEffect(() => {
         getPatient();
@@ -38,21 +44,7 @@ const Patient = () => {
                 console.log(error);
             });
     };
-
-    const handleNameChange = (event) => {
-        setPatient({
-            ...patient,
-            name: event.target.value
-        })
-    };
-
-    const handlePhoneNumberChange = (event) => {
-        setPatient({
-            ...patient,
-            phoneNumber: event.target.value
-        })
-    };
-
+    
     const updatePatient = () => {
         http
             .post(`/updatePatient/${patientId}`, patient)
@@ -87,13 +79,13 @@ const Patient = () => {
 
             <div className="patient-container">
                 <div className="form-group col-6 mb-2">
-                    <label htmlFor="firstname">Full name</label>
+                    <label htmlFor="fullname">Full name</label>
                     <input
                         type="text"
                         className="form-control"
-                        id="firstname"
+                        id="fullname"
                         value={patient?.name || ''}
-                        onChange={handleNameChange}
+                        onChange={(event) => handleInputChange(event, 'name')}
                     />
                 </div>
                 <div className="form-group col-6 mb-2">
@@ -103,7 +95,7 @@ const Patient = () => {
                         className="form-control"
                         id="phonenumber"
                         value={patient?.phoneNumber || ''}
-                        onChange={handlePhoneNumberChange}
+                        onChange={(event) => handleInputChange(event, 'phoneNumber')}
                     />
                 </div>
             </div>

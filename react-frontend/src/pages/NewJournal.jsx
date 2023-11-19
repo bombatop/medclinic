@@ -19,6 +19,13 @@ const NewJournal = () => {
     const formattedDate = format(journal.date, 'yyyy-MM-dd HH:mm');
     const [errorMessages, setErrorMessages] = useState('');
 
+    // const handleInputChange = (property, value) => {
+    //     setDoctor({
+    //         ...doctor,
+    //         [value]: property.target.value,
+    //     });
+    // };
+
     const handleDoctorChange = (selectedOption) => {
         if (!selectedOption) return;
         setJournal({

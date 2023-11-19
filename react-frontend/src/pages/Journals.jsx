@@ -94,10 +94,7 @@ const Journals = () => {
                         <DatePicker
                             selected={date}
                             onChange={handleDateChange}
-                            showTimeSelect
-                            timeFormat="HH:mm"
-                            timeIntervals={10}
-                            dateFormat="d MMMM, yyyy HH:mm"
+                            dateFormat="d MMMM, yyyy"
                             className="form-control"
                             locale={ru}
                             timeCaption="время"

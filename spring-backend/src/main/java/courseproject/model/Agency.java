@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +23,7 @@ public class Agency {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    // @NotBlank(message = "Appropriate name is required")
+    @NotBlank(message = "Appropriate name is required")
     @Column(name = "name")
     private String name;
 }

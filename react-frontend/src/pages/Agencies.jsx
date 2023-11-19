@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Container, Row, Col, Form, ListGroup, ListGroupItem } from 'react-bootstrap';
+
 import http from '../http-common';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import CustomPagination from '../pagination';
 
 const Agencies = () => {
-    const navigate = useNavigate();
-    const [agencies, setAgencies] = useState(null);
+    const [agencies, setAgencies] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [currentPage, setCurrentPage] = useState(0);
+    const [selectedPage, setSelectedPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
         getAgencies();
-    }, [currentPage, searchQuery]);
+    }, [selectedPage, searchQuery]);
 
     const getAgencies = () => {
-        const pageSize = 5;
         const params = {
-            page: currentPage,
-            size: pageSize,
+            page: selectedPage - 1,
             searchQuery: searchQuery,
+            size: 4,
         };
+
         http
             .get(`/agencies`, { params })
             .then((response) => {
                 setAgencies(response.data.content);
                 setTotalPages(response.data.totalPages);
-                console.log('Agencies fetch successful:', response.data.content, 'pages amount: ', response.data.totalPages);
+                console.log(
+                    'Agencies fetch successful:',
+                    response.data.content,
+                    response.data.totalPages
+                );
             })
             .catch((error) => {
                 console.log(error);
@@ -34,73 +40,52 @@ const Agencies = () => {
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
-        setCurrentPage(0);
     };
 
-    const filteredAgencies = agencies
-        ? agencies.filter((agency) =>
-            agency.name.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        : [];
-
-    const handlePreviousPage = () => {
-        if (currentPage > 0) {
-            setCurrentPage((prevPage) => prevPage - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages - 1) {
-            setCurrentPage((prevPage) => prevPage + 1);
-        }
+    const handlePageChange = (page) => {
+        if (page > 0 && page <= totalPages)
+            setSelectedPage(page);
     };
 
     return (
-        <div className="container">
-            <h2 className="text-info">Agency list page</h2>
+        <Container className="mt-4">
+            <h2>Agency Search</h2>
 
-            <div className="row">
-                <div className="col mb-3">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search by name"
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                        style={{
-                            height: 40,
-                        }}
+            <Row className="mb-3">
+                <Col xs={8}>
+                    <Form.Control type="text" placeholder="Search by name" value={searchQuery}
+                        onChange={(e) => handleSearchChange(e)}
                     />
-                </div>
+                </Col>
+                <Col xs={2}>
+                    <Link className="btn btn-primary" style={{ height: 40 }} to="/newAgency">
+                        Add new
+                    </Link>
+                </Col>
+            </Row>
 
-                <Link className="col-2 btn btn-primary" style={{ height: 40 }} to="/newAgency">
-                    Add new
-                </Link>
-            </div>
+            <Row className="mb-2">
+                <Col xs={8}>
+                    <ListGroup>
+                        {agencies.map((agency) => (
+                            <ListGroupItem key={agency.id}>
+                                <Link to={`/agency/${agency.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                    {agency.name}
+                                </Link>
+                            </ListGroupItem>
+                        ))}
+                    </ListGroup>
+                </Col>
+            </Row>
 
-            <ul className="list-group mb-2">
-                {filteredAgencies.map((agency) => (
-                    <li className="col-10 list-group-item" key={agency.id}>
-                        <Link to={`/agency/${agency.id}`} style={{ textDecoration: 'none', color: 'black' }}>
-                            {agency.name}
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-            {(totalPages > 0 ? (
-                <div className="pagination">
-                    <button className="btn btn-secondary" onClick={handlePreviousPage} disabled={currentPage === 0}>
-                        Previous
-                    </button>
-                    <span className="mx-2 mt-1">Page {currentPage + 1 - (totalPages === 0)} of {totalPages}</span>
-                    <button className="btn btn-secondary" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>
-                        Next
-                    </button>
-                </div>
-            ) : (
-                <p>No results found.</p>)
-            )}
-        </div>
+            <Row className="mb-2">
+                <Col xs={8}>
+                    {totalPages > 0 && (
+                        <CustomPagination selectedPage={selectedPage} totalPages={totalPages} handler={handlePageChange} />
+                    )}
+                </Col>
+            </Row>
+        </Container>
     );
 };
 

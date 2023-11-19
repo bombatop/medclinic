@@ -1,24 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import http from '../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Container, Form, Button, Alert, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 const Doctor = () => {
     const navigate = useNavigate();
     const { doctorId } = useParams();
     const [doctor, setDoctor] = useState(null);
-    const [errorMessages, setErrorMessages] = useState('');
+    const [errorMessages, setErrorMessages] = useState(null);
 
-    const handleNameChange = (event) => {
+    const handleInputChange = (event, property) => {
         setDoctor({
             ...doctor,
-            name: event.target.value
-        })
-    };
-    const handlePhoneNumberChange = (event) => {
-        setDoctor({
-            ...doctor,
-            phoneNumber: event.target.value
-        })
+            [property]: event.target.value,
+        });
     };
 
     useEffect(() => {
@@ -49,6 +44,10 @@ const Doctor = () => {
             })
             .catch((error) => {
                 console.log(error);
+                if (error.response && error.response.data) {
+                    const errorObjects = error.response.data.map((error) => error.defaultMessage);
+                    setErrorMessages(errorObjects);
+                }
             });
     };
 
@@ -65,32 +64,36 @@ const Doctor = () => {
     };
 
     return (
-        <div className="container">
-            <h2 className="text-info">Doctor page</h2>
+        <Container className="mt-4">
+            <h2>Doctor page</h2>
 
-            <div className="doctor-container">
-                <div className="form-group col-6 mb-2">
-                    <label htmlFor="name">Full name</label>
-                    <input type="text" className="form-control" id="name" value={doctor?.name || ''} onChange={handleNameChange} />
-                </div>
-                <div className="form-group col-6 mb-2">
-                    <label htmlFor="phonenumber">Phone number</label>
-                    <input type="text" className="form-control" id="phonenumber" value={doctor?.phoneNumber || ''} onChange={handlePhoneNumberChange} />
-                </div>
-            </div>
-            <button type="submit" className="btn btn-primary" onClick={updateDoctor}>Update info</button>
-            <button type="button" className="mx-2 btn btn-danger" onClick={deleteDoctor}>Delete Doctor</button>
+            <Form.Group as="div" controlId="formFullName" className="mb-2">
+                <Form.Label>Full name</Form.Label>
+                <Form.Control type="text" value={doctor?.name || ''} onChange={(event) => handleInputChange(event, 'name')}/>
+            </Form.Group>
+
+            <Form.Group as="div" controlId="formPhoneNumber" className="mb-2">
+                <Form.Label>Phone number</Form.Label>
+                <Form.Control type="text" value={doctor?.phoneNumber || ''} onChange={(event) => handleInputChange(event, 'phoneNumber')}/>
+            </Form.Group>
+
+            <Button variant="primary" type="submit" className="mb-2" onClick={updateDoctor}>
+                Update info
+            </Button>
+            <Button variant="danger" className="mx-2 mb-2" onClick={deleteDoctor}>
+                Delete Doctor
+            </Button>
 
             {errorMessages && (
-                <div className="text-danger">
-                    <ul>
-                        {errorMessages.map((errorMessage, index) => (
-                            <li key={index}>{errorMessage}</li>
-                        ))}
-                    </ul>
-                </div>
+                <ListGroup className="mt-2">
+                    {errorMessages.map((errorMessage, index) => (
+                        <Alert key={index} variant="danger" className="p-2" style={{ maxWidth: 300 }}>
+                            {errorMessage}
+                        </Alert>
+                    ))}
+                </ListGroup>
             )}
-        </div>
+        </Container>
     );
 };
 

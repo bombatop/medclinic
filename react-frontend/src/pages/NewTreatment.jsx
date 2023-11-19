@@ -6,11 +6,11 @@ const NewTreatment = () => {
     const navigate = useNavigate();
     const [treatment, setTreatment] = useState(null);
 
-    const handleNameChange = (event) => {
+    const handleInputChange = (event, property) => {
         setTreatment({
             ...treatment,
-            name: event.target.value
-        })
+            [property]: event.target.value,
+        });
     };
 
     useEffect(() => { }, [])
@@ -33,9 +33,9 @@ const NewTreatment = () => {
 
             <div className="treatment-container row">
                 <div className="form-group col-8">
-                    <input type="text" placeholder='Insert new treatment name here' className="form-control" value={treatment?.name || ''} onChange={handleNameChange} />
+                    <input type="text" placeholder='Insert new treatment name here' className="form-control" value={treatment?.name || ''} onChange={(event) => handleInputChange(event, 'name')} />
                 </div>
-                <button type="submit" className="col-2 btn btn-primary" style={{height: 38}}onClick={addTreatment}>Add new treatment</button>
+                <button type="submit" className="col-2 btn btn-primary" style={{height: 38}} onClick={addTreatment}>Add new treatment</button>
             </div>
         </div>
     );

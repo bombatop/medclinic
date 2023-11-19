@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import http from '../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Container, Form, Button, Alert, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 const Agency = () => {
     const navigate = useNavigate();
     const { agencyId } = useParams();
     const [agency, setAgency] = useState(null);
-    const [errorMessages, setErrorMessages] = useState('');
+    const [errorMessages, setErrorMessages] = useState(null);
 
     useEffect(() => {
         getAgency();
     }, []);
+
+    const handleNameChange = (event) => {
+        setAgency({
+            ...agency,
+            name: event.target.value
+        })
+    };
 
     const getAgency = () => {
         http
@@ -22,14 +30,6 @@ const Agency = () => {
             .catch((error) => {
                 console.log(error);
             });
-    };
-
-
-    const handleNameChange = (event) => {
-        setAgency({
-            ...agency,
-            name: event.target.value
-        })
     };
 
     const updateAgency = () => {
@@ -61,37 +61,31 @@ const Agency = () => {
     };
 
     return (
-        <div className="container">
-            <h2 className="text-info">Agency page</h2>
+        <Container className="mt-4">
+            <h2>Agency page</h2>
 
-            <div className="agency-container">
-                <div className="form-group col-6 mb-2">
-                    <label htmlFor="firstname">Full name</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="firstname"
-                        value={agency?.name || ''}
-                        onChange={handleNameChange}
-                    />
-                </div>
-            </div>
+            <Form.Group className="mb-2">
+                <Form.Label>Full name</Form.Label>
+                <Form.Control type="text" value={agency?.name || ''} id="fullname" onChange={handleNameChange} />
+            </Form.Group>
 
-            <button type="submit" className="btn btn-primary" onClick={updateAgency}>
+            <Button variant="primary" onClick={updateAgency}>
                 Update info
-            </button>
-            <button type="button" className="mx-2 btn btn-danger" onClick={deleteAgency}>
+            </Button>
+            <Button variant="danger" className="mx-2" onClick={deleteAgency}>
                 Delete agency
-            </button>
+            </Button>
 
             {errorMessages && (
-                <ul className="list-group">
+                <ListGroup className="mt-2">
                     {errorMessages.map((errorMessage, index) => (
-                        <li className="col-10 list-group item alert alert-danger p-3 mt-2" style={{ maxWidth: 400 }} key={index}>{errorMessage}</li>
+                        <Alert key={index} variant="danger" className="p-2" style={{ maxWidth: 300 }}>
+                            {errorMessage}
+                        </Alert>
                     ))}
-                </ul>
+                </ListGroup>
             )}
-        </div>
+        </Container>
     );
 };
 

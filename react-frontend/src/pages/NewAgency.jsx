@@ -9,11 +9,11 @@ const NewAgency = () => {
     });
     const [errorMessages, setErrorMessages] = useState('');
 
-    const handleNameChange = (event) => {
+    const handleInputChange = (event, property) => {
         setAgency({
             ...agency,
-            name: event.target.value
-        })
+            [property]: event.target.value,
+        });
     };
 
     useEffect(() => { }, [])
@@ -41,7 +41,7 @@ const NewAgency = () => {
             <div className="agency-container">
                 <div className="form-group mb-2">
                     <label htmlFor="name">Name</label>
-                    <input type="text" className="form-control" id="name" value={agency?.name || ''} onChange={handleNameChange} />
+                    <input type="text" className="form-control" id="name" value={agency?.name || ''} onChange={(event) => handleInputChange(event, 'name')} />
                 </div>
             </div>
             <button type="submit" className="btn btn-primary" onClick={addAgency}>Add new agency</button>

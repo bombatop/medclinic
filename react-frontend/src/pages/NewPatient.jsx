@@ -5,28 +5,20 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 const NewPatient = () => {
     const navigate = useNavigate();
     const [patient, setPatient] = useState({
-        name: "",
-        lastName: "",
-        phoneNumber: ""
+        name: null,
+        lastName: null,
+        phoneNumber: null
     });
-    const [errorMessages, setErrorMessages] = useState('');
+    const [errorMessages, setErrorMessages] = useState(null);
 
-    const handleNameChange = (event) => {
+    const handleInputChange = (event, property) => {
         setPatient({
             ...patient,
-            name: event.target.value
-        })
-    };
-
-    const handlePhoneNumberChange = (event) => {
-        setPatient({
-            ...patient,
-            phoneNumber: event.target.value
-        })
+            [property]: event.target.value,
+        });
     };
 
     const addPatient = () => {
-        console.log('fetch :', patient);
         http
             .post(`/addPatient`, patient)
             .then((response) => {
@@ -47,15 +39,28 @@ const NewPatient = () => {
             <h2 className="text-info">Patient page</h2>
 
             <div className="patient-container">
-                <div className="form-group mb-2">
-                    <label htmlFor="firstname">Name</label>
-                    <input type="text" className="form-control" id="firstname" value={patient?.name || ''} onChange={handleNameChange} />
+                <div className="form-group col-6 mb-2">
+                    <label htmlFor="fullname">Full name</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="fullname"
+                        value={patient?.name || ''}
+                        onChange={(event) => handleInputChange(event, 'name')}
+                    />
                 </div>
-                <div className="form-group mb-2">
+                <div className="form-group col-6 mb-2">
                     <label htmlFor="phonenumber">Phone number</label>
-                    <input type="text" className="form-control" id="phonenumber" value={patient?.phoneNumber || ''} onChange={handlePhoneNumberChange} />
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="phonenumber"
+                        value={patient?.phoneNumber || ''}
+                        onChange={(event) => handleInputChange(event, 'phoneNumber')}
+                    />
                 </div>
             </div>
+
             <button type="submit" className="btn btn-primary" onClick={addPatient}>Add new patient</button>
 
             {errorMessages && (
