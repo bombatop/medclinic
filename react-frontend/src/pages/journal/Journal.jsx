@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import http, { uploadAxios, downloadAxios } from '../http-common';
+import http, { uploadAxios, downloadAxios } from '../../http-common';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import DatePicker from 'react-datepicker';
@@ -23,20 +23,14 @@ const Journal = () => {
     const formattedDate = format(journal.date, 'yyyy-MM-dd HH:mm');
 
     const handleDateChange = (newDate) => {
-        if (journal.prices.length === 0) {
+        if (journal.prices.length === 0 && newDate !== journal.date) {
             setJournal({
                 ...journal,
                 date: newDate
             });
-        }
-    };
-
-    //whenever date changes (except for when it's loaded) update
-    useEffect(() => {
-        if (journal.doctor && journal.patient) {
             updateJournal();
         }
-    }, [journal.date]);
+    };
 
     // const handleTreatmentChange = (event) => {
     //     setTreatment(treatments[event.target.value]);

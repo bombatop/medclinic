@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form, FormGroup } from 'react-bootstrap';
-import http from '../http-common';
+import http from '../../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const Treatment = () => {

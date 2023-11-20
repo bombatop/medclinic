@@ -29,7 +29,6 @@ bugs to fix / microfeatures to add:
 
   Code Readability:
     перенести на спрингбут? или почистить xml
-    распилить фронт на папки
     переписать на react-bootstrap
     убрать или привести к одному виду логи на фронте
   

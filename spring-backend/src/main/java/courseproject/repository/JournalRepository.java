@@ -18,7 +18,7 @@ public interface JournalRepository extends JpaRepository<Journal, Integer>{
     @Query("SELECT j FROM Journal j")
     List<Journal> findJournals();
 
-    @Query("SELECT j FROM Journal j WHERE j.date >= :startDate AND j.date <= :endDate")
+    @Query("SELECT j FROM Journal j WHERE j.date >= :startDate AND j.date <= :endDate ORDER BY j.date")
     List<Journal> findJournalsByDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
     
     @Query("SELECT j FROM Journal j JOIN j.patient p WHERE p.id = :id")

@@ -2,20 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, ListGroup, ListGroupItem } from 'react-bootstrap';
 
-import http from '../http-common';
-import CustomPagination from '../pagination';
+import http from '../../http-common';
+import CustomPagination from '../../utils/pagination';
 
-const Doctors = () => {
-    const [doctors, setDoctors] = useState([]);
+const Treatments = () => {
+    const [treatments, setTreatments] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPage, setSelectedPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
-        getDoctors();
+        getTreatments();
     }, [selectedPage, searchQuery]);
 
-    const getDoctors = () => {
+    const getTreatments = () => {
         const params = {
             page: selectedPage - 1,
             searchQuery: searchQuery,
@@ -23,12 +23,12 @@ const Doctors = () => {
         };
 
         http
-            .get(`/doctors`, { params })
+            .get(`/treatments`, { params })
             .then((response) => {
-                setDoctors(response.data.content);
+                setTreatments(response.data.content);
                 setTotalPages(response.data.totalPages);
                 console.log(
-                    'Doctors fetch successful:',
+                    'Treatments fetch successful:',
                     response.data.content,
                     response.data.totalPages
                 );
@@ -49,7 +49,7 @@ const Doctors = () => {
 
     return (
         <Container className="mt-4">
-            <h2>Doctor Search</h2>
+            <h2>Treatment Search</h2>
 
             <Row className="mb-3">
                 <Col xs={8}>
@@ -58,7 +58,7 @@ const Doctors = () => {
                     />
                 </Col>
                 <Col xs={2}>
-                    <Link className="btn btn-primary" style={{ height: 40 }} to="/newDoctor">
+                    <Link className="btn btn-primary" style={{ height: 40 }} to="/newTreatment">
                         Add new
                     </Link>
                 </Col>
@@ -67,17 +67,17 @@ const Doctors = () => {
             <Row className="mb-2">
                 <Col xs={8}>
                     <ListGroup>
-                        {doctors.map((doctor) => (
-                            <ListGroupItem key={doctor.id}>
-                                <Link to={`/doctor/${doctor.id}`} style={{ textDecoration: 'none', color: 'black' }}>
-                                    {doctor.name}
+                        {treatments.map((treatment) => (
+                            <ListGroupItem key={treatment.id}>
+                                <Link to={`/treatment/${treatment.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                    {treatment.name}
                                 </Link>
                             </ListGroupItem>
                         ))}
                     </ListGroup>
                 </Col>
             </Row>
-            
+
             <Row className="mb-2">
                 <Col xs={8}>
                     {totalPages > 0 && (
@@ -89,4 +89,4 @@ const Doctors = () => {
     );
 };
 
-export default Doctors;
+export default Treatments;

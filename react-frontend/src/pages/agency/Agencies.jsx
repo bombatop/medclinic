@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, ListGroup, ListGroupItem } from 'react-bootstrap';
 
-import http from '../http-common';
-import CustomPagination from '../pagination';
+import http from '../../http-common';
+import CustomPagination from '../../uitls/pagination';
 
 const Agencies = () => {
     const [agencies, setAgencies] = useState([]);

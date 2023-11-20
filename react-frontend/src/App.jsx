@@ -4,23 +4,23 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 import Header from './pages/Header';
 
-import Patient from './pages/Patient';
-import Agency from './pages/Agency';
-import Treatment from './pages/Treatment';
-import Doctor from './pages/Doctor';
-import Journal from './pages/Journal';
+import Patient from './pages/patient/Patient';
+import Agency from './pages/agency/Agency';
+import Treatment from './pages/treatment/Treatment';
+import Doctor from './pages/doctor/Doctor';
+import Journal from './pages/journal/Journal';
 
-import Patients from './pages/Patients';
-import Treatments from './pages/Treatments';
-import Doctors from './pages/Doctors';
-import Journals from './pages/Journals';
-import Agencies from './pages/Agencies';
+import Patients from './pages/patient/Patients';
+import Treatments from './pages/treatment/Treatments';
+import Doctors from './pages/doctor/Doctors';
+import Journals from './pages/journal/Journals';
+import Agencies from './pages/agency/Agencies';
 
-import NewPatient from './pages/NewPatient';
-import NewDoctor from './pages/NewDoctor'
-import NewTreatment from './pages/NewTreatment';
-import NewJournal from './pages/NewJournal';
-import NewAgency from './pages/NewAgency';
+import NewPatient from './pages/patient/NewPatient';
+import NewDoctor from './pages/doctor/NewDoctor'
+import NewTreatment from './pages/treatment/NewTreatment';
+import NewJournal from './pages/journal/NewJournal';
+import NewAgency from './pages/agency/NewAgency';
 
 import ProfitsReport from './pages/ProfitsReport';
 import ErrorPage from './pages/ErrorPage';

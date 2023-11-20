@@ -1,29 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import http from '../http-common';
+import http from '../../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-const NewPatient = () => {
+const NewDoctor = () => {
     const navigate = useNavigate();
-    const [patient, setPatient] = useState({
+    const [doctor, setDoctor] = useState({
         name: null,
-        lastName: null,
         phoneNumber: null
     });
     const [errorMessages, setErrorMessages] = useState(null);
 
     const handleInputChange = (event, property) => {
-        setPatient({
-            ...patient,
+        setDoctor({
+            ...doctor,
             [property]: event.target.value,
         });
     };
 
-    const addPatient = () => {
+    useEffect(() => { }, [])
+
+    const addDoctor = () => {
         http
-            .post(`/addPatient`, patient)
+            .post(`/addDoctor`, doctor)
             .then((response) => {
-                console.log('Patient added:', response);
-                navigate("/patient/" + response.data.id);
+                console.log('Doctor added:', response.data);
+                navigate("/doctor/" + response.data.id);
             })
             .catch((error) => {
                 console.log(error);
@@ -36,16 +37,16 @@ const NewPatient = () => {
 
     return (
         <div className="container">
-            <h2 className="text-info">Patient page</h2>
+            <h2 className="text-info">Doctor page</h2>
 
-            <div className="patient-container">
+            <div className="doctor-container">
                 <div className="form-group col-6 mb-2">
                     <label htmlFor="fullname">Full name</label>
                     <input
                         type="text"
                         className="form-control"
                         id="fullname"
-                        value={patient?.name || ''}
+                        value={doctor?.name || ''}
                         onChange={(event) => handleInputChange(event, 'name')}
                     />
                 </div>
@@ -55,23 +56,25 @@ const NewPatient = () => {
                         type="text"
                         className="form-control"
                         id="phonenumber"
-                        value={patient?.phoneNumber || ''}
+                        value={doctor?.phoneNumber || ''}
                         onChange={(event) => handleInputChange(event, 'phoneNumber')}
                     />
                 </div>
             </div>
 
-            <button type="submit" className="btn btn-primary" onClick={addPatient}>Add new patient</button>
-
+            <button type="submit" className="btn btn-primary" onClick={addDoctor}>Add new doctor</button>
+            
             {errorMessages && (
-                <ul className="list-group">
-                    {errorMessages.map((errorMessage, index) => (
-                        <li className="col-10 list-group item alert alert-danger p-3 mt-2" style={{maxWidth:400}} key={index}>{errorMessage}</li>
-                    ))}
-                </ul>
+                <div >
+                    <ul className="list-group">
+                        {errorMessages.map((errorMessage, index) => (
+                            <li className="col-10 list-group item alert alert-danger p-3 mt-2" style={{ maxWidth: 400 }} key={index}>{errorMessage}</li>
+                        ))}
+                    </ul>
+                </div>
             )}
         </div>
     );
 };
 
-export default NewPatient;
+export default NewDoctor;

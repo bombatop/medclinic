@@ -16,21 +16,21 @@ const CustomPagination = ({ selectedPage, totalPages, handler }) => {
         }
 
         pages.push(
-            <Pagination.First onClick={() => handler(1)} />,
-            <Pagination.Prev disabled={selectedPage === 1} onClick={() => handler(selectedPage - 1)} />
+            <Pagination.First key="first" onClick={() => handler(1)} />,
+            <Pagination.Prev key="prev" disabled={selectedPage === 1} onClick={() => handler(selectedPage - 1)} />
         );
 
         for (let index = lowrange; index <= highrange; index++) {
             pages.push(
-                <Pagination.Item active={index === selectedPage} onClick={() => handler(index)}>
+                <Pagination.Item key={index} active={index === selectedPage} onClick={() => handler(index)}>
                     {index}
                 </Pagination.Item>
             );
         }
 
         pages.push(
-            <Pagination.Next disabled={selectedPage === totalPages} onClick={() => handler(selectedPage + 1)} />,
-            <Pagination.Last onClick={() => handler(totalPages)} />
+            <Pagination.Next key="next" disabled={selectedPage === totalPages} onClick={() => handler(selectedPage + 1)} />,
+            <Pagination.Last key="last" onClick={() => handler(totalPages)} />
         );
 
         return pages;
