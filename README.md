@@ -1,4 +1,4 @@
-# Bugs to Fix / Microfeatures to Add
+# TODO
 
 ## Архитектура:
 - Переехать в конце концов на бут
