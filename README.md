@@ -1,5 +1,7 @@
 # medclinic
-react.js + spring boot infosystem project that hasn't been updated for ages
+UPCOMING MAJOR MIGRATION, entire project is obsolete junk
+
+atm react.js + spring boot infosystem project that hasn't been updated for ages
 
 made for bachelor's degree qualification
 
