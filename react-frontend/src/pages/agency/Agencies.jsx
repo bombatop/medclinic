@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, ListGroup, ListGroupItem } from 'react-bootstrap';
-
 import http from '../../http-common';
-import CustomPagination from '../../uitls/pagination';
+import CustomPagination from '../../utils/pagination';
 
 const Agencies = () => {
     const [agencies, setAgencies] = useState([]);
@@ -15,27 +14,25 @@ const Agencies = () => {
         getAgencies();
     }, [selectedPage, searchQuery]);
 
-    const getAgencies = () => {
+    const getAgencies = async () => {
         const params = {
             page: selectedPage - 1,
             searchQuery: searchQuery,
             size: 4,
         };
 
-        http
-            .get(`/agencies`, { params })
-            .then((response) => {
-                setAgencies(response.data.content);
-                setTotalPages(response.data.totalPages);
-                console.log(
-                    'Agencies fetch successful:',
-                    response.data.content,
-                    response.data.totalPages
-                );
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        try {
+            const response = await http.get(`/agencies`, { params });
+            setAgencies(response.data.content);
+            setTotalPages(response.data.totalPages);
+            console.log(
+                'Agencies fetch successful:',
+                response.data.content,
+                response.data.totalPages
+            );
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleSearchChange = (event) => {

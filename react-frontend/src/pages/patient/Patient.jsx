@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import http from '../../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Container, Form, Button, Alert, Col, Row, ListGroup, ListGroupItem} from 'react-bootstrap';
 
 const Patient = () => {
     const navigate = useNavigate();
-    const { patientId } = useParams();
-    const [patient, setPatient] = useState(null);
+    const [patient, setPatient] = useState({
+        id: useParams().patientId
+    });
     const [journals, setJournals] = useState([]);
+    const [agencies, setAgencies] = useState([]);
     const [errorMessages, setErrorMessages] = useState('');
 
     const handleInputChange = (event, property) => {
@@ -18,66 +21,65 @@ const Patient = () => {
 
     useEffect(() => {
         getPatient();
-        getJournals();
     }, []);
 
-    const getPatient = () => {
-        http
-            .get(`/patient/${patientId}`)
-            .then((response) => {
-                setPatient(response.data);
-                console.log('Patient fetch successful:', response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    useEffect(() => {
+        getJournals();
+        getAgencies();
+    }, [patient?.id])
+
+    const fetchData = async (endpoint, params, callback) => {
+        try {
+            const response = await http.get(endpoint, { params });
+            const data = response.data;
+            callback(data);
+            console.log(`${endpoint} fetch successful:`, data);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
-    const getJournals = () => {
-        http
-            .get(`/journalsForPatient/${patientId}`)
-            .then((response) => {
-                setJournals(response.data);
-                console.log('Journals fetch successful:', response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-    
-    const updatePatient = () => {
-        http
-            .post(`/updatePatient/${patientId}`, patient)
-            .then((response) => {
-                console.log('Patient updated:', response.data);
-                setErrorMessages(null);
-            })
-            .catch ((error) => {
-                console.log(error);
-                if (error.response && error.response.data) {
-                    const errorObjects = error.response.data.map((error) => error.defaultMessage);
-                    setErrorMessages(errorObjects);
-                }
-            });
+    const getPatient = async () => {
+        await fetchData(`/patient/${patient.id}`, null, setPatient);
     };
 
-    const deletePatient = () => {
-        http
-            .delete(`/deletePatient/${patientId}`)
-            .then((response) => {
-                console.log('Patient deleted:', response.data);
-                navigate('/patients');
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    const getJournals = async () => {
+        await fetchData(`/journalsForPatient/${patient.id}`, null, setJournals);
+    };
+
+    const getAgencies = async () => {
+        await fetchData(`/agreements/${patient.id}`, null, setAgencies);
+    };
+
+    const updatePatient = async () => {
+        try {
+            const response = await http.post(`/updatePatient/${patient.id}`, patient);
+            console.log('Patient updated:', response.data);
+            setErrorMessages(null);
+        } catch (error) {
+            console.error(error);
+            if (error.response && error.response.data) {
+                const errorObjects = error.response.data.map((error) => error.defaultMessage);
+                setErrorMessages(errorObjects);
+            }
+        }
+    };
+
+    const deletePatient = async () => {
+        try {
+            const response = await http.delete(`/deletePatient/${patient.id}`);
+            console.log('Patient deleted:', response.data);
+            navigate('/patients');
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
-        <div className="container">
-            <h2 className="text-info">Patient page</h2>
+        <Container>
+            <h2>Patient page</h2>
 
-            <div className="patient-container">
+            <Container>
                 <div className="form-group col-6 mb-2">
                     <label htmlFor="fullname">Full name</label>
                     <input
@@ -98,43 +100,42 @@ const Patient = () => {
                         onChange={(event) => handleInputChange(event, 'phoneNumber')}
                     />
                 </div>
-            </div>
 
-            <button type="submit" className="btn btn-primary" onClick={updatePatient}>
-                Update info
-            </button>
-            <button type="button" className="mx-2 btn btn-danger" onClick={deletePatient}>
-                Delete patient
-            </button>
+                <button type="submit" className="btn btn-primary" onClick={updatePatient}>
+                    Update info
+                </button>
+                <button type="button" className="mx-2 btn btn-danger" onClick={deletePatient}>
+                    Delete patient
+                </button>
+            </Container>
 
             {errorMessages && (
-                <ul className="list-group">
+                <ListGroup className="list-group">
                     {errorMessages.map((errorMessage, index) => (
                         <li className="col-10 list-group item alert alert-danger p-3 mt-2" style={{ maxWidth: 400 }} key={index}>{errorMessage}</li>
                     ))}
-                </ul>
+                </ListGroup>
             )}
 
             {journals.length > 0 && (
-                <div className="journal-container mt-4">
-                    <label htmlFor="journals">Journal history</label>
-                    <ul className="list-group mt-1" id="journals">
+                <Container md={4} className="mt-4">
+                    <h4>Journal history</h4>
+                    <ListGroup className="list-group mt-1" id="journals">
                         {journals.map((journal) => (
-
-
-                            <li className="col-3 list-group-item" key={journal.id}>
+                            <ListGroupItem className="col-3 list-group-item" key={journal.id}>
                                 <Link
                                     to={`/journal/${journal.id}`}
                                     style={{ textDecoration: 'none', color: 'black' }}
                                 >
                                     {journal.date} {journal.doctor.name}
                                 </Link>
-                            </li>
+                            </ListGroupItem>
                         ))}
-                    </ul>
-                </div>
+                    </ListGroup>
+                </Container>
             )}
-        </div>
+
+        </Container>
     );
 };
 

@@ -4,17 +4,18 @@ import { Link } from 'react-router-dom';
 import Header from '../Header'
 
 import DatePicker from 'react-datepicker';
-import CustomDate from '../../utils/CustomDate';
+import NamedDate from '../../utils/NamedDate';
+import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import "react-datepicker/dist/react-datepicker.css";
 
 const Journals = () => {
     const [journals, setJournals] = useState(null);
-    const [date, setDate] = useState(new CustomDate());
+    const [date, setDate] = useState(new Date());
     const [table, setTable] = useState({});
 
     const handleDateChange = (value) => {
-        setDate(new CustomDate(value));
+        setDate(value);
     };
 
     useEffect(() => {
@@ -26,7 +27,7 @@ const Journals = () => {
 
         const updatedTable = {};
         for (let jrn of journals) {
-            let dt = new CustomDate(jrn.date)
+            let dt = new Date(jrn.date)
             dt.setHours(0, 0, 0, 0);
             if (!updatedTable.hasOwnProperty(dt)) {
                 updatedTable[dt] = [];
@@ -35,21 +36,19 @@ const Journals = () => {
         }
         for (let key in updatedTable) {
             console.log(key);
-            updatedTable[key].sort((a, b) => new CustomDate(a.date) - new CustomDate(b.date));
+            updatedTable[key].sort((a, b) => new Date(a.date) - new Date(b.date));
         }
         setTable(updatedTable);
     }, [journals]);
 
-    const getJournals = () => {
-        http
-            .get(`/journalsByDateRange?startDate=${date.formatDate()}`)
-            .then((response) => {
-                setJournals(response.data);
-                console.log('Journals fetch successful:', response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    const getJournals = async () => {
+        try {
+            const response = await http.get(`/journalsByDateRange?startDate=${format(date, 'yyyy-MM-dd')}`);
+            setJournals(response.data);
+            console.log('Journals fetch successful:', response.data);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
@@ -84,7 +83,7 @@ const Journals = () => {
                 {date && Object.keys(table).map((keyDate) => (
                     <div className="col" style={{ maxWidth: 260 }} key={keyDate}>
 
-                        <h6 className="text-center">{new CustomDate(keyDate).getCardTitle()}</h6>
+                        <h6 className="text-center">{NamedDate.getCardTitle(keyDate)}</h6>
 
                         <div>
                             {table[keyDate].map((journal) => (
@@ -94,7 +93,7 @@ const Journals = () => {
                                         to={`/journal/${journal.id}`}
                                         style={{ textDecoration: 'none', color: 'black' }}
                                     >
-                                        {new CustomDate(journal.date).formatTime()}
+                                        {NamedDate.getTime(journal.date)}
                                     </Link>
                                     <div className="card-body mb-0 p-2" key={journal.id}>
                                         <div className="card-title">

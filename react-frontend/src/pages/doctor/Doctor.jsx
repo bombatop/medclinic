@@ -5,9 +5,10 @@ import { Container, Form, Button, Alert, ListGroup, ListGroupItem } from 'react-
 
 const Doctor = () => {
     const navigate = useNavigate();
-    const { doctorId } = useParams();
-    const [doctor, setDoctor] = useState(null);
     const [errorMessages, setErrorMessages] = useState(null);
+    const { doctorId } = useParams();
+    
+    const [doctor, setDoctor] = useState(null);
 
     const handleInputChange = (event, property) => {
         setDoctor({
@@ -20,47 +21,41 @@ const Doctor = () => {
         getDoctor();
     }, [])
 
-    const getDoctor = () => {
-        http
-            .get(`/doctor/${doctorId}`)
-            .then((response) => {
-                setDoctor(response.data);
-                console.log('Doctor fetch successful:', response.data);
-            })
-        .catch ((error) => {
-            console.log(error);
+    const getDoctor = async () => {
+        try {
+            const response = await http.get(`/doctor/${doctorId}`);
+            setDoctor(response.data);
+            console.log('Doctor fetch successful:', response.data);
+        } catch (error) {
+            console.error(error);
             if (error.response && error.response.data) {
                 const errorObjects = error.response.data.map((error) => error.defaultMessage);
                 setErrorMessages(errorObjects);
             }
-        });
+        }
     };
 
-    const updateDoctor = () => {
-        http
-            .post(`/updateDoctor/${doctorId}`, doctor)
-            .then((response) => {
-                console.log('Doctor updated:', response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-                if (error.response && error.response.data) {
-                    const errorObjects = error.response.data.map((error) => error.defaultMessage);
-                    setErrorMessages(errorObjects);
-                }
-            });
+    const updateDoctor = async () => {
+        try {
+            const response = await http.post(`/updateDoctor/${doctorId}`, doctor);
+            console.log('Doctor updated:', response.data);
+        } catch (error) {
+            console.error(error);
+            if (error.response && error.response.data) {
+                const errorObjects = error.response.data.map((error) => error.defaultMessage);
+                setErrorMessages(errorObjects);
+            }
+        }
     };
 
-    const deleteDoctor = () => {
-        http
-            .delete(`/deleteDoctor/${doctorId}`)
-            .then((response) => {
-                console.log('Doctor deleted:', response.data);
-                navigate('/doctors');
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    const deleteDoctor = async () => {
+        try {
+            const response = await http.delete(`/deleteDoctor/${doctorId}`);
+            console.log('Doctor deleted:', response.data);
+            navigate('/doctors');
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (

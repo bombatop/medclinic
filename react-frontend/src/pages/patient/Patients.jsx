@@ -15,27 +15,22 @@ const Patients = () => {
         getPatients();
     }, [selectedPage, searchQuery]);
 
-    const getPatients = () => {
+    const getPatients = async () => {
         const params = {
             page: selectedPage - 1,
             searchQuery: searchQuery,
             size: 4,
         };
 
-        http
-            .get(`/patients`, { params })
-            .then((response) => {
-                setPatients(response.data.content);
-                setTotalPages(response.data.totalPages);
-                console.log(
-                    'Patients fetch successful:',
-                    response.data.content,
-                    response.data.totalPages
-                );
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        try {
+            const response = await http.get(`/patients`, { params });
+            const data = response.data;
+            setPatients(data.content);
+            setTotalPages(data.totalPages);
+            console.log('Patients fetch successful:', data.content, data.totalPages);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleSearchChange = (event) => {

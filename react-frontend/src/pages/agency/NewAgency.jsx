@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import http from '../../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Container, Form, Button, Alert, ListGroup, ListGroupItem } from 'react-bootstrap';
+import http from '../../http-common';
 
 const NewAgency = () => {
     const navigate = useNavigate();
-    const [agency, setAgency] = useState({
-        name: "",
-    });
     const [errorMessages, setErrorMessages] = useState('');
+
+    const [agency, setAgency] = useState(null);
 
     const handleInputChange = (event, property) => {
         setAgency({
@@ -16,46 +16,54 @@ const NewAgency = () => {
         });
     };
 
-    useEffect(() => { }, [])
-
-    const addAgency = () => {
-        http
-            .post(`/addAgency`, agency)
-            .then((response) => {
-                console.log('Agency added:', response.data);
-                navigate("/agency/" + response.data.id);
-            })
-            .catch((error) => {
-                console.log(error);
-                if (error.response && error.response.data) {
-                    const errorObjects = error.response.data.map((error) => error.defaultMessage);
-                    setErrorMessages(errorObjects);
-                }
-            });
+    const addAgency = async () => {
+        try {
+            const response = await http.post('/addAgency', agency);
+            console.log('Agency added:', response.data);
+            navigate('/agency/' + response.data.id);
+        } catch (error) {
+            console.error(error);
+            if (error.response && error.response.data) {
+                const errorObjects = error.response.data.map((error) => error.defaultMessage);
+                setErrorMessages(errorObjects);
+            }
+        }
     };
 
     return (
-        <div className="container">
-            <h2 className="text-info">Agency page</h2>
+        <Container className="mt-4">
+            <h2>Agency page</h2>
 
-            <div className="agency-container">
-                <div className="form-group mb-2">
-                    <label htmlFor="name">Name</label>
-                    <input type="text" className="form-control" id="name" value={agency?.name || ''} onChange={(event) => handleInputChange(event, 'name')} />
-                </div>
-            </div>
-            <button type="submit" className="btn btn-primary" onClick={addAgency}>Add new agency</button>
+            <Form.Group className="mb-2">
+                <Form.Label htmlFor="name">Name</Form.Label>
+                <Form.Control
+                    type="text"
+                    id="name"
+                    value={agency?.name || ''}
+                    onChange={(event) => handleInputChange(event, 'name')}
+                />
+            </Form.Group>
+
+            <Button type="submit" className="btn btn-primary" onClick={addAgency}>
+                Add new agency
+            </Button>
 
             {errorMessages && (
-                <div >
-                    <ul className="list-group">
+                <div>
+                    <ListGroup>
                         {errorMessages.map((errorMessage, index) => (
-                            <li className="col-10 list-group item alert alert-danger p-3 mt-2" style={{ maxWidth: 400 }} key={index}>{errorMessage}</li>
+                            <ListGroup.Item
+                                className="col-10 list-group-item alert alert-danger p-3 mt-2"
+                                style={{ maxWidth: 400 }}
+                                key={index}
+                            >
+                                {errorMessage}
+                            </ListGroup.Item>
                         ))}
-                    </ul>
+                    </ListGroup>
                 </div>
             )}
-        </div>
+        </Container>
     );
 };
 

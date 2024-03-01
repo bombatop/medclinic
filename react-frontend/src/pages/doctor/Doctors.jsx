@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 import http from '../../http-common';
-import CustomPagination from '../../uitls/pagination';
+import CustomPagination from '../../utils/pagination';
 
 const Doctors = () => {
     const [doctors, setDoctors] = useState([]);
@@ -15,27 +15,25 @@ const Doctors = () => {
         getDoctors();
     }, [selectedPage, searchQuery]);
 
-    const getDoctors = () => {
+    const getDoctors = async () => {
         const params = {
             page: selectedPage - 1,
             searchQuery: searchQuery,
             size: 4,
         };
 
-        http
-            .get(`/doctors`, { params })
-            .then((response) => {
-                setDoctors(response.data.content);
-                setTotalPages(response.data.totalPages);
-                console.log(
-                    'Doctors fetch successful:',
-                    response.data.content,
-                    response.data.totalPages
-                );
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        try {
+            const response = await http.get(`/doctors`, { params });
+            setDoctors(response.data.content);
+            setTotalPages(response.data.totalPages);
+            console.log(
+                'Doctors fetch successful:',
+                response.data.content,
+                response.data.totalPages
+            );
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleSearchChange = (event) => {

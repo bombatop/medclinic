@@ -15,28 +15,25 @@ const Treatments = () => {
         getTreatments();
     }, [selectedPage, searchQuery]);
 
-    const getTreatments = () => {
-        const params = {
-            page: selectedPage - 1,
-            searchQuery: searchQuery,
-            size: 4,
-        };
+    const getTreatments = async () => {
+        try {
+            const params = {
+                page: selectedPage - 1,
+                searchQuery: searchQuery,
+                size: 4,
+            };
 
-        http
-            .get(`/treatments`, { params })
-            .then((response) => {
-                setTreatments(response.data.content);
-                setTotalPages(response.data.totalPages);
-                console.log(
-                    'Treatments fetch successful:',
-                    response.data.content,
-                    response.data.totalPages
-                );
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+            const response = await http.get(`/treatments`, { params });
+            const data = response.data;
+
+            setTreatments(data.content);
+            setTotalPages(data.totalPages);
+            console.log('Treatments fetch successful:', data.content, data.totalPages);
+        } catch (error) {
+            console.error(error);
+        }
     };
+
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);

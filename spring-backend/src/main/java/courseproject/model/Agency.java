@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.validator.constraints.NotBlank;
 
 import lombok.Getter;
@@ -26,4 +27,7 @@ public class Agency {
     @NotBlank(message = "Appropriate name is required")
     @Column(name = "name")
     private String name;
+
+    @Column(nullable = false)
+    private Boolean loadedByDefault = false;
 }

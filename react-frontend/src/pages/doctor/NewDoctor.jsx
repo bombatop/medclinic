@@ -19,20 +19,18 @@ const NewDoctor = () => {
 
     useEffect(() => { }, [])
 
-    const addDoctor = () => {
-        http
-            .post(`/addDoctor`, doctor)
-            .then((response) => {
-                console.log('Doctor added:', response.data);
-                navigate("/doctor/" + response.data.id);
-            })
-            .catch((error) => {
-                console.log(error);
-                if (error.response && error.response.data) {
-                    const errorObjects = error.response.data.map((error) => error.defaultMessage);
-                    setErrorMessages(errorObjects);
-                }
-            });
+    const addDoctor = async () => {
+        try {
+            const response = await http.post(`/addDoctor`, doctor);
+            console.log('Doctor added:', response.data);
+            navigate("/doctor/" + response.data.id);
+        } catch (error) {
+            console.error(error);
+            if (error.response && error.response.data) {
+                const errorObjects = error.response.data.map((error) => error.defaultMessage);
+                setErrorMessages(errorObjects);
+            }
+        }
     };
 
     return (

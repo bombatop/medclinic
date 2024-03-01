@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import http from '../../http-common';
+import { Container, Form, Button, Alert, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import http from '../../http-common';
+import Date from '../../utils/NamedDate';
 
 import AsyncSelect from 'react-select/async';
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import "react-datepicker/dist/react-datepicker.css";
 
 const NewJournal = () => {
     const navigate = useNavigate();
@@ -15,54 +16,42 @@ const NewJournal = () => {
         patient: null,
         doctor: null
     });
-
-    const formattedDate = format(journal.date, 'yyyy-MM-dd HH:mm');
     const [errorMessages, setErrorMessages] = useState('');
 
-    // const handleInputChange = (property, value) => {
-    //     setDoctor({
-    //         ...doctor,
-    //         [value]: property.target.value,
-    //     });
-    // };
-
-    const handleDoctorChange = (selectedOption) => {
-        if (!selectedOption) return;
+    const handleInputChange = (value, property) => {
+        if (value === null) return;
         setJournal({
             ...journal, 
-            doctor: selectedOption.value
-        })
+            [property]: value,
+        });
     };
 
-    const handlePatientChange = (selectedOption) => {
-        if (!selectedOption) return;
-        setJournal({
-            ...journal,
-            patient: selectedOption.value
-        })
-    };
-    
-    const handleDateChange = (date) => {
-        setJournal({
-            ...journal,
-            date: date
-        })
-    };
-
-    const addJournal = () => {
-        let formattedDateJournal = {
-            ...journal,
-            date: formattedDate
+    const addJournal = async () => {
+        try {
+            const response = await http.post(`/addJournal`, { ...journal, date: format(journal.date, 'yyyy-MM-dd HH:mm') });
+            console.log('Journal added:', response.data);
+            navigate("/journal/" + response.data.id);
+        } catch (error) {
+            console.error(error);
+            if (error.response && error.response.data) {
+                const errorObjects = error.response.data.map((error) => error.defaultMessage);
+                setErrorMessages(errorObjects);
+            }
         }
-        http
-            .post(`/addJournal`, formattedDateJournal)
-            .then((response) => {
-                console.log('Journal added:', response.data);
-                navigate("/journal/" + response.data.id);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    };
+
+    const fetchData = async (endpoint, params, callback) => {
+        try {
+            const response = await http.get(endpoint, { params });
+            const options = response.data.content.map((item) => ({
+                value: item,
+                label: item.name,
+            }));
+            console.log(`${endpoint} fetch on query ${params.searchQuery} successful: `, options);
+            callback(options);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const loadDoctors = (inputValue, callback) => {
@@ -71,19 +60,7 @@ const NewJournal = () => {
             size: 10,
             page: 0,
         };
-        http
-            .get(`/doctors`, { params })
-            .then((response) => {
-                const options = response.data.content.map((doctor) => ({
-                    value: doctor,
-                    label: doctor.name,
-                }));
-                console.log('Doctors fetch on query {' + inputValue + '} successful: ', options);
-                callback(options);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        fetchData(`/doctors`, params, callback);
     };
 
     const loadPatients = (inputValue, callback) => {
@@ -92,20 +69,9 @@ const NewJournal = () => {
             size: 10,
             page: 0,
         };
-        http
-            .get(`/patients`, { params })
-            .then((response) => {
-                const options = response.data.content.map((patient) => ({
-                    value: patient,
-                    label: patient.name,
-                }));
-                console.log('Patients fetch on query ' + inputValue + ' successful: ', options);
-                callback(options);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        fetchData(`/patients`, params, callback);
     };
+
 
 
     return (
@@ -118,7 +84,7 @@ const NewJournal = () => {
                     <AsyncSelect
                         loadOptions={loadDoctors}
                         isClearable={true}
-                        onChange={handleDoctorChange}
+                        onChange={(event) => handleInputChange(event.value, 'doctor')}
                     />
                 </div>
                 <div className="form-group mb-2">
@@ -126,7 +92,7 @@ const NewJournal = () => {
                     <AsyncSelect
                         loadOptions={loadPatients}
                         isClearable={true}
-                        onChange={handlePatientChange}
+                        onChange={(event) => handleInputChange(event.value, 'patient')}
                     />
                 </div>
                 <div className="form-group mb-2">
@@ -134,7 +100,7 @@ const NewJournal = () => {
                     <div className="date-picker-div">
                         <DatePicker
                             selected={journal.date}
-                            onChange={handleDateChange}
+                            onChange={(event) => handleInputChange(event, 'date')}
                             showTimeSelect
                             timeFormat="HH:mm"
                             timeIntervals={10}
@@ -149,6 +115,16 @@ const NewJournal = () => {
             <button type="submit" className="btn btn-primary" onClick={addJournal}>
                 Add new journal
             </button>
+            
+            {errorMessages && (
+                <ListGroup className="mt-2">
+                    {errorMessages.map((errorMessage, index) => (
+                        <Alert key={index} variant="danger" className="p-2" style={{ maxWidth: 300 }}>
+                            {errorMessage}
+                        </Alert>
+                    ))}
+                </ListGroup>
+            )}
         </div>
     );
 };
