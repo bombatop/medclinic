@@ -1,5 +1,5 @@
 # medclinic
-UPCOMING MAJOR MIGRATION, entire project is obsolete junk
+UPCOMING MAJOR MIGRATION, entire project is kinda obsolete
 
 atm react.js + spring boot infosystem project that hasn't been updated for ages
 
