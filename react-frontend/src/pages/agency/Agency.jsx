@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Container, Form, Button, Alert, ListGroup, ListGroupItem } from 'react-bootstrap';
+
 import http from '../../http-common';
 
 const Agency = () => {
     const navigate = useNavigate();
     const [errorMessages, setErrorMessages] = useState(null);
     const { agencyId } = useParams();
-    
+
     const [agency, setAgency] = useState({
-        loadedByDefault: false
+        loadedByDefault: false,
     });
 
     useEffect(() => {
@@ -17,12 +17,11 @@ const Agency = () => {
     }, []);
 
     const handleInputChange = (value, property) => {
-        if (value === null)
-            return;
+        if (value === null) return;
         setAgency({
             ...agency,
             [property]: value,
-        });  
+        });
     };
 
     const getAgency = async () => {
@@ -60,49 +59,48 @@ const Agency = () => {
     };
 
     return (
-        <Container className='mt-4'>
+        <div className="container mt-4">
             <h2>Agency page</h2>
 
-            <Form.Group className='mb-2'>
-                <Form.Label>Full name</Form.Label>
-                <Form.Control
-                    type='text' 
-                    value={agency?.name || ''}
-                    id='fullname'
-                    onChange={(event) => handleInputChange(event, 'name')} />
-            </Form.Group>
+            <label htmlFor="fullname" className="form-label mb-2">
+                Full name
+            </label>
+            <input
+                type="text"
+                className="form-control"
+                id="fullname"
+                value={agency?.name || ''}
+                onChange={(event) => handleInputChange(event.target.value, 'name')}
+            />
 
-            <Form>  
-                {['checkbox'].map((type) => (
-                    <div key={`default-${type}`} className='mb-3'>
-                        <Form.Check
-                            checked={agency?.loadedByDefault}
-                            type={type}
-                            id={`default-${type}`}
-                            label={`loaded by default`}
-                            onChange={(event) => handleInputChange(event.target.checked, 'loadedByDefault')}
-                        />
-                    </div>
-                ))}
-            </Form>
+            <div className="form-check mb-2">
+                <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="default-checkbox"
+                    checked={agency?.loadedByDefault}
+                    onChange={(event) => handleInputChange(event.target.checked, 'loadedByDefault')}
+                />
+                <label className="form-check-label" htmlFor="default-checkbox">
+                    Loaded by default
+                </label>
+            </div>
 
-            <Button variant='primary' onClick={updateAgency}>
+            <button type="button" className="btn btn-primary me-2" onClick={updateAgency}>
                 Update info
-            </Button>
-            <Button variant='danger' className='mx-2' onClick={deleteAgency}>
+            </button>
+            <button type="button" className="btn btn-danger" onClick={deleteAgency}>
                 Delete agency
-            </Button>
+            </button>
 
             {errorMessages && (
-                <ListGroup className='mt-2'>
+                <div className="alert alert-danger mt-2" role="alert">
                     {errorMessages.map((errorMessage, index) => (
-                        <Alert key={index} variant='danger' className='p-2' style={{ maxWidth: 300 }}>
-                            {errorMessage}
-                        </Alert>
+                        <div key={index}>{errorMessage}</div>
                     ))}
-                </ListGroup>
+                </div>
             )}
-        </Container>
+        </div>
     );
 };
 

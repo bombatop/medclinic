@@ -34,7 +34,6 @@ const Treatments = () => {
         }
     };
 
-
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
     };
@@ -50,9 +49,7 @@ const Treatments = () => {
 
             <Row className="mb-3">
                 <Col xs={8}>
-                    <Form.Control type="text" placeholder="Search by name" value={searchQuery}
-                        onChange={(e) => handleSearchChange(e)}
-                    />
+                    <Form.Control type="text" placeholder="Search by name" value={searchQuery} onChange={(e) => handleSearchChange(e)} />
                 </Col>
                 <Col xs={2}>
                     <Link className="btn btn-primary" style={{ height: 40 }} to="/newTreatment">
@@ -77,9 +74,7 @@ const Treatments = () => {
 
             <Row className="mb-2">
                 <Col xs={8}>
-                    {totalPages > 0 && (
-                        <CustomPagination selectedPage={selectedPage} totalPages={totalPages} handler={handlePageChange} />
-                    )}
+                    {totalPages > 0 && <CustomPagination selectedPage={selectedPage} totalPages={totalPages} handler={handlePageChange} />}
                 </Col>
             </Row>
         </Container>

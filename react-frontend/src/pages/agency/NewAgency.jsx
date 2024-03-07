@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Container, Form, Button, Alert, ListGroup, ListGroupItem } from 'react-bootstrap';
 import http from '../../http-common';
 
 const NewAgency = () => {
@@ -31,39 +30,33 @@ const NewAgency = () => {
     };
 
     return (
-        <Container className="mt-4">
+        <div className="container mt-4">
             <h2>Agency page</h2>
 
-            <Form.Group className="mb-2">
-                <Form.Label htmlFor="name">Name</Form.Label>
-                <Form.Control
+            <div className="mb-2">
+                <label htmlFor="name">Name:</label>
+                <input
                     type="text"
                     id="name"
                     value={agency?.name || ''}
                     onChange={(event) => handleInputChange(event, 'name')}
                 />
-            </Form.Group>
+            </div>
 
-            <Button type="submit" className="btn btn-primary" onClick={addAgency}>
+            <button type="submit" className="btn btn-primary" onClick={addAgency}>
                 Add new agency
-            </Button>
+            </button>
 
             {errorMessages && (
                 <div>
-                    <ListGroup>
+                    <ul className="list-unstyled">
                         {errorMessages.map((errorMessage, index) => (
-                            <ListGroup.Item
-                                className="col-10 list-group-item alert alert-danger p-3 mt-2"
-                                style={{ maxWidth: 400 }}
-                                key={index}
-                            >
-                                {errorMessage}
-                            </ListGroup.Item>
+                            <li className="alert alert-danger col-10 mt-2" key={index} style={{ maxWidth: 400 }}>{errorMessage}</li>
                         ))}
-                    </ListGroup>
+                    </ul>
                 </div>
             )}
-        </Container>
+        </div>
     );
 };
 

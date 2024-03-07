@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import http from '../../http-common';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const NewDoctor = () => {
     const navigate = useNavigate();
@@ -17,13 +17,13 @@ const NewDoctor = () => {
         });
     };
 
-    useEffect(() => { }, [])
+    useEffect(() => { }, []);
 
     const addDoctor = async () => {
         try {
             const response = await http.post(`/addDoctor`, doctor);
             console.log('Doctor added:', response.data);
-            navigate("/doctor/" + response.data.id);
+            navigate(`/doctor/${response.data.id}`);
         } catch (error) {
             console.error(error);
             if (error.response && error.response.data) {
@@ -37,9 +37,11 @@ const NewDoctor = () => {
         <div className="container">
             <h2 className="text-info">Doctor page</h2>
 
-            <div className="doctor-container">
-                <div className="form-group col-6 mb-2">
-                    <label htmlFor="fullname">Full name</label>
+            <div className="row g-3 align-items-center">
+                <div className="col-auto">
+                    <label htmlFor="fullname" className="col-form-label">Full name</label>
+                </div>
+                <div className="col-auto">
                     <input
                         type="text"
                         className="form-control"
@@ -48,8 +50,13 @@ const NewDoctor = () => {
                         onChange={(event) => handleInputChange(event, 'name')}
                     />
                 </div>
-                <div className="form-group col-6 mb-2">
-                    <label htmlFor="phonenumber">Phone number</label>
+            </div>
+
+            <div className="row g-3 align-items-center">
+                <div className="col-auto">
+                    <label htmlFor="phonenumber" className="col-form-label">Phone number</label>
+                </div>
+                <div className="col-auto">
                     <input
                         type="text"
                         className="form-control"
@@ -60,13 +67,13 @@ const NewDoctor = () => {
                 </div>
             </div>
 
-            <button type="submit" className="btn btn-primary" onClick={addDoctor}>Add new doctor</button>
-            
+            <button type="submit" className="btn btn-primary mt-3" onClick={addDoctor}>Add new doctor</button>
+
             {errorMessages && (
-                <div >
+                <div className="mt-3">
                     <ul className="list-group">
                         {errorMessages.map((errorMessage, index) => (
-                            <li className="col-10 list-group item alert alert-danger p-3 mt-2" style={{ maxWidth: 400 }} key={index}>{errorMessage}</li>
+                            <li className="list-group-item alert alert-danger p-3 mt-2" style={{ maxWidth: 400 }} key={index}>{errorMessage}</li>
                         ))}
                     </ul>
                 </div>

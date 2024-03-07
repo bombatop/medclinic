@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Form, ListGroup, ListGroupItem } from 'react-bootstrap';
-
 import http from '../../http-common';
 import CustomPagination from '../../utils/pagination';
 
 const Patients = () => {
+    const navigate = useNavigate();
     const [patients, setPatients] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPage, setSelectedPage] = useState(1);
@@ -43,44 +42,52 @@ const Patients = () => {
     };
 
     return (
-        <Container className="mt-4">
+        <div className="container mt-4">
             <h2>Patient Search</h2>
 
-            <Row className="mb-3">
-                <Col xs={8}>
-                    <Form.Control type="text" placeholder="Search by name" value={searchQuery}
+            <div className="row mb-3">
+                <div className="col-8">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search by name"
+                        value={searchQuery}
                         onChange={(e) => handleSearchChange(e)}
                     />
-                </Col>
-                <Col xs={2}>
-                    <Link className="btn btn-primary" style={{ height: 40 }} to="/newPatient">
+                </div>
+                <div className="col-2">
+                    <Link to="/newPatient" className="btn btn-primary" style={{ height: 40 }}>
                         Add new
                     </Link>
-                </Col>
-            </Row>
+                </div>
+            </div>
 
-            <Row className="mb-2">
-                <Col xs={8}>
-                    <ListGroup>
+            <div className="row mb-2">
+                <div className="col-8">
+                    <ul className="list-group">
                         {patients.map((patient) => (
-                            <ListGroupItem key={patient.id}>
+                            <li className="list-group-item" key={patient.id}>
                                 <Link to={`/patient/${patient.id}`} style={{ textDecoration: 'none', color: 'black' }}>
                                     {patient.name}
                                 </Link>
-                            </ListGroupItem>
+                            </li>
                         ))}
-                    </ListGroup>
-                </Col>
-            </Row>
+                    </ul>
+                </div>
+            </div>
 
-            <Row className="mb-2">
-                <Col xs={8}>
+            <div className="row mb-2">
+                <div className="col-8">
                     {totalPages > 0 && (
-                        <CustomPagination selectedPage={selectedPage} totalPages={totalPages} handler={handlePageChange} />
+                        <CustomPagination
+                            selectedPage={selectedPage}
+                            totalPages={totalPages}
+                            handler={handlePageChange}
+                        />
                     )}
-                </Col>
-            </Row>
-        </Container>
+                </div>
+            </div>
+        </div>
     );
 };
 

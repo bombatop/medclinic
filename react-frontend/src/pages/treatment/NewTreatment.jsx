@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Container, Form, Button, Alert, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import http from '../../http-common';
 
 const NewTreatment = () => {
     const navigate = useNavigate();
-    const [treatment, setTreatment] = useState(null);
-    const [errorMessages, setErrorMessages] = useState('');
+    const [treatment, setTreatment] = useState({});
+    const [errorMessages, setErrorMessages] = useState([]);
 
     const handleInputChange = (event, property) => {
         setTreatment({
@@ -15,7 +14,7 @@ const NewTreatment = () => {
         });
     };
 
-    useEffect(() => { }, [])
+    useEffect(() => { }, []);
 
     const addTreatment = async () => {
         try {
@@ -24,44 +23,46 @@ const NewTreatment = () => {
             navigate("/treatment/" + response.data.id);
         } catch (error) {
             console.error(error);
+            if (error.response && error.response.data) {
+                const errorObjects = error.response.data.map((error) => error.defaultMessage);
+                setErrorMessages(errorObjects);
+            } else {
+                setErrorMessages(['An unexpected error occurred']);
+            }
         }
     };
 
-
     return (
-        <Container className="mt-4">
+        <div className="container mt-4">
             <h2>Treatment page</h2>
 
-            <Form.Group className="mb-2">
-                <Form.Label htmlFor="name">Name</Form.Label>
-                <Form.Control
+            <div className="form-group mb-2">
+                <label htmlFor="name">Name</label>
+                <input
                     type="text"
+                    className="form-control"
                     id="name"
                     value={treatment?.name || ''}
                     onChange={(event) => handleInputChange(event, 'name')}
                 />
-            </Form.Group>
+            </div>
 
-            <Button type="submit" className="btn btn-primary" onClick={addTreatment}>
+            <button type="submit" className="btn btn-primary" onClick={addTreatment}>
                 Add new treatment
-            </Button>
+            </button>
 
-            {errorMessages && (
+            {errorMessages.length > 0 && (
                 <div>
-                    <ListGroup>
+                    <ul className="list-group">
                         {errorMessages.map((errorMessage, index) => (
-                            <ListGroup.Item
-                                className="col-10 list-group-item alert alert-danger p-3 mt-2"
-                                style={{ maxWidth: 400 }}
-                                key={index}
-                            >
+                            <li className="col-10 list-group-item alert alert-danger p-3 mt-2" style={{ maxWidth: 400 }} key={index}>
                                 {errorMessage}
-                            </ListGroup.Item>
+                            </li>
                         ))}
-                    </ListGroup>
+                    </ul>
                 </div>
             )}
-        </Container>
+        </div>
     );
 };
 

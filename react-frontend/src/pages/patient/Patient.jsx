@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import http from '../../http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Container, Form, Button, Alert, Col, Row, ListGroup, ListGroupItem} from 'react-bootstrap';
 
 const Patient = () => {
     const navigate = useNavigate();
+    const { patientId } = useParams();
     const [patient, setPatient] = useState({
-        id: useParams().patientId
+        id: patientId
     });
     const [journals, setJournals] = useState([]);
     const [agencies, setAgencies] = useState([]);
@@ -76,12 +76,12 @@ const Patient = () => {
     };
 
     return (
-        <Container>
+        <div>
             <h2>Patient page</h2>
 
-            <Container>
-                <div className="form-group col-6 mb-2">
-                    <label htmlFor="fullname">Full name</label>
+            <div className="form-group row mb-2">
+                <label htmlFor="fullname" className="col-sm-2 col-form-label">Full name</label>
+                <div className="col-sm-10">
                     <input
                         type="text"
                         className="form-control"
@@ -90,8 +90,10 @@ const Patient = () => {
                         onChange={(event) => handleInputChange(event, 'name')}
                     />
                 </div>
-                <div className="form-group col-6 mb-2">
-                    <label htmlFor="phonenumber">Phone number</label>
+            </div>
+            <div className="form-group row mb-2">
+                <label htmlFor="phonenumber" className="col-sm-2 col-form-label">Phone number</label>
+                <div className="col-sm-10">
                     <input
                         type="text"
                         className="form-control"
@@ -100,42 +102,37 @@ const Patient = () => {
                         onChange={(event) => handleInputChange(event, 'phoneNumber')}
                     />
                 </div>
+            </div>
 
-                <button type="submit" className="btn btn-primary" onClick={updatePatient}>
-                    Update info
-                </button>
-                <button type="button" className="mx-2 btn btn-danger" onClick={deletePatient}>
-                    Delete patient
-                </button>
-            </Container>
+            <button type="submit" className="btn btn-primary mr-2" onClick={updatePatient}>Update info</button>
+            <button type="button" className="btn btn-danger mx-2" onClick={deletePatient}>Delete patient</button>
 
             {errorMessages && (
-                <ListGroup className="list-group">
+                <div className="alert alert-danger" style={{ marginTop: '1rem' }}>
                     {errorMessages.map((errorMessage, index) => (
-                        <li className="col-10 list-group item alert alert-danger p-3 mt-2" style={{ maxWidth: 400 }} key={index}>{errorMessage}</li>
+                        <div key={index}>{errorMessage}</div>
                     ))}
-                </ListGroup>
+                </div>
             )}
 
             {journals.length > 0 && (
-                <Container md={4} className="mt-4">
+                <div className="mt-4">
                     <h4>Journal history</h4>
-                    <ListGroup className="list-group mt-1" id="journals">
+                    <ul className="list-group mt-1" id="journals">
                         {journals.map((journal) => (
-                            <ListGroupItem className="col-3 list-group-item" key={journal.id}>
+                            <li className="list-group-item" key={journal.id}>
                                 <Link
                                     to={`/journal/${journal.id}`}
                                     style={{ textDecoration: 'none', color: 'black' }}
                                 >
                                     {journal.date} {journal.doctor.name}
                                 </Link>
-                            </ListGroupItem>
+                            </li>
                         ))}
-                    </ListGroup>
-                </Container>
+                    </ul>
+                </div>
             )}
-
-        </Container>
+        </div>
     );
 };
 

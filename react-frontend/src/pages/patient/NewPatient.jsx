@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Container, Form, Button, Alert, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import http from '../../http-common';
 
 const NewPatient = () => {
     const navigate = useNavigate();
     const [patient, setPatient] = useState({
-        name: null,
-        lastName: null,
-        phoneNumber: null
+        name: '',
+        lastName: '',
+        phoneNumber: '',
     });
     const [errorMessages, setErrorMessages] = useState(null);
 
@@ -23,7 +22,7 @@ const NewPatient = () => {
         try {
             const response = await http.post(`/addPatient`, patient);
             console.log('Patient added:', response.data);
-            navigate("/patient/" + response.data.id);
+            navigate('/patient/' + response.data.id);
         } catch (error) {
             console.error(error);
             if (error.response && error.response.data) {
@@ -34,51 +33,58 @@ const NewPatient = () => {
     };
 
     return (
-        <Container className="mt-4">
+        <div className="container mt-4">
             <h2>Patient page</h2>
 
-            <Form.Group className="mb-2">
-                <Form.Label htmlFor="name">Name</Form.Label>
-                <Form.Control
+            <div className="mb-2">
+                <label htmlFor="fullname" className="form-label">Name</label>
+                <input
                     type="text"
                     className="form-control"
                     id="fullname"
-                    value={patient?.name || ''}
+                    value={patient.name || ''}
                     onChange={(event) => handleInputChange(event, 'name')}
                 />
-            </Form.Group>
+            </div>
 
-            <Form.Group className="mb-2">
-                <Form.Label htmlFor="name">Phone number</Form.Label>
-                <Form.Control
+            <div className="mb-2">
+                <label htmlFor="lastname" className="form-label">Last Name</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    id="lastname"
+                    value={patient.lastName || ''}
+                    onChange={(event) => handleInputChange(event, 'lastName')}
+                />
+            </div>
+
+            <div className="mb-2">
+                <label htmlFor="phonenumber" className="form-label">Phone number</label>
+                <input
                     type="text"
                     className="form-control"
                     id="phonenumber"
-                    value={patient?.phoneNumber || ''}
+                    value={patient.phoneNumber || ''}
                     onChange={(event) => handleInputChange(event, 'phoneNumber')}
                 />
-            </Form.Group>
+            </div>
 
-            <Button type="submit" className="btn btn-primary" onClick={addPatient}>
+            <button type="submit" className="btn btn-primary" onClick={addPatient}>
                 Add new patient
-            </Button>
+            </button>
 
             {errorMessages && (
                 <div>
-                    <ListGroup>
+                    <ul className="list-group">
                         {errorMessages.map((errorMessage, index) => (
-                            <ListGroup.Item
-                                className="col-10 list-group-item alert alert-danger p-3 mt-2"
-                                style={{ maxWidth: 400 }}
-                                key={index}
-                            >
+                            <li className="col-10 list-group-item alert alert-danger p-3 mt-2" style={{ maxWidth: 400 }} key={index}>
                                 {errorMessage}
-                            </ListGroup.Item>
+                            </li>
                         ))}
-                    </ListGroup>
+                    </ul>
                 </div>
             )}
-        </Container>
+        </div>
     );
 };
 
