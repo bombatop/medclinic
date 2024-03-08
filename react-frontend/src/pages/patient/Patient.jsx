@@ -76,7 +76,7 @@ const Patient = () => {
     };
 
     return (
-        <div>
+        <div className="container mt-4">
             <h2>Patient page</h2>
 
             <div className="form-group row mb-2">

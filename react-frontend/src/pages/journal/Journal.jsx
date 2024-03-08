@@ -223,15 +223,14 @@ const Journal = () => {
     };
 
     return (
-        <Container className="mt-4">
+        <div className="container mt-4">
             <h2>Journal page</h2>
             {journal && (
-                <Container>
-
-                    <Container>
-                        <Col md={4} className="mt-2">
+                <div>
+                    <div className="row g-3">
+                        <div className="col-md-4">
                             <Form.Group controlId="doctor">
-                                {/* <Form.Label>Doctor</Form.Label> */}
+                                <Form.Label>Doctor</Form.Label>
                                 <AsyncSelect
                                     defaultValue={{ label: journal.doctor.name, value: journal.doctor }}
                                     loadOptions={loadDoctors}
@@ -239,10 +238,10 @@ const Journal = () => {
                                     onChange={(event) => handleInputChange(event.value, 'doctor')}
                                 />
                             </Form.Group>
-                        </Col>
-                        <Col md={4} className="mt-2">
+                        </div>
+                        <div className="col-md-4">
                             <Form.Group controlId="patient">
-                                {/* <Form.Label>Patient</Form.Label> */}
+                                <Form.Label>Patient</Form.Label>
                                 <AsyncSelect
                                     defaultValue={{ label: journal.patient.name, value: journal.patient }}
                                     loadOptions={loadPatients}
@@ -250,10 +249,10 @@ const Journal = () => {
                                     onChange={(event) => handleInputChange(event.value, 'patient')}
                                 />
                             </Form.Group>
-                        </Col>
-                        <Col md={4} className="mt-2">
+                        </div>
+                        <div className="col-md-4">
                             <Form.Group controlId="date-picker-div">
-                                {/* <Form.Label className="mt-4 mb-2">Date</Form.Label> */}
+                                <Form.Label className="mt-4 mb-2">Date</Form.Label>
                                 <DatePicker
                                     selected={journal.date}
                                     onChange={(date) => handleInputChange(date, 'date')}
@@ -265,58 +264,44 @@ const Journal = () => {
                                     timeCaption="время"
                                 />
                             </Form.Group>
-                        </Col>
-                        <Col md={12}>
-                            <Button variant="danger" className="mt-3 mb-4" onClick={deleteJournal}>
+                        </div>
+                        <div className="col-12">
+                            <button type="button" className="btn btn-danger mt-3 mb-4" onClick={deleteJournal}>
                                 Delete Journal
-                            </Button>
-                        </Col>
-                    </Container>
-
-                    <Container>
-                        <Row>
-                            {journal.files && journal.files.length > 0 && (
-                                <div className="col-7">
-                                    <label htmlFor="files">Uploaded files</label>
-                                    <ul className="list-group">
-                                        {journal.files.map((file) => (
-                                            <li className="list-group-item" key={file.id}>
-                                                <a className="link-dark link-offset-2 link-underline link-underline-opacity-0"
-                                                    onClick={() => downloadFile(file)}>{file.name}</a>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-danger"
-                                                    onClick={() => deleteFile(file.id)}
-                                                    style={{
-                                                        color: 'red',
-                                                        background: 'none',
-                                                        border: 'none',
-                                                        cursor: 'pointer',
-                                                    }}
-                                                >
-                                                    &times; Delete
-                                                </button>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-                        </Row>
-
-                        <div className="form-group row mt-2">
-                            <div className="col-5">
-                                {/* <label htmlFor="fileUpload">Upload Files</label> */}
-                                <input type="file" className="form-control" id="fileUpload" multiple onChange={handleFileSelect} />
-                            </div>
-                            <button type="submit" className="col-2 btn btn-primary" onClick={handleFileUpload}>
-                                Upload
                             </button>
                         </div>
-                    </Container>
+                    </div>
 
-                </Container>
+                    <div className="row">
+                        {journal.files && journal.files.length > 0 && (
+                            <div className="col-7">
+                                <label htmlFor="files">Uploaded files</label>
+                                <ul className="list-group">
+                                    {journal.files.map((file) => (
+                                        <li className="list-group-item" key={file.id}>
+                                            <a href="#!" className="link-dark link-offset-2 link-underline link-underline-opacity-0" onClick={() => downloadFile(file)}>{file.name}</a>
+                                            <button type="button" className="btn btn-danger" onClick={() => deleteFile(file.id)}>
+                                                &times; Delete
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="form-group row mt-2">
+                        <div className="col-5">
+                            <label htmlFor="fileUpload">Upload Files</label>
+                            <input type="file" className="form-control" id="fileUpload" multiple onChange={handleFileSelect} />
+                        </div>
+                        <button type="submit" className="col-2 btn btn-primary" onClick={handleFileUpload}>
+                            Upload
+                        </button>
+                    </div>
+                </div>
             )}
-        </Container>
+        </div>
     );
 }
 

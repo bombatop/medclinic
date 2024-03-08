@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Form, Button, Alert, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import http from '../../http-common';
-import Date from '../../utils/NamedDate';
-
+import NamedDate from '../../utils/NamedDate';
 import AsyncSelect from 'react-select/async';
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
@@ -21,7 +19,7 @@ const NewJournal = () => {
     const handleInputChange = (value, property) => {
         if (value === null) return;
         setJournal({
-            ...journal, 
+            ...journal,
             [property]: value,
         });
     };
@@ -72,15 +70,13 @@ const NewJournal = () => {
         fetchData(`/patients`, params, callback);
     };
 
-
-
     return (
-        <div className="container">
-            <h2 className="text-info">Journal page</h2>
+        <div className="container mt-4">
+            <h2>Journal page</h2>
 
             <div className="journal-container">
                 <div className="form-group mb-2">
-                    <label htmlFor="doctor">Doctor</label>
+                    <label htmlFor="doctor">Doctor:</label>
                     <AsyncSelect
                         loadOptions={loadDoctors}
                         isClearable={true}
@@ -88,7 +84,7 @@ const NewJournal = () => {
                     />
                 </div>
                 <div className="form-group mb-2">
-                    <label htmlFor="patient">Patient</label>
+                    <label htmlFor="patient">Patient:</label>
                     <AsyncSelect
                         loadOptions={loadPatients}
                         isClearable={true}
@@ -96,7 +92,7 @@ const NewJournal = () => {
                     />
                 </div>
                 <div className="form-group mb-2">
-                    <label htmlFor="date-picker-div">Date</label>
+                    <label htmlFor="date-picker-div">Date:</label>
                     <div className="date-picker-div">
                         <DatePicker
                             selected={journal.date}
@@ -115,15 +111,13 @@ const NewJournal = () => {
             <button type="submit" className="btn btn-primary" onClick={addJournal}>
                 Add new journal
             </button>
-            
+
             {errorMessages && (
-                <ListGroup className="mt-2">
+                <div className="alert alert-danger mt-2" role="alert">
                     {errorMessages.map((errorMessage, index) => (
-                        <Alert key={index} variant="danger" className="p-2" style={{ maxWidth: 300 }}>
-                            {errorMessage}
-                        </Alert>
+                        <div key={index}>{errorMessage}</div>
                     ))}
-                </ListGroup>
+                </div>
             )}
         </div>
     );
