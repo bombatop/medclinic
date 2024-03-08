@@ -1,42 +1,58 @@
 import React from 'react';
-import { Pagination } from 'react-bootstrap';
+import '../styles/CustomPagination.css'
 
 const CustomPagination = ({ selectedPage, totalPages, handler }) => {
-    const renderPageNumbers = () => {
-        const pages = [];
-        const range = 2;
+  const renderPageNumbers = () => {
+    const pages = [];
+    const range = 2;
 
-        let lowrange = Math.max(1, selectedPage - range);
-        let highrange = Math.min(selectedPage + range, totalPages);
+    let lowRange = Math.max(1, selectedPage - range);
+    let highRange = Math.min(selectedPage + range, totalPages);
 
-        if (lowrange > selectedPage - range) {
-            highrange = Math.min(highrange - selectedPage + range + lowrange, totalPages);
-        } else if (highrange < selectedPage + range) {
-            lowrange = Math.max(lowrange - selectedPage - range + highrange, 1);
-        }
+    if (lowRange > selectedPage - range) {
+      highRange = Math.min(highRange - (selectedPage - range) + lowRange, totalPages);
+    } else if (highRange < selectedPage + range) {
+      lowRange = Math.max(lowRange - (selectedPage + range) + highRange, 1);
+    }
 
-        pages.push(
-            <Pagination.First key="first" onClick={() => handler(1)} />,
-            <Pagination.Prev key="prev" disabled={selectedPage === 1} onClick={() => handler(selectedPage - 1)} />
-        );
+    pages.push(
+      <span key="first" onClick={() => handler(1)} className={`custom-pagination-item ${selectedPage === 1 ? 'disabled' : ''}`}>
+        ❮
+      </span>,
+      <span key="prev" disabled={selectedPage === 1} onClick={() => handler(selectedPage - 1)} className={`custom-pagination-item ${selectedPage === 1 ? 'disabled' : ''}`}>
+        ‹
+      </span>
+    );
 
-        for (let index = lowrange; index <= highrange; index++) {
-            pages.push(
-                <Pagination.Item key={index} active={index === selectedPage} onClick={() => handler(index)}>
-                    {index}
-                </Pagination.Item>
-            );
-        }
+    for (let index = lowRange; index <= highRange; index++) {
+      pages.push(
+        <span
+          key={index}
+          onClick={() => handler(index)}
+          className={`custom-pagination-item ${selectedPage === index ? 'active' : ''}`}
+        >
+          {index}
+        </span>
+      );
+    }
 
-        pages.push(
-            <Pagination.Next key="next" disabled={selectedPage === totalPages} onClick={() => handler(selectedPage + 1)} />,
-            <Pagination.Last key="last" onClick={() => handler(totalPages)} />
-        );
+    pages.push(
+      <span key="next" disabled={selectedPage === totalPages} onClick={() => handler(selectedPage + 1)} className={`custom-pagination-item ${selectedPage === totalPages ? 'disabled' : ''}`}>
+        ›
+      </span>,
+      <span key="last" onClick={() => handler(totalPages)} className={`custom-pagination-item ${selectedPage === totalPages ? 'disabled' : ''}`}>
+        ❯
+      </span>
+    );
 
-        return pages;
-    };
+    return pages;
+  };
 
-    return <Pagination className="justify-content-md-center">{renderPageNumbers()}</Pagination>;
+  return (
+    <div className="custom-pagination">
+      <span>{renderPageNumbers()}</span>
+    </div>
+  );
 };
 
 export default CustomPagination;

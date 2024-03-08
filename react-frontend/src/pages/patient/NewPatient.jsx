@@ -6,7 +6,6 @@ const NewPatient = () => {
     const navigate = useNavigate();
     const [patient, setPatient] = useState({
         name: '',
-        lastName: '',
         phoneNumber: '',
     });
     const [errorMessages, setErrorMessages] = useState(null);
@@ -44,17 +43,6 @@ const NewPatient = () => {
                     id="fullname"
                     value={patient.name || ''}
                     onChange={(event) => handleInputChange(event, 'name')}
-                />
-            </div>
-
-            <div className="mb-2">
-                <label htmlFor="lastname" className="form-label">Last Name</label>
-                <input
-                    type="text"
-                    className="form-control"
-                    id="lastname"
-                    value={patient.lastName || ''}
-                    onChange={(event) => handleInputChange(event, 'lastName')}
                 />
             </div>
 

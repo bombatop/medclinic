@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css'; 
 
-import Header from './pages/Header';
+import Header from './pages/templates/Header';
 
 import Patient from './pages/patient/Patient';
 import Agency from './pages/agency/Agency';
@@ -17,7 +17,7 @@ import NewJournal from './pages/journal/NewJournal';
 import NewAgency from './pages/agency/NewAgency';
 
 import ProfitsReport from './pages/ProfitsReport';
-import ErrorPage from './pages/ErrorPage';
+import ErrorPage from './pages/templates/ErrorPage';
 
 import Patients from './pages/patient/Patients';
 import Agencies from './pages/agency/Agencies';

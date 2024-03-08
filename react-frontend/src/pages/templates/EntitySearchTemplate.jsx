@@ -19,7 +19,7 @@ const EntitySearchTemplate = ({ entityName, apiEndpoint, titleText }) => {
         const params = {
             page: selectedPage - 1,
             searchQuery: searchQuery,
-            size: 4,
+            size: 1,
         };
 
         try {
