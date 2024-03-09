@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import http from '../../http-common';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import http from '../../utils/http-common';
 
 const NewAgency = () => {
     const navigate = useNavigate();

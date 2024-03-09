@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import http, { uploadAxios, downloadAxios } from '../../http-common';
+import http from '../../utils/http-common';
 import { useNavigate, useParams } from 'react-router-dom';
 import AsyncSelect from 'react-select/async';
 import DatePicker from 'react-datepicker';

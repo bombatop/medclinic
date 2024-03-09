@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import http from '../../http-common';
+import http from '../../utils/http-common';
 import { Link } from 'react-router-dom';
-import Header from '../templates/Header'
 
 import DatePicker from 'react-datepicker';
 import NamedDate from '../../utils/NamedDate';

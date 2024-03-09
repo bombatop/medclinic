@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import http from '../../http-common';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import http from '../../utils/http-common';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Doctor = () => {
     const navigate = useNavigate();

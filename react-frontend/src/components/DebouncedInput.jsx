@@ -1,8 +1,10 @@
 import React, { useState, useCallback, useRef } from 'react';
 
-function DebouncedInput({ onChange, value, className }) {
-    const [localValue, setLocalValue] = useState('');
-    const timeoutRef = useRef(null);
+const onChangeDelay = 400; //ms
+
+function DebouncedInput({ onChange, onFocus, className }) {
+    const [localValue, setLocalValue] = useState(''); //value to pass on return
+    const timeoutRef = useRef(null); // timer
 
     const clearTimeoutRef = useCallback(() => {
         clearTimeout(timeoutRef.current);
@@ -10,13 +12,15 @@ function DebouncedInput({ onChange, value, className }) {
 
     const handleOnChange = useCallback((event) => {
         const enteredValue = event.target.value;
-        setLocalValue(enteredValue);
+        setLocalValue(enteredValue); // saving value
+        onFocus(true); // calling onFocus (if some action is needed while debounce is happening)
 
-        clearTimeoutRef();
+        clearTimeoutRef(); // resetting timer
         timeoutRef.current = setTimeout(() => {
             onChange(enteredValue);
-        }, 300);
-    }, [clearTimeoutRef, onChange]);
+            onFocus(false);
+        }, onChangeDelay);
+    });
 
     return (
         <input

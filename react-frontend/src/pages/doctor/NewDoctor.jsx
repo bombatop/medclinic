@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import http from '../../http-common';
+import http from '../../utils/http-common';
 import { useNavigate } from 'react-router-dom';
 
 const NewDoctor = () => {
