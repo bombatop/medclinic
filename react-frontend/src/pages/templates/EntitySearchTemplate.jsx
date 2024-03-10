@@ -22,7 +22,7 @@ const EntitySearchTemplate = ({ entityName, apiEndpoint, titleText }) => {
         const params = {
             page: selectedPage - 1,
             searchQuery: searchQuery,
-            size: 1,
+            size: 5,
         };
 
         try {
@@ -52,7 +52,7 @@ const EntitySearchTemplate = ({ entityName, apiEndpoint, titleText }) => {
     };
 
     return (
-        <div className="container mt-4">
+        <div className="container">
             <h2>{titleText}</h2>
 
             <div className="row mb-3">

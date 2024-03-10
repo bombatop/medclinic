@@ -51,9 +51,9 @@ const Journals = () => {
     };
 
     return (
-        <div className="mt-4 mx-4">
+        <div>
             <div className="row">
-                <div className="col-2 form-group">
+                <div className="col form-group" style={{minWidth: 250}}>
                     <label htmlFor="date-picker-div">Date</label>
                     <div className="date-picker-div">
                         <DatePicker
@@ -68,11 +68,9 @@ const Journals = () => {
                 </div>
 
                 <Link
-                    className="col-1 btn btn-primary mt-4"
+                    className="col btn btn-primary mt-4"
                     to="/newJournal"
-                    style={{
-                        height: 40
-                    }}
+                    style={{minWidth: 100, height: 40}}
                 >
                     Add New
                 </Link>

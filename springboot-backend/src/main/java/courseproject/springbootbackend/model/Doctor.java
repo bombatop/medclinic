@@ -25,7 +25,7 @@ public class Doctor {
 
     @NotBlank(message = "Name is required")
     @Column(name = "name")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Name should contain only letters")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Name should contain only letters")
     private String name;
 
     @NotBlank(message = "Phone number is required")

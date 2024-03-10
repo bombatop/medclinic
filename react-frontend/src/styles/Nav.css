@@ -1,0 +1,28 @@
+.sidebar{
+    background-color: #7de55a5c;
+    overflow-y: hidden;
+    width: 100vw;
+    height: auto;
+    padding: 15px;
+}
+
+@media (min-width: 576px) {
+    .sidebar {
+        height: 95vh;
+        width: 176px;
+    }
+}
+
+
+.header {
+    height: 5vh;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+}
+
+.content {
+    min-width: 400px;
+    padding: 16px;
+}
