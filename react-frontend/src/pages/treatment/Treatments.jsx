@@ -3,7 +3,7 @@ import EntitySearchTemplate from '../templates/EntitySearchTemplate';
 
 const Treatments = () => {
     return (
-        <EntitySearchTemplate entityName="treatment" apiEndpoint="treatments" titleText="Treatment search" />
+        <EntitySearchTemplate entityName="treatment" api="treatments" pageTitleText="Treatment search" />
     );
 };
 

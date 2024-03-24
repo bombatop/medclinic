@@ -5,7 +5,6 @@ import http from '../../utils/http-common';
 
 const Agency = () => {
     const navigate = useNavigate();
-    const [errorMessages, setErrorMessages] = useState(null);
     const { agencyId } = useParams();
 
     const [agency, setAgency] = useState({
@@ -37,13 +36,8 @@ const Agency = () => {
     const updateAgency = async () => {
         try {
             const response = await http.post(`/updateAgency/${agencyId}`, agency);
-            setErrorMessages(null);
             console.log('Agency updated:', response.data);
         } catch (error) {
-            if (error.response && error.response.data) {
-                const errorObjects = error.response.data.map((error) => error.defaultMessage);
-                setErrorMessages(errorObjects);
-            }
             console.error(error);
         }
     };
@@ -92,14 +86,6 @@ const Agency = () => {
             <button type="button" className="btn btn-danger" onClick={deleteAgency}>
                 Delete agency
             </button>
-
-            {errorMessages && (
-                <div className="alert alert-danger mt-2" role="alert">
-                    {errorMessages.map((errorMessage, index) => (
-                        <div key={index}>{errorMessage}</div>
-                    ))}
-                </div>
-            )}
         </div>
     );
 };

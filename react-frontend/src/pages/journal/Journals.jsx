@@ -53,7 +53,7 @@ const Journals = () => {
     return (
         <div>
             <div className="row">
-                <div className="col form-group" style={{minWidth: 250}}>
+                <div className="col-2 form-group" style={{minWidth: 250}}>
                     <label htmlFor="date-picker-div">Date</label>
                     <div className="date-picker-div">
                         <DatePicker
@@ -68,9 +68,9 @@ const Journals = () => {
                 </div>
 
                 <Link
-                    className="col btn btn-primary mt-4"
+                    className="col btn btn-primary"
                     to="/newJournal"
-                    style={{minWidth: 100, height: 40}}
+                    style={{marginTop: 22, maxWidth: 100, height: 40}}
                 >
                     Add New
                 </Link>

@@ -1,9 +1,9 @@
 import { CgSpinner } from "react-icons/cg";
 import '../styles/LoadingOverlay.css'
 
-function LoadingOverlay() {
+function LoadingOverlay({ className }) {
     return (
-        <div className="loading-overlay">
+        <div className={`${className} loading-overlay`}>
             <CgSpinner className="loader" />
         </div>
     );

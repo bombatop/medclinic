@@ -3,7 +3,7 @@ import EntitySearchTemplate from '../templates/EntitySearchTemplate';
 
 const Agencies = () => {
     return (
-        <EntitySearchTemplate entityName="agency" apiEndpoint="agencies" titleText="Agency search" />
+        <EntitySearchTemplate entityName="agency" api="agencies" pageTitleText="Agency search" />
     );
 };
 

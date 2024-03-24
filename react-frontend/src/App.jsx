@@ -34,8 +34,8 @@ function App() {
             <div className='row'>
                 <Header />
             </div>
-            <div className="row full-height">
-                <div className="col-2 sidebar">
+            <div className="row">
+                <div className="d-flex flex-column col-2 sidebar">
                     <Sidebar />
                 </div>
                 <div className="col content">

@@ -8,6 +8,7 @@
     padding: 2rem;
 }
 
+
 .loader {
     animation: loader 2s infinite linear;
 }

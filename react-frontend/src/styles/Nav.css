@@ -8,14 +8,14 @@
 
 @media (min-width: 576px) {
     .sidebar {
-        height: 95vh;
+        height: calc(100vh - 50px);
         width: 176px;
     }
 }
 
-
 .header {
-    height: 5vh;
+    height: 50px;
+    width: 100vw;
     padding: 10px;
     background-color: #333;
     color: #fff;
@@ -24,5 +24,9 @@
 
 .content {
     min-width: 400px;
-    padding: 16px;
+    padding: 20px;
+}
+
+.page-wrapper {
+    /* overflow-x: hidden; */
 }

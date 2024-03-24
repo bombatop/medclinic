@@ -25,10 +25,8 @@ const Treatment = () => {
     useEffect(() => {
         if (!treatmentId) return;
 
-        (async () => {
-            await getTreatment();
-            // Note: getPrices will be called inside the getTreatment function
-        })();
+        getTreatment();
+        // Note: getPrices will be called inside the getTreatment function
     }, [treatmentId]);
 
     useEffect(() => {
@@ -116,7 +114,8 @@ const Treatment = () => {
     const addPrice = async () => {
         try {
             console.log(newPrice);
-            const response = await http.post(`/addPriceForTreatment`, { ...newPrice, treatment: treatment, date: format(newPrice.date, 'yyyy-MM-dd HH:mm') });
+            const response = await http.post(`/addPriceForTreatment`,
+                { ...newPrice, treatment: treatment, date: format(newPrice.date, 'yyyy-MM-dd HH:mm') });
             console.log('Price added:', response.data);
             await getPrices();
         } catch (error) {

@@ -4,36 +4,36 @@ import '../styles/Nav.css';
 
 const Sidebar = () => {
     return (
-        <aside>
-            <ul className="">
-                <li className="">
-                    <Link className="" to="/journals">
+        <div>
+            <ul className="nav nav-pills flex-column">
+                <li className="nav-item">
+                    <Link className="nav-link link-dark" to="/journals">
                         Journals
                     </Link>
                 </li>
-                <li className="">
-                    <Link className="" to="/patients">
+                <li className="nav-item">
+                    <Link className="nav-link link-dark" to="/patients">
                         Patients
                     </Link>
                 </li>
-                <li className="">
-                    <Link className="" to="/doctors">
+                <li className="nav-item">
+                    <Link className="nav-link link-dark" to="/doctors">
                         Doctors
                     </Link>
                 </li>
-                <li className="">
-                    <Link className="" to="/treatments">
+                <li className="nav-item">
+                    <Link className="nav-link link-dark" to="/treatments">
                         Treatments
                     </Link>
                 </li>
 
-                <li className="">
-                    <Link className="" to="/agencies">
+                <li className="nav-item">
+                    <Link className="nav-link link-dark" to="/agencies">
                         Agencies
                     </Link>
                 </li>
             </ul>
-        </aside>
+        </div>
     );
 };
 

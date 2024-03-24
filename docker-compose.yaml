@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  reactfrontend:
+    image: reactfrontend
+    build:
+      context: ./react-frontend
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 4200:4200
+
+  springbootbackend:
+    image: springbootbackend
+    build:
+      context: ./springboot-backend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080

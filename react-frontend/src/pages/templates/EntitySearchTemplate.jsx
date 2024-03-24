@@ -6,7 +6,7 @@ import CustomPagination from '../../components/CustomPagination';
 import DebouncedInput from '../../components/DebouncedInput';
 import LoadingOverlay from '../../components/LoadingOverlay'
 
-const EntitySearchTemplate = ({ entityName, apiEndpoint, titleText }) => {
+const EntitySearchTemplate = ({ entityName, api, pageTitleText }) => {
     const [entities, setEntities] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPage, setSelectedPage] = useState(1);
@@ -19,6 +19,9 @@ const EntitySearchTemplate = ({ entityName, apiEndpoint, titleText }) => {
     }, [selectedPage, searchQuery]);
 
     const getEntities = async () => {
+        setIsLoading(true);
+        setEntities([]);
+
         const params = {
             page: selectedPage - 1,
             searchQuery: searchQuery,
@@ -26,7 +29,7 @@ const EntitySearchTemplate = ({ entityName, apiEndpoint, titleText }) => {
         };
 
         try {
-            const response = await http.get(`/${apiEndpoint}`, { params });
+            const response = await http.get(`/${api}`, { params });
             const data = response.data;
             setEntities(data.content);
             setTotalPages(data.totalPages);
@@ -39,27 +42,23 @@ const EntitySearchTemplate = ({ entityName, apiEndpoint, titleText }) => {
 
     const handleSearchChange = (value) => {
         setSearchQuery(value);
-        setIsLoading(true);
-        setEntities([]);
     };
 
     const handlePageChange = (page) => {
         if (page <= 0 || page > totalPages || page === selectedPage)
             return;
         setSelectedPage(page);
-        setIsLoading(true);
-        setEntities([]);
     };
 
     return (
         <div className="container">
-            <h2>{titleText}</h2>
+            <h2>{pageTitleText}</h2>
 
             <div className="row mb-3">
                 <div className="col-8">
                     <DebouncedInput
                         onChange={handleSearchChange}
-                        onFocus={setIsLoading}
+                        onLoading={setIsLoading}
                         value={searchQuery}
                         className="form-control"
                         placeholder={`Search by name`}
