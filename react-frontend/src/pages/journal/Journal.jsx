@@ -9,7 +9,6 @@ import FileList from '../../components/FileList';
 
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
-import { update } from 'lodash';
 
 const Journal = () => {
     const navigate = useNavigate();

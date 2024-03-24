@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/CustomPagination.css'
+import './CustomPagination.css'
 
 const CustomPagination = ({ selectedPage, totalPages, pageChangeHandler }) => {
     const renderPageNumbers = () => {

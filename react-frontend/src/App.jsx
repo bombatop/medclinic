@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
-import './styles/Nav.css';
 
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';

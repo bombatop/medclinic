@@ -1,5 +1,5 @@
 import { CgSpinner } from "react-icons/cg";
-import '../styles/LoadingOverlay.css'
+import './LoadingOverlay.css'
 
 function LoadingOverlay({ className }) {
     return (

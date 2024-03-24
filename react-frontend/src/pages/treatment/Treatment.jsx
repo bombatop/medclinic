@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DebouncedSearchSelect from '../../components/DebouncedSearchSelect';
 import http from '../../utils/http-common';
 import { useNavigate, useParams } from 'react-router-dom';
 import AsyncSelect from 'react-select/async';
@@ -9,8 +10,6 @@ import { ru } from 'date-fns/locale';
 const Treatment = () => {
     const navigate = useNavigate();
     const { treatmentId } = useParams();
-
-    const [errorMessages, setErrorMessages] = useState(null);
 
     const [treatment, setTreatment] = useState(null);
     const [prices, setPrices] = useState({});
@@ -120,29 +119,6 @@ const Treatment = () => {
             await getPrices();
         } catch (error) {
             console.log(error);
-            if (error.response && error.response.data) {
-                const errorObjects = error.response.data.map((error) => error.defaultMessage);
-                setErrorMessages(errorObjects);
-            }
-        }
-    };
-
-    const loadAgencies = async (inputValue, callback) => {
-        try {
-            const params = {
-                searchQuery: inputValue,
-                size: 10,
-                page: 0,
-            };
-            const response = await http.get(`/agencies`, { params });
-            const options = response.data.content.map((agency) => ({
-                value: agency,
-                label: agency.name,
-            }));
-            console.log('Doctors fetch on query {' + inputValue + '} successful: ', options);
-            callback(options);
-        } catch (error) {
-            console.log(error);
         }
     };
 
@@ -150,7 +126,6 @@ const Treatment = () => {
         <div className="container mt-4">
             <h2>Treatment page</h2>
 
-            {/* Main Content */}
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group">
@@ -171,16 +146,12 @@ const Treatment = () => {
                 </div>
             </div>
 
-            {/* Prices Section */}
             <div className="row my-5">
                 <h4 className="col-auto mb-3">Add New Price</h4>
                 <div className="col-md-9 ms-auto">
-                    <AsyncSelect
-                        cacheOptions
-                        defaultOptions
-                        loadOptions={loadAgencies}
-                        isClearable={true}
-                        onChange={(event) => handleInputChange(event?.value, 'agency')}
+                    <DebouncedSearchSelect
+                        onChange={(event) => handleInputChange(event.value, 'agency')}
+                        api={'agencies'}
                     />
                     <DatePicker
                         selected={newPrice.date}

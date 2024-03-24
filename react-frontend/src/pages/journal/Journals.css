@@ -1,0 +1,29 @@
+.form-group-custom {
+    min-width: 250px;
+}
+
+.add-button {
+    margin-top: 22px;
+    max-width: 100px;
+    height: 40px;
+}
+
+.col-journal {
+    max-width: 260px;
+}
+
+.card-header-custom,
+.card-body-custom,
+.card-title-custom,
+.card-text-custom {
+    text-decoration: none;
+    color: black;
+}
+
+.card-title-custom {
+    font-weight: 600;
+}
+
+.card-text-custom {
+    font-size: 14px;
+}

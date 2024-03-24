@@ -1,15 +1,13 @@
 # Stack
-- React.js (+zustand)
+- React.js + TS
 - Java Spring Boot (jpa, web, security, redis?)
-- MySQL (xampp, migration maybe?)
+- MySQL (xampp)
 - docker
 
 ## Функциональность:
-- Сделать treatment page, journal page
-- Сделать нормальный компонент календаря
-- Сделать нормальный компонент селекта с поиском
+- Сделать treatment page
 - Сделать нормальный список записей, мейби как в расписании тут[ссылка](https://www.asu.ru/timetable/students/10/)
-- Сделать нормальный navbar 
+- Допилить sidebar и header
 - Раздобыть иконки upd: [раздобыл](https://react-icons.github.io/react-icons/icons/cg/)
 
 - Хранить договоры страхований

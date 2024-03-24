@@ -23,7 +23,7 @@ function DebouncedSearchSelect({ api, defaultValue, onChange }) {
                     console.error('Error fetching data:', error);
                     resolve([]);
                 }
-            }, 500);
+            }, 400); //ms
         });
     };
 
