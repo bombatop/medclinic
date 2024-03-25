@@ -6,8 +6,8 @@
 
 ## Функциональность:
 - Сделать treatment page
-- Сделать нормальный список записей, мейби как в расписании тут[ссылка](https://www.asu.ru/timetable/students/10/)
 - Допилить sidebar и header
+- Сделать нормальный список записей, мейби как в расписании тут[ссылка](https://www.asu.ru/timetable/students/10/)
 - Раздобыть иконки upd: [раздобыл](https://react-icons.github.io/react-icons/icons/cg/)
 
 - Хранить договоры страхований

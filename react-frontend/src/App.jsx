@@ -28,12 +28,12 @@ import Treatments from './pages/treatment/Treatments';
 
 function App() {
     return (
-        <div className="container-fluid page-wrapper">
+        <div className="container-fluid">
             <link rel="icon" href="favicon.png" type="image/x-icon" />
             <div className='row'>
                 <Header />
             </div>
-            <div className="row">
+            <div className="row sidebar-content-wrapper">
                 <div className="d-flex flex-column col-2 sidebar">
                     <Sidebar />
                 </div>

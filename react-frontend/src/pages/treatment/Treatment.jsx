@@ -1,64 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import DebouncedSearchSelect from '../../components/DebouncedSearchSelect';
-import http from '../../utils/http-common';
-import { useNavigate, useParams } from 'react-router-dom';
-import AsyncSelect from 'react-select/async';
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import http from '../../utils/http-common';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Treatment = () => {
     const navigate = useNavigate();
     const { treatmentId } = useParams();
-
-    const [treatment, setTreatment] = useState(null);
-    const [prices, setPrices] = useState({});
-
-    const [newPrice, setNewPrice] = useState({
-        agency: null,
-        treatment: null,
-        price: 0,
-        date: new Date(),
-    });
+    const [treatment, setTreatment] = useState({ name: '', pricesByAgency: {} });
+    const [newPrice, setNewPrice] = useState({ agency: '', price: '', date: new Date() });
 
     useEffect(() => {
-        if (!treatmentId) return;
-
-        getTreatment();
-        // Note: getPrices will be called inside the getTreatment function
-    }, [treatmentId]);
-
-    useEffect(() => {
-        if (treatment && treatment.name) {
-            updateTreatment();
+        if (treatmentId) {
+            getTreatment();
+            getPrices();
         }
-    }, [treatment?.name]);
-
-    const handleInputChange = (value, property) => {
-        if (value === null) return;
-        setNewPrice({
-            ...newPrice,
-            [property]: value,
-        });
-    };
+    }, [treatmentId]);
 
     const getTreatment = async () => {
         try {
-            const response = await http.get(`/treatment/${treatmentId}`);
-            setTreatment(response.data);
-            console.log('Treatment fetch successful:', response.data);
-
-            // Now that treatment is set, call getPrices
-            await getPrices(response.data.id);
+            const { data } = await http.get(`/treatment/${treatmentId}`);
+            setTreatment((prevTreatment) => ({ ...prevTreatment, name: data.name }));
         } catch (error) {
             console.error(error);
         }
     };
 
-    const updateTreatment = async () => {
+    const getPrices = async () => {
         try {
-            const response = await http.post(`/updateTreatment/${treatment.id}`, treatment);
-            console.log('Treatment updated:', response.data);
+            const { data } = await http.get(`/prices/${treatmentId}`);
+            const pricesByAgency = data.reduce((acc, price) => {
+                const { agency } = price;
+                if (!acc[agency.id]) {
+                    acc[agency.id] = { agencyInfo: agency, pricesList: [] };
+                }
+                acc[agency.id].pricesList.push(price);
+                return acc;
+            }, {});
+            console.log('prices by agency', pricesByAgency);
+            setTreatment((prevTreatment) => ({ ...prevTreatment, pricesByAgency }));
+        } catch (error) {
+            console.error(error.response.data);
+        }
+    };
+
+    const handleInputChange = (value, property) => {
+        setNewPrice((prev) => ({ ...prev, [property]: value }));
+    };
+
+    const updateTreatmentName = (name) => {
+        setTreatment((prev) => ({ ...prev, name }));
+    };
+
+    const addPrice = async () => {
+        try {
+            const response = await http.post('/addPriceForTreatment', {
+                ...newPrice,
+                treatmentId: treatment.id,
+                date: format(newPrice.date, 'yyyy-MM-dd HH:mm'),
+            });
+            setTreatment((prev) => ({
+                ...prev,
+                prices: [...prev.prices, response.data],
+            }));
+            setNewPrice({ agency: '', price: '', date: new Date() });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const deletePrice = async (priceId) => {
+        try {
+            await http.delete(`/deletePrice/${priceId}`);
+            setTreatment((prev) => ({
+                ...prev,
+                prices: prev.prices.filter((price) => price.id !== priceId),
+            }));
         } catch (error) {
             console.error(error);
         }
@@ -66,140 +85,98 @@ const Treatment = () => {
 
     const deleteTreatment = async () => {
         try {
-            const response = await http.delete(`/deleteTreatment/${treatment.id}`);
-            console.log('Treatment deleted:', response.data);
+            await http.delete(`/deleteTreatment/${treatmentId}`);
             navigate('/treatments');
         } catch (error) {
             console.error(error);
         }
     };
-
-    const getPrices = async (treatmentId) => {
-        try {
-            const response = await http.get(`/prices/${treatmentId}`);
-            const newPrices = {};
-
-            response.data.forEach((item) => {
-                const { agency } = item;
-                const agencyId = agency.id;
-
-                if (!newPrices[agencyId]) {
-                    newPrices[agencyId] = {
-                        agencyInfo: { ...agency },
-                        pricesList: [],
-                    };
-                }
-
-                newPrices[agencyId].pricesList.push(item);
-            });
-
-            setPrices(newPrices);
-            console.log('Prices fetch successful:', newPrices);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const deletePrice = async (price) => {
-        try {
-            const response = await http.delete(`/deletePrice/${price.id}`);
-            console.log('Price deleted:', response.data);
-            await getPrices();
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const addPrice = async () => {
-        try {
-            console.log(newPrice);
-            const response = await http.post(`/addPriceForTreatment`,
-                { ...newPrice, treatment: treatment, date: format(newPrice.date, 'yyyy-MM-dd HH:mm') });
-            console.log('Price added:', response.data);
-            await getPrices();
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    
 
     return (
         <div className="container mt-4">
-            <h2>Treatment page</h2>
-
-            <div className="row">
-                <div className="col-md-6">
-                    <div className="form-group">
-                        <label htmlFor="formFullName">Full Name</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="formFullName"
-                            value={treatment?.name || ''}
-                            onChange={(event) => setTreatment({ ...treatment, name: event.target.value })}
-                        />
-                    </div>
-                </div>
-                <div className="col-auto">
-                    <button className="btn btn-danger" onClick={deleteTreatment}>
-                        Delete Treatment
-                    </button>
-                </div>
-            </div>
-
-            <div className="row my-5">
-                <h4 className="col-auto mb-3">Add New Price</h4>
-                <div className="col-md-9 ms-auto">
-                    <DebouncedSearchSelect
-                        onChange={(event) => handleInputChange(event.value, 'agency')}
-                        api={'agencies'}
-                    />
-                    <DatePicker
-                        selected={newPrice.date}
-                        onChange={(date) => handleInputChange(date, 'date')}
-                        showTimeSelect
-                        timeFormat="HH:mm"
-                        timeIntervals={10}
-                        dateFormat="d MMMM, yyyy HH:mm"
-                        locale={ru}
-                        className="form-control mt-3"
-                        timeCaption="Время"
-                    />
+            <h2>Treatment Details</h2>
+            <form className="mb-5">
+                <div className="form-group mb-3">
+                    <label htmlFor="formFullName">Treatment Name</label>
                     <input
-                        type="number"
-                        step="any"
-                        min="0"
-                        className="form-control mt-3"
-                        placeholder="Price"
-                        value={newPrice.price}
-                        onChange={(event) => handleInputChange(parseFloat(event.target.value), 'price')}
+                        type="text"
+                        className="form-control"
+                        id="formFullName"
+                        value={treatment.name}
+                        onChange={(e) => updateTreatmentName(e.target.value)}
                     />
-                    <button className="btn btn-success mt-3" onClick={addPrice}>
-                        Add Price
-                    </button>
                 </div>
-            </div>
+                <button type="button" className="btn btn-danger" onClick={deleteTreatment}>
+                    Delete Treatment
+                </button>
+            </form>
 
-            {/* Agencies Prices Listing */}
-            <div className="row">
-                {prices && Object.entries(prices).map(([key, value]) => (
-                    <React.Fragment key={key}>
-                        <h4 className="col-auto mb-3">Agency: {value.agencyInfo.name}</h4>
-                        <ul className="col-md-9 ms-auto ps-0">
-                            {value.pricesList.map((price) => (
-                                <li className="d-flex justify-content-between align-items-center mb-2" key={price.id}>
-                                    <span> {price.price}</span>
-                                    <span>{format(new Date(price.date), 'd MMMM, yyyy HH:mm', { locale: ru })}</span>
-                                    <button className="btn btn-danger btn-sm ms-2" onClick={() => deletePrice(price)}>
-                                        X
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+            <form className="mb-5">
+                <h4>Add New Price</h4>
+                <DebouncedSearchSelect
+                    onChange={(value) => handleInputChange(value, 'agency')}
+                    api='agencies'
+                    placeholder="Select Agency"
+                />
+                <DatePicker
+                    selected={newPrice.date}
+                    onChange={(date) => handleInputChange(date, 'date')}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    dateFormat="d MMMM, yyyy HH:mm"
+                    locale={ru}
+                    className="form-control mt-3"
+                    placeholderText="Select date and time"
+                />
+                <input
+                    type="number"
+                    step="any"
+                    min="0"
+                    className="form-control mt-3"
+                    placeholder="Enter price"
+                    value={newPrice.price}
+                    onChange={(e) => handleInputChange(e.target.value, 'price')}
+                />
+                <button type="button" className="btn btn-primary mt-3" onClick={addPrice}>
+                    Add Price
+                </button>
+            </form>
+
+            {treatment.pricesByAgency && Object.entries(treatment.pricesByAgency).length > 0 ? (
+                Object.entries(treatment.pricesByAgency).map(([agencyId, { agencyInfo, pricesList }]) => (
+                    <React.Fragment key={agencyId}>
+                        <h5>{agencyInfo.name}</h5>
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {pricesList.map((price) => (
+                                    <tr key={price.id}>
+                                        <td>{price.price}</td>
+                                        <td>{format(new Date(price.date), 'd MMMM, yyyy HH:mm', { locale: ru })}</td>
+                                        <td>
+                                            <button className="btn btn-danger btn-sm" onClick={() => deletePrice(price.id)}>
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </React.Fragment>
-                ))}
-            </div>
+                ))
+            ) : (
+                <p>No prices available for this treatment.</p>
+            )}
         </div>
     );
-}
+};
 
 export default Treatment;

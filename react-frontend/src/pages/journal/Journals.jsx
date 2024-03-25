@@ -15,6 +15,8 @@ const Journals = () => {
     const [journals, setJournals] = useState(null);
     const [date, setDate] = useState(new Date());
 
+    const formatDate = (dateStr, formatStr) => format(parseISO(dateStr), formatStr, { locale: ru });
+    
     useEffect(() => {
         const getJournals = async () => {
             try {
@@ -40,8 +42,6 @@ const Journals = () => {
 
         return updatedTable;
     }, [journals]);
-
-    const formatDate = (dateStr, formatStr) => format(parseISO(dateStr), formatStr, { locale: ru });
 
     return (
         <div>

@@ -37,7 +37,7 @@ public class Journal {
     private Patient patient;
 
     @NotNull(message = "Doctor is required")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 

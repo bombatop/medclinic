@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import http from '../../utils/http-common';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import format from 'date-fns/format';
+import parseISO from 'date-fns/parseISO';
+import ru from 'date-fns/locale/ru';
 
 const Patient = () => {
     const navigate = useNavigate();
@@ -10,7 +13,8 @@ const Patient = () => {
     });
     const [journals, setJournals] = useState([]);
     const [agencies, setAgencies] = useState([]);
-    const [errorMessages, setErrorMessages] = useState('');
+
+    const formatDate = (dateStr, formatStr) => format(parseISO(dateStr), formatStr, { locale: ru });
 
     const handleInputChange = (event, property) => {
         setPatient({
@@ -55,13 +59,8 @@ const Patient = () => {
         try {
             const response = await http.post(`/updatePatient/${patient.id}`, patient);
             console.log('Patient updated:', response.data);
-            setErrorMessages(null);
         } catch (error) {
             console.error(error);
-            if (error.response && error.response.data) {
-                const errorObjects = error.response.data.map((error) => error.defaultMessage);
-                setErrorMessages(errorObjects);
-            }
         }
     };
 
@@ -107,25 +106,14 @@ const Patient = () => {
             <button type="submit" className="btn btn-primary mr-2" onClick={updatePatient}>Update info</button>
             <button type="button" className="btn btn-danger mx-2" onClick={deletePatient}>Delete patient</button>
 
-            {errorMessages && (
-                <div className="alert alert-danger" style={{ marginTop: '1rem' }}>
-                    {errorMessages.map((errorMessage, index) => (
-                        <div key={index}>{errorMessage}</div>
-                    ))}
-                </div>
-            )}
-
             {journals.length > 0 && (
                 <div className="mt-4">
                     <h4>Journal history</h4>
                     <ul className="list-group mt-1" id="journals">
                         {journals.map((journal) => (
                             <li className="list-group-item" key={journal.id}>
-                                <Link
-                                    to={`/journal/${journal.id}`}
-                                    style={{ textDecoration: 'none', color: 'black' }}
-                                >
-                                    {journal.date} {journal.doctor.name}
+                                <Link to={`/journal/${journal.id}`} style={{ textDecoration: 'none', color: 'black' }} >
+                                    {formatDate(journal.date, 'd MMMM, yyyy')} {' : '} {journal.doctor.name}
                                 </Link>
                             </li>
                         ))}

@@ -17,7 +17,7 @@ function DebouncedSearchSelect({ api, defaultValue, onChange }) {
                         value: entity,
                         label: entity.name,
                     }));
-                    console.log(inputValue, options);
+                    console.log(api, inputValue, options);
                     resolve(options);
                 } catch (error) {
                     console.error('Error fetching data:', error);
