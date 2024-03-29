@@ -3,9 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import DebouncedSearchSelect from '../../components/DebouncedSearchSelect';
 
-import http, { uploadAxios, downloadAxios } from '../../utils/http-common';
+import http from '../../utils/http-common';
 import FileUploader from '../../components/FileUploader';
-import FileList from '../../components/FileList';
 
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
@@ -95,17 +94,17 @@ const Journal = () => {
         <div className="container mt-4">
             <h2>Journal page</h2>
             {journal && (
-                <div>
-                    <div className="row g-3">
+                <>
+                    <div className="row journal-maindata-container">
 
-                        <div className="col-md-4">
+                        <div className="col-md-3">
                             <DebouncedSearchSelect
                                 defaultValue={{ label: journal.doctor.name, value: journal.doctor }}
                                 onChange={(event) => handleInputChange(event.value, 'doctor')}
                                 api={'doctors'}
                             />
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-md-3">
                             <DebouncedSearchSelect
                                 defaultValue={{ label: journal.patient.name, value: journal.patient }}
                                 onChange={(event) => handleInputChange(event.value, 'patient')}
@@ -114,7 +113,7 @@ const Journal = () => {
                         </div>
                         
                         
-                        <div className="col-md-4">
+                        <div className="col-md-3">
                             <div className="from-group" 
                                 // controlId="date-picker-div"
                             >
@@ -131,16 +130,23 @@ const Journal = () => {
                                 />
                             </div>
                         </div>
-                        <div className="col-12">
-                            <button type="button" className="btn btn-danger mt-3 mb-4" onClick={deleteJournal}>
+
+                        <div className="col-md-3">
+                            <button type="button" className="btn btn-danger" onClick={deleteJournal}>
                                 Delete Journal
                             </button>
                         </div>
+
                     </div>
 
-                    <FileList journalId={journalId} files={journal.files} onFileChange={onFilesUpdated} />
-                    <FileUploader journalId={journalId} onUploadSuccess={onFilesUpdated} />
-                </div>
+                    <FileUploader
+                        className="row journal-file-container mt-4"
+                        journalId={journalId}
+                        files={journal.files}
+                        onFileChange={onFilesUpdated}
+                        onUploadSuccess={onFilesUpdated}
+                    />
+                </>
             )}
         </div>
     );

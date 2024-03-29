@@ -30,14 +30,14 @@ function App() {
     return (
         <div className="container-fluid">
             <link rel="icon" href="favicon.png" type="image/x-icon" />
-            <div className='row'>
-                <Header />
-            </div>
-            <div className="row sidebar-content-wrapper">
-                <div className="d-flex flex-column col-2 sidebar">
-                    <Sidebar />
-                </div>
-                <div className="col content">
+            
+            <Header className="row"/>
+
+            <div className="sidebar-and-content-wrapper row">
+
+                <Sidebar className="sidebar d-flex flex-column col-2" />
+                
+                <div className="content col">
                     <Routes>
                         <Route path='/patient/:patientId' element={<Patient />} />
                         <Route path='/treatment/:treatmentId' element={<Treatment />} />

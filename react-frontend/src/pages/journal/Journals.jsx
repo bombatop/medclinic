@@ -47,16 +47,16 @@ const Journals = () => {
         <div>
             <div className="row">
                 <div className={`col-2 form-group form-group-custom`}>
-                    <label htmlFor="date-picker">Date</label>
+                    {/* <label htmlFor="date-picker">Date</label> */}
                     <DatePicker
                         selected={date}
                         onChange={setDate}
                         dateFormat="d MMMM, yyyy"
-                        className="form-control"
+                        className="form-control date-picker"
                         locale="ru"
                     />
+                    <Link className={`col btn btn-primary add-button`} to="/newJournal">Add New</Link>
                 </div>
-                <Link className={`col btn btn-primary add-button`} to="/newJournal">Add New</Link>
             </div>
             <div className="row mt-5">
                 {Object.keys(table).map((keyDate) => (

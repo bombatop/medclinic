@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Header = () => {
+const Header = ({ className }) => {
     return (
-        <div className="header">
+        <div className={`header ${className}`}>
             HEADER
         </div>
     );

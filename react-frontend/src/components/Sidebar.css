@@ -1,15 +1,14 @@
 
 :root {
     --header-height: 50px;
-    --header-padding: 10px;
-    --sidebar-padding: 15px;
     --sidebar-width: 176px;
+    --padding: 10px;
 }
 
 .header {
     height: var(--header-height);
     width: 100vw;
-    padding: var(--header-padding);
+    padding: var(--padding);
     background-color: #333;
     color: #fff;
     text-align: center;
@@ -20,17 +19,19 @@
 .sidebar{
     background-color: #7de55a5c;
     overflow-y: hidden;
+    position: fixed;
     height: calc(100vh - var(--header-height));
     width: var(--sidebar-width);
-    padding: var(--sidebar-padding);
-    position: fixed;
+    padding: var(--padding);
     z-index: 1;
+    margin-top: calc(var(--header-height))
 }
 
 .content {
-    margin-left: calc(var(--sidebar-width) + var(--sidebar-padding));
+    margin-left: calc(var(--sidebar-width));
+    margin-top: calc(var(--header-height));
     min-width: 400px;
-    padding: 20px;
+    padding: var(--padding);
 }
 
 @media (max-width: 576px) {
@@ -48,5 +49,5 @@
 }
 
 .sidebar-content-wrapper {
-    margin-top: var(--header-height);
+    
 }

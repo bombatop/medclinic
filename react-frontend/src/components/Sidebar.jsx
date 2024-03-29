@@ -2,9 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ className }) => {
     return (
-        <div>
+        <div className={`${className}`}>
             <ul className="nav nav-pills flex-column">
                 <li className="nav-item">
                     <Link className="nav-link link-dark" to="/journals">

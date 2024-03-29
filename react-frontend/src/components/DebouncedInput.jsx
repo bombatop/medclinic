@@ -13,7 +13,7 @@ function DebouncedInput({ onChange, onLoading, className }) {
         timeoutRef.current = setTimeout(() => {
             onChange(enteredValue);
             onLoading(false);
-        }, 400); //ms
+        }, 350); //ms
     });
 
     return (
