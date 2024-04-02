@@ -29,7 +29,12 @@ const FileUploader = ({ journalId, initialFiles }) => {
                 setUploadingFiles(prevFiles =>
                     prevFiles.filter(f => f.name !== fileToUpload.name)
                 );
-                setFiles(response.data);
+                setFiles(prevFiles => [
+                    ...prevFiles,
+                    ...response.data.filter((newFile) =>
+                        !prevFiles.some((existingFile) => existingFile.id === newFile.id)
+                    )
+                ]); // this abomination exists because async upload call for multiple files leads to override in wrong order 
             })
             .catch(error => {
                 console.error(error.status);
