@@ -1,6 +1,7 @@
 package courseproject.springbootbackend.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -36,17 +37,6 @@ public class JournalController {
     public ResponseEntity<?> getJournalsForPatient(@PathVariable("patientId") Integer patientId) {
         return service.getJournalsForPatient(patientId);
     }
-    
-    @PostMapping("/reportPricesForDoctors")
-    public ResponseEntity<?> getReportPricesForDoctors(
-            @Validated @RequestBody RequestDTO_ReportProfitsForDoctors req,
-            BindingResult bindingResult) 
-    {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
-        }
-        return service.reportPricesForDoctors(req.getDoctors(), req.getStartDate(), req.getEndDate());
-    }
 
     @GetMapping("/journals")
     public ResponseEntity<?> getJournals() {
@@ -59,8 +49,11 @@ public class JournalController {
     }
 
     @PostMapping("/updateJournal/{id}")
-    public ResponseEntity<?> updateJournal(@PathVariable("id") Integer id, @Validated @RequestBody Journal journal,
-            BindingResult bindingResult) {
+    public ResponseEntity<?> updateJournal(
+        @PathVariable("id") Integer id,
+        @Validated @RequestBody Journal journal,
+        BindingResult bindingResult)
+    {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
@@ -78,5 +71,22 @@ public class JournalController {
     @DeleteMapping("/deleteJournal/{id}")
     public ResponseEntity<?> deleteJournal(@PathVariable("id") Integer id) {
         return service.deleteJournal(id);
+    }
+
+    @PostMapping("/addTreatmentToJournal")
+    public ResponseEntity<?> addTreatmentToJournal(
+            @PathVariable Integer journalId,
+            @RequestParam Integer treatmentId,
+            @RequestParam Integer amount)
+    {
+        return service.addTreatmentToJournal(journalId, treatmentId, amount);
+    }
+
+    @PostMapping("/addTreatmentsToJournal")
+    public ResponseEntity<?> addTreatmentsToJournal(
+            @PathVariable Integer journalId,
+            @RequestBody List<TreatmentDTO> treatments)
+    {
+        return service.addTreatmentsToJournal(journalId, treatments);
     }
 }

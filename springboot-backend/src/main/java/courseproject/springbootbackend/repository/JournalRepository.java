@@ -22,15 +22,5 @@ public interface JournalRepository extends JpaRepository<Journal, Integer>{
     List<Journal> findJournalsByDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
     
     @Query("SELECT j FROM Journal j JOIN j.patient p WHERE p.id = :id")
-    List<Journal> findJournalsForPatient(@Param("id") Integer id);
-
-    @Query("SELECT d, COUNT(j), SUM(p.price) " +
-        "FROM Journal j JOIN j.doctor d JOIN j.prices p " +
-        "WHERE d.id IN :doctorIds AND j.date >= :startDate AND j.date <= :endDate " +
-        "GROUP BY d")
-    List<Object[]> getReportPricesForDoctors(
-        @Param("doctorIds") List<Integer> doctorIds,
-        @Param("startDate") java.util.Date startDate,
-        @Param("endDate") java.util.Date endDate);
-   
+    List<Journal> findJournalsForPatient(@Param("id") Integer id); 
 }

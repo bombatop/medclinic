@@ -39,22 +39,4 @@ public class PriceController {
         }
         return service.savePrice(price);
     }
-    
-    @PostMapping("/addPriceForJournal/{journal_id}")
-    public ResponseEntity<?> addPriceForJournal(
-            @PathVariable("journal_id") Integer journal_id,
-            @Validated @RequestBody RequestDTO_AddPriceForJournal req,
-            BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
-        }
-        return service.addPriceForJournal(journal_id, req.getTreatment(), req.getDate());
-    }
-
-    @DeleteMapping("/deletePriceForJournal/{journal_id}/{price_id}")
-    public ResponseEntity<?> deletePriceForJournal(
-            @PathVariable("journal_id") Integer journal_id,
-            @PathVariable("price_id") Integer price_id) {
-        return service.deletePriceForJournal(journal_id, price_id);
-    }
 }

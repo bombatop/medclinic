@@ -64,30 +64,4 @@ public class PriceService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
         }
     }
-
-    public ResponseEntity<?> addPriceForJournal(Integer id, Treatment t, Date d){
-        try {
-            Price price = priceRepo.findPriceForTreatmentAndDate(t, d);
-            if (price == null) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There is no price for this treatment");
-            }
-            Journal journal = journalRepo.findJournalById(id);
-            journal.getPrices().add(price);
-            journalRepo.save(journal);
-            return ResponseEntity.status(HttpStatus.OK).body(price);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
-        }
-    }
-    
-    public ResponseEntity<?> deletePriceForJournal(Integer journal_id, Integer price_id) {
-        try {
-            Journal journal = journalRepo.findJournalById(journal_id);
-            journal.getPrices().removeIf(price -> price.getId().equals(price_id));
-            journalRepo.save(journal);
-            return ResponseEntity.status(HttpStatus.OK).body(price_id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
-        }
-    }
 }   

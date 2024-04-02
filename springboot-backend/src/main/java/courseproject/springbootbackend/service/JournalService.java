@@ -5,8 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import courseproject.springbootbackend.controller.ResponseDTO_ReportProfitsForDoctors;
-import courseproject.springbootbackend.model.*;
+import courseproject.springbootbackend.controller.TreatmentDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,37 +15,26 @@ import org.springframework.stereotype.Service;
 import courseproject.springbootbackend.repository.DoctorRepository;
 import courseproject.springbootbackend.repository.JournalRepository;
 import courseproject.springbootbackend.repository.PatientRepository;
+import courseproject.springbootbackend.repository.JournalTreatmentRepository;
+import courseproject.springbootbackend.repository.TreatmentRepository;
+
+import courseproject.springbootbackend.model.Doctor;
+import courseproject.springbootbackend.model.Journal;
+import courseproject.springbootbackend.model.JournalTreatment;
+import courseproject.springbootbackend.model.Treatment;
 
 @Service
 public class JournalService {
     @Autowired
     private JournalRepository journalRepo;
-
     @Autowired
     private PatientRepository patientRepo;
-
     @Autowired
     private DoctorRepository doctorRepo;
-    
-    public ResponseEntity<?> reportPricesForDoctors(List<Integer> doctorIds, Date startDate, Date endDate) {
-        try {
-            List<Object[]> data = journalRepo.getReportPricesForDoctors(doctorIds, startDate, endDate);
-
-            List<ResponseDTO_ReportProfitsForDoctors> report = new ArrayList<>();
-            for (Object[] row : data) {
-                Doctor doctor = (Doctor) row[0];
-                Long numberOfJournals = (Long) row[1];
-                Long sumOfPrices = (Long) row[2];
-
-                ResponseDTO_ReportProfitsForDoctors dto = new ResponseDTO_ReportProfitsForDoctors(doctor, numberOfJournals,
-                        sumOfPrices);
-                report.add(dto);
-            }
-            return ResponseEntity.status(HttpStatus.OK).body(report);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
+    @Autowired
+    private TreatmentRepository treatmentRepo;
+    @Autowired
+    private JournalTreatmentRepository journalTreatmentRepo;
 
     public ResponseEntity<?> getJournalsForPatient(Integer patientId) {
         try {
@@ -102,9 +91,6 @@ public class JournalService {
 
     public ResponseEntity<?> updateJournal(Journal journal) {
         try {
-            if (!journal.getPrices().isEmpty() && !journal.getDate().equals(journalRepo.findJournalById(journal.getId()).getDate())) {
-                throw new IllegalArgumentException("Date cannot be changed after price has been established");
-            }
             journal.setDoctor(doctorRepo.findDoctorById(journal.getDoctor().getId()));
             journal.setPatient(patientRepo.findPatientById(journal.getPatient().getId()));
             return ResponseEntity.status(HttpStatus.OK).body(journalRepo.save(journal));
@@ -117,6 +103,35 @@ public class JournalService {
         try {
             journalRepo.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> addTreatmentToJournal(Integer journalId, Integer treatmentId, Integer amount) {
+        try {
+            JournalTreatment journalTreatment = new JournalTreatment();
+            journalTreatment.setJournal(journalRepo.findJournalById(journalId));
+            journalTreatment.setTreatment(treatmentRepo.findTreatmentById(treatmentId));
+            journalTreatment.setAmount(amount);
+            return ResponseEntity.status(HttpStatus.OK).body(journalTreatmentRepo.save(journalTreatment));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> addTreatmentsToJournal(Integer journalId, List<TreatmentDTO> treatments) {
+        try {
+            List<JournalTreatment> journalTreatments = new ArrayList<>();
+            Journal journal = journalRepo.findJournalById(journalId);
+            for (TreatmentDTO treatment : treatments) {
+                JournalTreatment journalTreatment = new JournalTreatment();
+                journalTreatment.setJournal(journal);
+                journalTreatment.setTreatment(treatmentRepo.findTreatmentById(treatment.getTreatmentId()));
+                journalTreatment.setAmount(treatment.getAmount());
+                journalTreatments.add(journalTreatment);
+            } 
+            return ResponseEntity.status(HttpStatus.OK).body(journalTreatmentRepo.saveAll(journalTreatments));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

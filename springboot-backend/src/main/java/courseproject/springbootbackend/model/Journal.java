@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -45,12 +46,12 @@ public class Journal {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date date;
 
-    @ManyToMany(targetEntity = Price.class, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = Treatment.class, fetch = FetchType.EAGER)
     @JoinTable(
-        name = "journal_pricelist",
+        name = "journal_treatment",
         joinColumns = @JoinColumn(name = "journal_id"),
-        inverseJoinColumns = @JoinColumn(name = "treatment_price_id"))
-    private Set <Price> prices;
+        inverseJoinColumns = @JoinColumn(name = "treatment_id"))
+    private Set <JournalTreatment> treatments;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -58,11 +59,4 @@ public class Journal {
         joinColumns = @JoinColumn(name = "journal_id"),
         inverseJoinColumns = @JoinColumn(name = "file_id"))
     private Set<Filepath> files;
-
-    // @ManyToMany(fetch = FetchType.EAGER)
-    // @JoinTable(
-    //     name = "journal_diagnoses",
-    //     joinColumns = @JoinColumn(name = "journal_id"),
-    //     inverseJoinColumns = @JoinColumn(name = "diagnosis_id"))
-    // private Set<Diagnosis> diagnoses;
 }
