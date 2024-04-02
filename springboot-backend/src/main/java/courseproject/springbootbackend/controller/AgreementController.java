@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,33 +16,35 @@ import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.*;
 import courseproject.springbootbackend.service.AgreementService;
+import courseproject.springbootbackend.utility.PathsUtils;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(path = PathsUtils.AGREEMENTS_PATH)
+@RequiredArgsConstructor
 public class AgreementController {
-    @Autowired
-    private AgreementService service;
+    
+    private final AgreementService service;
 
-    @GetMapping("/agreement/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<?> getAgreementById(@PathVariable("id") Integer id) {
         return service.getAgreementById(id);
     }
 
-    @GetMapping("/agreements/{id}")
+    @GetMapping("/patient/{id}")
     public ResponseEntity<?> getAgreementByPatientId(@PathVariable("id") Integer id) {
         return service.getAgreementByPatientId(id);
     }
 
-    @PostMapping("/updateAgreement/{id}")
-    public ResponseEntity<?> updateAgreement(@PathVariable("id") Integer id, @Validated @RequestBody Agreement Agreement,
-            BindingResult bindingResult) {
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateAgreement(@PathVariable("id") Integer id, @Validated @RequestBody Agreement Agreement, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
         return service.saveAgreement(Agreement);
     }
 
-    @PostMapping("/addAgreement")
+    @PostMapping
     public ResponseEntity<?> addAgreement(@Validated @RequestBody Agreement Agreement, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
@@ -49,7 +52,7 @@ public class AgreementController {
         return service.saveAgreement(Agreement);
     }
 
-    @DeleteMapping("/deleteAgreement/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<?> deleteAgreement(@PathVariable("id") Integer id) {
         return service.deleteAgreement(id);
     }

@@ -33,7 +33,7 @@ public class FileService {
     @Autowired
     private ApplicationConfig applicationConfig;
 
-    public ResponseEntity<?> downloadFileByJournalId(Integer journal_id, Integer file_id) {
+    public ResponseEntity<?> downloadFileById(Integer file_id) {
         try {
             String path = fileRepo.findFilepathById(file_id).getPath();
             byte[] fileData = Files.readAllBytes(Paths.get(path));
@@ -86,18 +86,18 @@ public class FileService {
         }
     }
 
-    public ResponseEntity<?> deleteFileForJournal(Integer journal_id, Integer file_id) {
+    public ResponseEntity<?> deleteFileForJournal(Integer id) {
         try {
-            String pathToDelete = fileRepo.findFilepathById(file_id).getPath();
-            Journal journal = journalRepo.findJournalById(journal_id);
-            journal.getFiles().removeIf(file -> file.getId().equals(file_id));
+            String pathToDelete = fileRepo.findFilepathById(id).getPath();
+            Journal journal = journalRepo.findJournalByFileId(id);
+            journal.getFiles().removeIf(file -> file.getId().equals(id));
             journalRepo.save(journal);
 
             File dir = new File(pathToDelete);
             if (dir.exists()) {
                 dir.delete();
             }
-            fileRepo.deleteById(file_id);
+            fileRepo.deleteById(id);
 
             return ResponseEntity.status(HttpStatus.OK).body(journal.getFiles());
         } catch (Exception e) {

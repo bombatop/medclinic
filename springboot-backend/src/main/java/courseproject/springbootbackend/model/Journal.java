@@ -53,7 +53,7 @@ public class Journal {
         inverseJoinColumns = @JoinColumn(name = "treatment_id"))
     private Set <JournalTreatment> treatments;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "journal_files", 
         joinColumns = @JoinColumn(name = "journal_id"),

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,73 +21,64 @@ import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.*;
 import courseproject.springbootbackend.service.JournalService;
+import courseproject.springbootbackend.utility.PathsUtils;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/")
+@RequestMapping(path = PathsUtils.JOURNALS_PATH)
+@RequiredArgsConstructor
 public class JournalController {
-    @Autowired
-    private JournalService service;
     
-    @GetMapping("/journalsByDateRange")
-    public ResponseEntity<?> getJournalsByDateRange(
-            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
-        return service.getJournalsByDateRange(startDate);
+    private final JournalService journalService;
+    
+    @GetMapping("/date")
+    public ResponseEntity<?> getJournalsByDateRange(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
+        return journalService.getJournalsByDateRange(startDate);
     }
 
-    @GetMapping("/journalsForPatient/{patientId}")
-    public ResponseEntity<?> getJournalsForPatient(@PathVariable("patientId") Integer patientId) {
-        return service.getJournalsForPatient(patientId);
-    }
-
-    @GetMapping("/journals")
+    @GetMapping
     public ResponseEntity<?> getJournals() {
-        return service.getAllJournals();
+        return journalService.getAllJournals();
     }
 
-    @GetMapping("/journal/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<?> getJournalById(@PathVariable("id") Integer id) {
-        return service.getJournalById(id);
+        return journalService.getJournalById(id);
     }
 
-    @PostMapping("/updateJournal/{id}")
-    public ResponseEntity<?> updateJournal(
-        @PathVariable("id") Integer id,
-        @Validated @RequestBody Journal journal,
-        BindingResult bindingResult)
-    {
+    @GetMapping("/patient/{id}")
+    public ResponseEntity<?> getJournalsForPatient(@PathVariable("id") Integer id) {
+        return journalService.getJournalsForPatient(id);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateJournal( @PathVariable("id") Integer id, @Validated @RequestBody Journal journal, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
-        return service.updateJournal(journal);
+        return journalService.updateJournal(journal);
     }
 
-    @PostMapping("/addJournal")
+    @PostMapping
     public ResponseEntity<?> addJournal(@Validated @RequestBody Journal journal, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
-        return service.addJournal(journal);
+        return journalService.addJournal(journal);
     }
 
-    @DeleteMapping("/deleteJournal/{id}")
+    @PostMapping("/treatment")
+    public ResponseEntity<?> addTreatmentToJournal(@PathVariable Integer journalId, @RequestParam Integer treatmentId, @RequestParam Integer amount) {
+        return journalService.addTreatmentToJournal(journalId, treatmentId, amount);
+    }
+
+    @PostMapping("/treatments")
+    public ResponseEntity<?> addTreatmentsToJournal(@PathVariable Integer journalId, @RequestBody List<TreatmentDTO> treatments) {
+        return journalService.addTreatmentsToJournal(journalId, treatments);
+    }
+
+    @DeleteMapping("{id}")
     public ResponseEntity<?> deleteJournal(@PathVariable("id") Integer id) {
-        return service.deleteJournal(id);
-    }
-
-    @PostMapping("/addTreatmentToJournal")
-    public ResponseEntity<?> addTreatmentToJournal(
-            @PathVariable Integer journalId,
-            @RequestParam Integer treatmentId,
-            @RequestParam Integer amount)
-    {
-        return service.addTreatmentToJournal(journalId, treatmentId, amount);
-    }
-
-    @PostMapping("/addTreatmentsToJournal")
-    public ResponseEntity<?> addTreatmentsToJournal(
-            @PathVariable Integer journalId,
-            @RequestBody List<TreatmentDTO> treatments)
-    {
-        return service.addTreatmentsToJournal(journalId, treatments);
+        return journalService.deleteJournal(id);
     }
 }

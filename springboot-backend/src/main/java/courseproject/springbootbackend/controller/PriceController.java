@@ -15,28 +15,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.*;
 import courseproject.springbootbackend.service.PriceService;
+import courseproject.springbootbackend.utility.PathsUtils;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(path = PathsUtils.PRICES_PATH)
+@RequiredArgsConstructor
 public class PriceController {
-    @Autowired
-    private PriceService service;
+    
+    private final PriceService service;
 
-    @GetMapping("/prices/{treatment_id}")
+    @GetMapping("{id}")
     public ResponseEntity<?> getPricesByTreatmentId(@PathVariable("treatment_id") Integer treatment_id) {
         return service.getPricesByTreatmentId(treatment_id);
     }
     
-    @DeleteMapping("/deletePrice/{id}")
-    public ResponseEntity<?> deletePrice(@PathVariable("id") Integer id) {
-        return service.deletePrice(id);
-    }
-
-    @PostMapping("/addPriceForTreatment")
+    @PostMapping
     public ResponseEntity<?> addPriceForTreatment(@Validated @RequestBody Price price, BindingResult bindingResult) {
         if (bindingResult.hasErrors() || price == null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
         return service.savePrice(price);
+    }
+    
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deletePrice(@PathVariable("id") Integer id) {
+        return service.deletePrice(id);
     }
 }

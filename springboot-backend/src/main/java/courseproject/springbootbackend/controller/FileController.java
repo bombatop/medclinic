@@ -12,32 +12,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import courseproject.springbootbackend.service.DoctorService;
 import courseproject.springbootbackend.service.FileService;
+import courseproject.springbootbackend.utility.PathsUtils;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/files/")
+@RequestMapping(path = PathsUtils.FILES_PATH)
+@RequiredArgsConstructor
 public class FileController {
-    @Autowired
-    private FileService service;
+    
+    private final FileService service;
 
-    @RequestMapping("/download/{journal_id}/{file_id}")
-    public ResponseEntity<?> downloadFilesByJournalId(
-            @PathVariable("journal_id") Integer journal_id,
-            @PathVariable("file_id") Integer file_id) {
-        return service.downloadFileByJournalId(journal_id, file_id);
+    @RequestMapping("{id}")
+    public ResponseEntity<?> downloadFileById(@PathVariable("id") Integer id) {
+        return service.downloadFileById(id);
     }
     
-    @PostMapping("/upload/{journal_id}")
-    public ResponseEntity<?> uploadFilesByJournalId(
-            @PathVariable ("journal_id") Integer journal_id,
-            @RequestParam("files") List<MultipartFile> multipartFiles) {
-        return service.uploadFilesByJournalId(journal_id, multipartFiles);
+    @PostMapping("{id}")
+    public ResponseEntity<?> uploadFilesByJournalId(@PathVariable ("id") Integer id, @RequestParam("files") List<MultipartFile> files) {
+        return service.uploadFilesByJournalId(id, files);
     }
 
-    @DeleteMapping("/delete/{journal_id}/{file_id}")
-    public ResponseEntity<?> deletePriceForJournal(
-            @PathVariable("journal_id") Integer journal_id,
-            @PathVariable("file_id") Integer file_id) {
-        return service.deleteFileForJournal(journal_id, file_id);
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteFileForJournal(@PathVariable("id") Integer id) {
+        return service.deleteFileForJournal(id);
     }
 }

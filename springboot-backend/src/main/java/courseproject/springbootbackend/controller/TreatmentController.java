@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,14 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.*;
 import courseproject.springbootbackend.service.TreatmentService;
+import courseproject.springbootbackend.utility.PathsUtils;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(path = PathsUtils.TREATMENTS_PATH)
+@RequiredArgsConstructor
 public class TreatmentController {
-    @Autowired
-    private TreatmentService service;
     
-    @GetMapping("/treatments")
+    private final TreatmentService service;
+    
+    @GetMapping
     public ResponseEntity<?> getTreatments(
             @RequestParam(required = false) String searchQuery,
             @RequestParam(required = false) Integer page,
@@ -41,21 +45,20 @@ public class TreatmentController {
         return service.getAllTreatments(pageable);
     }
 
-    @GetMapping("/treatment/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<?> getTreatmentById(@PathVariable("id") Integer id) {
         return service.getTreatmentById(id);
     }
 
-    @PostMapping("/updateTreatment/{id}")
-    public ResponseEntity<?> updateTreatment(@PathVariable("id") Integer id, @Validated @RequestBody Treatment treatment,
-            BindingResult bindingResult) {
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateTreatment(@PathVariable("id") Integer id, @Validated @RequestBody Treatment treatment, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
         return service.saveTreatment(treatment);
     }
 
-    @PostMapping("/addTreatment")
+    @PostMapping
     public ResponseEntity<?> addTreatment(@Validated @RequestBody Treatment treatment, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
@@ -63,7 +66,7 @@ public class TreatmentController {
         return service.saveTreatment(treatment);
     }
 
-    @DeleteMapping("/deleteTreatment/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<?> deleteTreatment(@PathVariable("id") Integer id) {
         return service.deleteTreatment(id);
     }
