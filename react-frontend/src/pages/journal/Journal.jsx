@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import DebouncedSearchSelect from '../../components/DebouncedSearchSelect';
 
 import http from '../../utils/http-common';
-import FileUploader from '../../components/FileUploader';
+import FileUploader from './FileUploader';
 
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
@@ -15,10 +15,6 @@ const Journal = () => {
     const [journal, setJournal] = useState(null);
     // const [treatment, setTreatment] = useState(null);
     // const [treatments, setTreatments] = useState(null);
-    
-    const onFilesUpdated = () => {
-        getJournal(); // Re-fetch journal to update the file list
-    };
 
     const handleInputChange = (value, property) => {
         console.log(value, property);
@@ -95,8 +91,7 @@ const Journal = () => {
             <h2>Journal page</h2>
             {journal && (
                 <>
-                    <div className="row journal-maindata-container">
-
+                    <div className="row g-3 journal-maindata-container">
                         <div className="col-md-3">
                             <DebouncedSearchSelect
                                 defaultValue={{ label: journal.doctor.name, value: journal.doctor }}
@@ -111,13 +106,8 @@ const Journal = () => {
                                 api={'patients'}
                             />
                         </div>
-                        
-                        
                         <div className="col-md-3">
-                            <div className="from-group" 
-                                // controlId="date-picker-div"
-                            >
-                                {/* <Form.Label className="mt-4 mb-2">Date</Form.Label> */}
+                            <div className="from-group">
                                 <DatePicker
                                     selected={journal.date}
                                     onChange={(date) => handleInputChange(date, 'date')}
@@ -130,22 +120,19 @@ const Journal = () => {
                                 />
                             </div>
                         </div>
-
                         <div className="col-md-3">
                             <button type="button" className="btn btn-danger" onClick={deleteJournal}>
                                 Delete Journal
                             </button>
                         </div>
-
                     </div>
 
-                    <FileUploader
-                        className="row journal-file-container mt-4"
-                        journalId={journalId}
-                        files={journal.files}
-                        onFileChange={onFilesUpdated}
-                        onUploadSuccess={onFilesUpdated}
-                    />
+                    <div className="col mt-4 journal-file-container">
+                        <FileUploader
+                            journalId={journalId}
+                            initialFiles={journal.files}
+                        />
+                    </div>
                 </>
             )}
         </div>

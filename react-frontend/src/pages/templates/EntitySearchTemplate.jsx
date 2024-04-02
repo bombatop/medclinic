@@ -73,7 +73,7 @@ const EntitySearchTemplate = ({ entityName, api, pageTitleText }) => {
 
             <div className="col-8">
                 {isLoading ? (
-                    <LoadingOverlay />
+                    <LoadingOverlay size={45}/>
                 ) : (
                     <div>
                         {totalPages > 0 && entities.length > 0 && (

@@ -1,7 +1,6 @@
 package courseproject.springbootbackend.controller;
 
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.*;
 import courseproject.springbootbackend.service.DoctorService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -48,7 +48,7 @@ public class DoctorController {
     }
 
     @PostMapping("/updateDoctor/{id}")
-    public ResponseEntity<?> updateDoctor(@PathVariable("id") Integer id, @Validated @RequestBody Doctor doctor,
+    public ResponseEntity<?> updateDoctor(@PathVariable("id") Integer id, @Valid @RequestBody Doctor doctor,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
@@ -57,10 +57,10 @@ public class DoctorController {
     }
 
     @PostMapping("/addDoctor")
-    public ResponseEntity<?> addDoctor(@Validated @RequestBody Doctor doctor, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
-        }
+    public ResponseEntity<?> addDoctor(@Valid @RequestBody Doctor doctor) {
+        // if (bindingResult.hasErrors()) {
+        //     return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
+        // }
         return service.saveDoctor(doctor);
     }
 

@@ -1,6 +1,5 @@
 package courseproject.springbootbackend.controller;
 
-
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.beans.factory.annotation.Autowired;
