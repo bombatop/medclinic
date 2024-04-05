@@ -53,7 +53,7 @@ const Journal = () => {
 
     const getJournal = async () => {
         try {
-            const response = await http.get(`/journal/${journalId}`);
+            const response = await http.get(`/journals/${journalId}`);
             setJournal({
                 ...response.data,
                 date: new Date(response.data.date),
@@ -69,7 +69,7 @@ const Journal = () => {
             return;
         }
         try {
-            const response = await http.post(`/updateJournal/${journalId}`, { ...journal, date: format(journal.date, 'yyyy-MM-dd HH:mm') });
+            const response = await http.put(`/journals/${journalId}`, { ...journal, date: format(journal.date, `yyyy-MM-dd'T'HH:mm`) });
             console.log('Journal updated:', response.data);
         } catch (error) {
             console.error(error);
@@ -78,7 +78,7 @@ const Journal = () => {
 
     const deleteJournal = async () => {
         try {
-            await http.delete(`/deleteJournal/${journalId}`);
+            await http.delete(`/journals/${journalId}`);
             console.log('Journal deleted');
             navigate('/journals');
         } catch (error) {

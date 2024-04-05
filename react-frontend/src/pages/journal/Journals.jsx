@@ -20,7 +20,7 @@ const Journals = () => {
     useEffect(() => {
         const getJournals = async () => {
             try {
-                const response = await http.get(`/journalsByDateRange?startDate=${format(date, 'yyyy-MM-dd')}`);
+                const response = await http.get(`/journals/date/${format(date, 'yyyy-MM-dd')}`);
                 setJournals(response.data);
             } catch (error) {
                 console.error(error);

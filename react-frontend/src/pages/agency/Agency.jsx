@@ -25,7 +25,7 @@ const Agency = () => {
 
     const getAgency = async () => {
         try {
-            const response = await http.get(`/agency/${agencyId}`);
+            const response = await http.get(`/agencies/${agencyId}`);
             setAgency(response.data);
             console.log('Agency fetch successful:', response.data);
         } catch (error) {
@@ -35,7 +35,7 @@ const Agency = () => {
 
     const updateAgency = async () => {
         try {
-            const response = await http.post(`/updateAgency/${agencyId}`, agency);
+            const response = await http.put(`/agencies/${agencyId}`, agency);
             console.log('Agency updated:', response.data);
         } catch (error) {
             console.error(error);
@@ -44,7 +44,7 @@ const Agency = () => {
 
     const deleteAgency = async () => {
         try {
-            const response = await http.delete(`/deleteAgency/${agencyId}`);
+            const response = await http.delete(`/agencies/${agencyId}`);
             console.log('Agency deleted:', response.data);
             navigate('/agencies');
         } catch (error) {

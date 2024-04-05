@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import http from '../../utils/http-common';
-import CustomPagination from '../../components/CustomPagination';
-import DebouncedInput from '../../components/DebouncedInput';
-import LoadingOverlay from '../../components/LoadingOverlay'
+import http from '../utils/http-common';
+import CustomPagination from '../components/CustomPagination';
+import DebouncedInput from '../components/DebouncedInput';
+import LoadingOverlay from '../components/LoadingOverlay'
 
 const EntitySearchTemplate = ({ entityName, api, pageTitleText }) => {
     const [entities, setEntities] = useState([]);

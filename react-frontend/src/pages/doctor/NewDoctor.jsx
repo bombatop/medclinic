@@ -21,7 +21,7 @@ const NewDoctor = () => {
 
     const addDoctor = async () => {
         try {
-            const response = await http.post(`/addDoctor`, doctor);
+            const response = await http.post(`/doctors`, doctor);
             console.log('Doctor added:', response.data);
             navigate(`/doctor/${response.data.id}`);
         } catch (error) {

@@ -21,7 +21,7 @@ const Treatment = () => {
 
     const getTreatment = async () => {
         try {
-            const { data } = await http.get(`/treatment/${treatmentId}`);
+            const { data } = await http.get(`/treatments/${treatmentId}`);
             setTreatment((prevTreatment) => ({ ...prevTreatment, name: data.name }));
         } catch (error) {
             console.error(error);
@@ -56,7 +56,7 @@ const Treatment = () => {
 
     const addPrice = async () => {
         try {
-            const response = await http.post('/addPriceForTreatment', {
+            const response = await http.post('/prices', {
                 ...newPrice,
                 treatmentId: treatment.id,
                 date: format(newPrice.date, 'yyyy-MM-dd HH:mm'),
@@ -73,7 +73,7 @@ const Treatment = () => {
 
     const deletePrice = async (priceId) => {
         try {
-            await http.delete(`/deletePrice/${priceId}`);
+            await http.delete(`/prices/${priceId}`);
             setTreatment((prev) => ({
                 ...prev,
                 prices: prev.prices.filter((price) => price.id !== priceId),
@@ -85,7 +85,7 @@ const Treatment = () => {
 
     const deleteTreatment = async () => {
         try {
-            await http.delete(`/deleteTreatment/${treatmentId}`);
+            await http.delete(`/treatments/${treatmentId}`);
             navigate('/treatments');
         } catch (error) {
             console.error(error);

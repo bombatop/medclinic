@@ -44,11 +44,11 @@ const Patient = () => {
     };
 
     const getPatient = async () => {
-        await fetchData(`/patient/${patient.id}`, null, setPatient);
+        await fetchData(`/patients/${patient.id}`, null, setPatient);
     };
 
     const getJournals = async () => {
-        await fetchData(`/journalsForPatient/${patient.id}`, null, setJournals);
+        await fetchData(`/journals/patient/${patient.id}`, null, setJournals);
     };
 
     const getAgencies = async () => {
@@ -57,7 +57,7 @@ const Patient = () => {
 
     const updatePatient = async () => {
         try {
-            const response = await http.post(`/updatePatient/${patient.id}`, patient);
+            const response = await http.put(`/patients/${patient.id}`, patient);
             console.log('Patient updated:', response.data);
         } catch (error) {
             console.error(error);
@@ -66,7 +66,7 @@ const Patient = () => {
 
     const deletePatient = async () => {
         try {
-            const response = await http.delete(`/deletePatient/${patient.id}`);
+            const response = await http.delete(`/patients/${patient.id}`);
             console.log('Patient deleted:', response.data);
             navigate('/patients');
         } catch (error) {

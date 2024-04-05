@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +30,8 @@ public class JournalController {
     
     private final JournalService journalService;
     
-    @GetMapping("/date")
-    public ResponseEntity<?> getJournalsByDateRange(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
+    @GetMapping("/date/{date}")
+    public ResponseEntity<?> getJournalsByDateRange(@PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
         return journalService.getJournalsByDateRange(startDate);
     }
 
@@ -52,7 +51,7 @@ public class JournalController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updateJournal( @PathVariable("id") Integer id, @Validated @RequestBody Journal journal, BindingResult bindingResult) {
+    public ResponseEntity<?> updateJournal(@PathVariable("id") Integer id, @Validated @RequestBody Journal journal, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }

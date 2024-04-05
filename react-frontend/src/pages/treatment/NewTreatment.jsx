@@ -18,7 +18,7 @@ const NewTreatment = () => {
 
     const addTreatment = async () => {
         try {
-            const response = await http.post(`/addTreatment`, treatment);
+            const response = await http.post(`/treatments`, treatment);
             console.log('Treatment added:', response.data);
             navigate("/treatment/" + response.data.id);
         } catch (error) {

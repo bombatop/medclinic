@@ -24,7 +24,7 @@ const FileUploader = ({ journalId, initialFiles }) => {
             }
         };
 
-        uploadAxios.post(`/upload/${journalId}`, formData, config)
+        uploadAxios.post(`/files/${journalId}`, formData, config)
             .then(response => {
                 setUploadingFiles(prevFiles =>
                     prevFiles.filter(f => f.name !== fileToUpload.name)
@@ -34,7 +34,7 @@ const FileUploader = ({ journalId, initialFiles }) => {
                     ...response.data.filter((newFile) =>
                         !prevFiles.some((existingFile) => existingFile.id === newFile.id)
                     )
-                ]); // this abomination exists because async upload call for multiple files leads to override in wrong order 
+                ]); // this abomination exists because async upload calls for multiple files leads to override in wrong order 
             })
             .catch(error => {
                 console.error(error.status);
@@ -82,7 +82,7 @@ const FileUploader = ({ journalId, initialFiles }) => {
     //delete and download
     const deleteFile = async (fileId) => {
         try {
-            const response = await http.delete(`/files/delete/${journalId}/${fileId}`);
+            const response = await http.delete(`/files/${fileId}`);
             if (response.status === 200 || response.status === 204) { 
                 setFiles(currentFiles => currentFiles.filter(file => file.id !== fileId));
             }
@@ -90,11 +90,10 @@ const FileUploader = ({ journalId, initialFiles }) => {
             console.error(error);
         }
     };
+
     const downloadFile = async (file) => {
         try {
-            const response = await downloadAxios.get(`/download/${journalId}/${file.id}`, {
-                responseType: 'arraybuffer',
-            });
+            const response = await downloadAxios.get(`/files/${file.id}`, { responseType: 'arraybuffer' });
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;

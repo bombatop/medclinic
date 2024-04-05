@@ -18,7 +18,7 @@ import NewPatient from './pages/patient/NewPatient';
 import NewTreatment from './pages/treatment/NewTreatment';
 
 import ProfitsReport from './pages/ProfitsReport';
-import ErrorPage from './pages/templates/ErrorPage';
+import ErrorPage from './templates/ErrorPage';
 
 import Agencies from './pages/agency/Agencies';
 import Doctors from './pages/doctor/Doctors';

@@ -19,7 +19,7 @@ const NewPatient = () => {
 
     const addPatient = async () => {
         try {
-            const response = await http.post(`/addPatient`, patient);
+            const response = await http.post(`/patients`, patient);
             console.log('Patient added:', response.data);
             navigate('/patient/' + response.data.id);
         } catch (error) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import EntitySearchTemplate from '../templates/EntitySearchTemplate';
+import EntitySearchTemplate from '../../templates/EntitySearchTemplate';
 
 const Patients = () => {
     return (

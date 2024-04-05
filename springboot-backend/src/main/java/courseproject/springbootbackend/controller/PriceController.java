@@ -1,6 +1,5 @@
 package courseproject.springbootbackend.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -26,8 +25,8 @@ public class PriceController {
     private final PriceService service;
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getPricesByTreatmentId(@PathVariable("treatment_id") Integer treatment_id) {
-        return service.getPricesByTreatmentId(treatment_id);
+    public ResponseEntity<?> getPricesByTreatmentId(@PathVariable("id") Integer id) {
+        return service.getPricesByTreatmentId(id);
     }
     
     @PostMapping

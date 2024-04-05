@@ -17,7 +17,7 @@ const NewAgency = () => {
 
     const addAgency = async () => {
         try {
-            const response = await http.post('/addAgency', agency);
+            const response = await http.post('/agencies', agency);
             console.log('Agency added:', response.data);
             navigate('/agency/' + response.data.id);
         } catch (error) {

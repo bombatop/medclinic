@@ -26,8 +26,8 @@ const NewJournal = () => {
                 ...journal,
                 date: format(journal.date, `yyyy-MM-dd'T'HH:mm`, { locale: ru }),
             };
-            const response = await http.post('/addJournal', formattedJournal);
-            navigate(`/journal/${response.data.id}`);
+            const response = await http.post('/journals', formattedJournal);
+            navigate(`/journals/${response.data.id}`);
         } catch (error) {
             if (error.response?.data) {
                 const errorObjects = error.response.data.map((error) => error.defaultMessage);

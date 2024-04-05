@@ -22,7 +22,7 @@ const Doctor = () => {
 
     const getDoctor = async () => {
         try {
-            const response = await http.get(`/doctor/${doctorId}`);
+            const response = await http.get(`/doctors/${doctorId}`);
             setDoctor(response.data);
             console.log("Doctor fetch successful:", response.data);
         } catch (error) {
@@ -36,7 +36,7 @@ const Doctor = () => {
 
     const updateDoctor = async () => {
         try {
-            const response = await http.post(`/updateDoctor/${doctorId}`, doctor);
+            const response = await http.put(`/doctors/${doctorId}`, doctor);
             console.log("Doctor updated:", response.data);
         } catch (error) {
             console.error(error);
@@ -49,7 +49,7 @@ const Doctor = () => {
 
     const deleteDoctor = async () => {
         try {
-            const response = await http.delete(`/deleteDoctor/${doctorId}`);
+            const response = await http.delete(`/doctors/${doctorId}`);
             console.log("Doctor deleted:", response.data);
             navigate('/doctors');
         } catch (error) {
