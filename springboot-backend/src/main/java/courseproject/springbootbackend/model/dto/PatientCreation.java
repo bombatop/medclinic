@@ -1,6 +1,5 @@
 package courseproject.springbootbackend.model.dto;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
@@ -12,6 +11,6 @@ public record PatientCreation(
     String name,
 
     @NotBlank(message = "Phone number is required")
-    @Column(name = "phone_number")
-    String phonenumber) {
+    String phonenumber
+) {
 }
