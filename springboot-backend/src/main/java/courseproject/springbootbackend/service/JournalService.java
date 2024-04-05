@@ -6,6 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 import courseproject.springbootbackend.controller.TreatmentDTO;
+import courseproject.springbootbackend.model.entity.Doctor;
+import courseproject.springbootbackend.model.entity.Journal;
+import courseproject.springbootbackend.model.entity.JournalTreatment;
+import courseproject.springbootbackend.model.entity.Treatment;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,11 +21,6 @@ import courseproject.springbootbackend.repository.JournalRepository;
 import courseproject.springbootbackend.repository.PatientRepository;
 import courseproject.springbootbackend.repository.JournalTreatmentRepository;
 import courseproject.springbootbackend.repository.TreatmentRepository;
-
-import courseproject.springbootbackend.model.Doctor;
-import courseproject.springbootbackend.model.Journal;
-import courseproject.springbootbackend.model.JournalTreatment;
-import courseproject.springbootbackend.model.Treatment;
 
 @Service
 public class JournalService {

@@ -3,6 +3,9 @@ package courseproject.springbootbackend.service;
 import java.util.Date;
 
 import courseproject.springbootbackend.model.*;
+import courseproject.springbootbackend.model.entity.Price;
+import courseproject.springbootbackend.model.entity.Treatment;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

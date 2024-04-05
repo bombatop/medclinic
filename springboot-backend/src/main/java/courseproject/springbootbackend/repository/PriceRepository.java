@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.Price;
-import courseproject.springbootbackend.model.Treatment;
+import courseproject.springbootbackend.model.entity.Price;
+import courseproject.springbootbackend.model.entity.Treatment;
 
 @Repository
 public interface PriceRepository extends JpaRepository<Price, Integer> {

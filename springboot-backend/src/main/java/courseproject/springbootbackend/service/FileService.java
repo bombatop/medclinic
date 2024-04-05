@@ -1,8 +1,8 @@
 package courseproject.springbootbackend.service;
 
 import courseproject.springbootbackend.configuration.ApplicationConfig;
-import courseproject.springbootbackend.model.Filepath;
-import courseproject.springbootbackend.model.Journal;
+import courseproject.springbootbackend.model.entity.Filepath;
+import courseproject.springbootbackend.model.entity.Journal;
 
 import java.io.File;
 import java.nio.file.Files;

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.JournalTreatment;
+import courseproject.springbootbackend.model.entity.JournalTreatment;
 
 public interface JournalTreatmentRepository extends JpaRepository<JournalTreatment, Integer> {
     List<JournalTreatment> findByJournalId(Integer journalId);

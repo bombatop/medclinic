@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.Agency;
+import courseproject.springbootbackend.model.entity.Agency;
 
 @Repository
 public interface AgencyRepository extends JpaRepository<Agency, Integer> {

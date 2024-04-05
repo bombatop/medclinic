@@ -1,4 +1,4 @@
-package courseproject.springbootbackend.model;
+package courseproject.springbootbackend.model.entity;
 
 import java.util.Date;
 
@@ -12,18 +12,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
-import lombok.Getter;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "agreement")
-@Getter
-@Setter
-@NoArgsConstructor
+@Builder
 public class Agreement {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

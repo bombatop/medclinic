@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.Agreement;
+import courseproject.springbootbackend.model.entity.Agreement;
 
 @Repository
 public interface AgreementRepository extends JpaRepository<Agreement, Integer> {
