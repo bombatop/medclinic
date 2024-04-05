@@ -2,7 +2,6 @@ package courseproject.springbootbackend.service;
 
 import java.util.Date;
 
-import courseproject.springbootbackend.model.*;
 import courseproject.springbootbackend.model.entity.PriceEntity;
 import courseproject.springbootbackend.model.entity.TreatmentEntity;
 

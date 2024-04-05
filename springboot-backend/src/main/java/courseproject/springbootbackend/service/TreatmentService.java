@@ -1,6 +1,5 @@
 package courseproject.springbootbackend.service;
 
-import courseproject.springbootbackend.model.*;
 import courseproject.springbootbackend.model.entity.TreatmentEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;

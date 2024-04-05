@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 import courseproject.springbootbackend.model.dto.JournalTreatmentCreation;
-import courseproject.springbootbackend.model.entity.DoctorEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.model.entity.JournalTreatmentEntity;
 import courseproject.springbootbackend.model.entity.TreatmentEntity;
