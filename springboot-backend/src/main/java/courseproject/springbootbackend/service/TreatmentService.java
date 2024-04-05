@@ -16,14 +16,14 @@ public class TreatmentService {
     
     public ResponseEntity<?> getAllTreatments() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(treatmentRepo.findTreatments());
+            return ResponseEntity.status(HttpStatus.OK).body(treatmentRepo.findAll());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
         }
     }
     public ResponseEntity<?> getAllTreatments(Pageable pageable) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(treatmentRepo.findTreatments(pageable));
+            return ResponseEntity.status(HttpStatus.OK).body(treatmentRepo.findAll(pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
         }
@@ -31,7 +31,7 @@ public class TreatmentService {
     public ResponseEntity<?> getTreatments(String searchQuery, Pageable pageable) {
         try {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(treatmentRepo.findTreatments("%" + searchQuery + "%", pageable));
+                    .body(treatmentRepo.findByNameContaining(searchQuery, pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
         }

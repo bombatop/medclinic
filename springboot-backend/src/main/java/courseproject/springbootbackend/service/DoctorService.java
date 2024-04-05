@@ -16,7 +16,7 @@ public class DoctorService {
     
     public ResponseEntity<?> getAllDoctors() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findDoctors());
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findAll());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -24,7 +24,7 @@ public class DoctorService {
     
     public ResponseEntity<?> getAllDoctors(Pageable pageable) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findDoctors(pageable));
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findAll(pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -32,7 +32,7 @@ public class DoctorService {
     public ResponseEntity<?> getDoctors(String searchQuery, Pageable pageable) {
         try {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(repo.findDoctors("%" + searchQuery + "%", pageable));
+                    .body(repo.findByNameContaining(searchQuery, pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

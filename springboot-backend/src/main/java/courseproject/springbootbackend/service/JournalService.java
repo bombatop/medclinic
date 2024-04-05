@@ -39,7 +39,7 @@ public class JournalService {
 
     public ResponseEntity<?> getJournalsForPatient(Integer patientId) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findByPatient(patientId));
+            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findByPatientId(patientId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -57,7 +57,7 @@ public class JournalService {
             calendar.add(Calendar.MINUTE, 59);
             Date endDate = calendar.getTime();
 
-            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findByDateRange(startDate, endDate));
+            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findByDateBetweenOrderByDateAsc(startDate, endDate));
         } 
         catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

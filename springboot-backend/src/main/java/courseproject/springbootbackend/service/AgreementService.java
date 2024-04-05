@@ -15,7 +15,7 @@ public class AgreementService {
 
     public ResponseEntity<?> getAllAgreements() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findAgreements());
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findAll());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -23,7 +23,7 @@ public class AgreementService {
 
     public ResponseEntity<?> getAgreementById(Integer id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findAgreementsByPatientId(id));
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findAgreementByPatientId(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import courseproject.springbootbackend.model.*;
 import courseproject.springbootbackend.model.entity.AgreementEntity;
 import courseproject.springbootbackend.service.AgreementService;
 import courseproject.springbootbackend.utility.PathsUtils;

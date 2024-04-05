@@ -7,5 +7,6 @@ import courseproject.springbootbackend.model.entity.FilepathEntity;
 
 @Repository
 public interface FilepathRepository extends JpaRepository<FilepathEntity, Integer> {
+    
     FilepathEntity findFilepathById(Integer id);
 }

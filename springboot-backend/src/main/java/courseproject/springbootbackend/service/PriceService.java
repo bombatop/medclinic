@@ -27,12 +27,12 @@ public class PriceService {
     private AgencyRepository agencyRepo;
 
     public PriceEntity getPriceForTreatmentAndDate(TreatmentEntity t, Date d) {
-        return priceRepo.findPriceForTreatmentAndDate(t, d);
+        return priceRepo.findPriceByTreatmentAndDate(t, d);
     }
 
     public ResponseEntity<?> getPricesByTreatmentId(Integer id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(priceRepo.findPricesByTreatmentId(id));
+            return ResponseEntity.status(HttpStatus.OK).body(priceRepo.findByTreatmentIdOrderByDateDesc(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
         }

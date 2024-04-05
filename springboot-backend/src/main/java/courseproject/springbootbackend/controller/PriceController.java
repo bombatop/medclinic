@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import courseproject.springbootbackend.model.*;
 import courseproject.springbootbackend.model.entity.PriceEntity;
 import courseproject.springbootbackend.service.PriceService;
 import courseproject.springbootbackend.utility.PathsUtils;

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import courseproject.springbootbackend.model.*;
 import courseproject.springbootbackend.model.entity.TreatmentEntity;
 import courseproject.springbootbackend.service.TreatmentService;
 import courseproject.springbootbackend.utility.PathsUtils;

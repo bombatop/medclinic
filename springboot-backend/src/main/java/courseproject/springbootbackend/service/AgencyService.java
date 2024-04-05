@@ -16,7 +16,7 @@ public class AgencyService {
 
     public ResponseEntity<?> getAllAgencies() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findAgencies());
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findAll());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -24,7 +24,7 @@ public class AgencyService {
 
     public ResponseEntity<?> getAllAgencies(Pageable pageable) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findAgencies(pageable));
+            return ResponseEntity.status(HttpStatus.OK).body(repo.findAll(pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -33,7 +33,7 @@ public class AgencyService {
     public ResponseEntity<?> getAgencies(String searchQuery, Pageable pageable) {
         try {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(repo.findAgencies("%" + searchQuery + "%", pageable));
+                    .body(repo.findByNameContaining(searchQuery, pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

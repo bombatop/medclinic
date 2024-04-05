@@ -60,7 +60,7 @@ public class FileService {
                 journalFolder.mkdirs();
             }
 
-            JournalEntity journal = journalRepo.findByFile(journalId);
+            JournalEntity journal = journalRepo.findByFilesId(journalId);
             Set<FilepathEntity> updatedJournal = journal.getFiles();
 
             for (MultipartFile uploadedFile : multipartFiles) {
@@ -89,7 +89,7 @@ public class FileService {
     public ResponseEntity<?> deleteFileForJournal(Integer id) {
         try {
             String pathToDelete = fileRepo.findFilepathById(id).getPath();
-            JournalEntity journal = journalRepo.findByFile(id);
+            JournalEntity journal = journalRepo.findByFilesId(id);
             journal.getFiles().removeIf(file -> file.getId().equals(id));
             journalRepo.save(journal);
 
