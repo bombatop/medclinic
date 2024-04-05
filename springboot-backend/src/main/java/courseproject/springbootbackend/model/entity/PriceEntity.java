@@ -9,8 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
@@ -23,20 +23,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "agreement")
+@Table(name = "price")
 @Builder
-public class Agreement {
+public class PriceEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER)
-    @JoinTable(name = "patient_agency_agreement",
-        joinColumns = @JoinColumn(name = "agency_id"),
-        inverseJoinColumns = @JoinColumn(name = "patient_id"))
-    private Patient patient;
+    @NotNull(message = "Price is required")
+    @Min(value = 0, message = "Price must be a positive number")
+    private Integer price;
 
     @NotNull(message = "Date is required")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date date;
+
+    @NotNull(message = "Treatment is required")
+    @ManyToOne(targetEntity = TreatmentEntity.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "treatment_id", referencedColumnName = "id")
+    private TreatmentEntity treatment;
+
+    @NotNull(message = "Agency is required")
+    @ManyToOne(targetEntity = AgencyEntity.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "agency_id", referencedColumnName = "id")
+    private AgencyEntity agency;
 }

@@ -1,8 +1,8 @@
 package courseproject.springbootbackend.service;
 
 import courseproject.springbootbackend.configuration.ApplicationConfig;
-import courseproject.springbootbackend.model.entity.Filepath;
-import courseproject.springbootbackend.model.entity.Journal;
+import courseproject.springbootbackend.model.entity.FilepathEntity;
+import courseproject.springbootbackend.model.entity.JournalEntity;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -60,8 +60,8 @@ public class FileService {
                 journalFolder.mkdirs();
             }
 
-            Journal journal = journalRepo.findJournalById(journalId);
-            Set<Filepath> updatedJournal = journal.getFiles();
+            JournalEntity journal = journalRepo.findByFile(journalId);
+            Set<FilepathEntity> updatedJournal = journal.getFiles();
 
             for (MultipartFile uploadedFile : multipartFiles) {
                 String originalFilename = uploadedFile.getOriginalFilename();
@@ -70,7 +70,7 @@ public class FileService {
                 Path path = Paths.get(storageFolderPath, uniqueFilename);
                 uploadedFile.transferTo(path.toFile());
 
-                Filepath newFile = new Filepath();
+                FilepathEntity newFile = new FilepathEntity();
                 newFile.setPath(storageFolderPath + uniqueFilename);
                 newFile.setName(originalFilename);
                 newFile = fileRepo.save(newFile);
@@ -89,7 +89,7 @@ public class FileService {
     public ResponseEntity<?> deleteFileForJournal(Integer id) {
         try {
             String pathToDelete = fileRepo.findFilepathById(id).getPath();
-            Journal journal = journalRepo.findJournalByFileId(id);
+            JournalEntity journal = journalRepo.findByFile(id);
             journal.getFiles().removeIf(file -> file.getId().equals(id));
             journalRepo.save(journal);
 

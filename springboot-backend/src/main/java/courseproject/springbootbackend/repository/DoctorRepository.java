@@ -9,18 +9,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.entity.Doctor;
+import courseproject.springbootbackend.model.entity.DoctorEntity;
 
 @Repository
-public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
-    Doctor findDoctorById(Integer id);
+public interface DoctorRepository extends JpaRepository<DoctorEntity, Integer> {
+    DoctorEntity findDoctorById(Integer id);
 
     @Query("SELECT d FROM Doctor d")
-    List<Doctor> findDoctors();
+    List<DoctorEntity> findDoctors();
     
     @Query("SELECT d FROM Doctor d")
-    Page<Doctor> findDoctors(Pageable pageable);
+    Page<DoctorEntity> findDoctors(Pageable pageable);
 
     @Query("SELECT d FROM Doctor d WHERE d.name LIKE :searchQuery")
-    Page<Doctor> findDoctors(@Param("searchQuery") String searchQuery, Pageable pageable);
+    Page<DoctorEntity> findDoctors(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.*;
-import courseproject.springbootbackend.model.entity.Treatment;
+import courseproject.springbootbackend.model.entity.TreatmentEntity;
 import courseproject.springbootbackend.service.TreatmentService;
 import courseproject.springbootbackend.utility.PathsUtils;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +51,7 @@ public class TreatmentController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updateTreatment(@PathVariable("id") Integer id, @Validated @RequestBody Treatment treatment, BindingResult bindingResult) {
+    public ResponseEntity<?> updateTreatment(@PathVariable("id") Integer id, @Validated @RequestBody TreatmentEntity treatment, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
@@ -59,7 +59,7 @@ public class TreatmentController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addTreatment(@Validated @RequestBody Treatment treatment, BindingResult bindingResult) {
+    public ResponseEntity<?> addTreatment(@Validated @RequestBody TreatmentEntity treatment, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }

@@ -7,8 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,19 +17,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "doctor")
+@Table(name = "agency")
 @Builder
-public class Doctor {
+public class AgencyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotBlank(message = "Name is required")
+    @NotBlank(message = "Appropriate name is required")
     @Column(name = "name")
-    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Name should contain only letters")
     private String name;
 
-    @NotBlank(message = "Phone number is required")
-    @Column(name = "phone_number")
-    private String phoneNumber;
+    @Column(nullable = false)
+    private Boolean loadedByDefault = false;
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.*;
-import courseproject.springbootbackend.model.entity.Patient;
+import courseproject.springbootbackend.model.entity.PatientEntity;
 import courseproject.springbootbackend.service.PatientService;
 import courseproject.springbootbackend.utility.PathsUtils;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class PatientController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updatePatient(@PathVariable("id") Integer id, @Validated @RequestBody Patient patient, BindingResult bindingResult) {
+    public ResponseEntity<?> updatePatient(@PathVariable("id") Integer id, @Validated @RequestBody PatientEntity patient, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
@@ -60,7 +60,7 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addPatient(@Validated @RequestBody Patient patient, BindingResult bindingResult) {
+    public ResponseEntity<?> addPatient(@Validated @RequestBody PatientEntity patient, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }

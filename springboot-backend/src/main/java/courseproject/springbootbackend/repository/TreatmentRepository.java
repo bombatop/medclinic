@@ -9,18 +9,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.entity.Treatment;
+import courseproject.springbootbackend.model.entity.TreatmentEntity;
 
 @Repository
-public interface TreatmentRepository extends JpaRepository<Treatment, Integer> {
-    Treatment findTreatmentById(Integer id);
+public interface TreatmentRepository extends JpaRepository<TreatmentEntity, Integer> {
+    TreatmentEntity findTreatmentById(Integer id);
 
     @Query("SELECT t FROM Treatment t")
-    List<Treatment> findTreatments();
+    List<TreatmentEntity> findTreatments();
 
     @Query("SELECT t FROM Treatment t")
-    Page<Treatment> findTreatments(Pageable pageable);
+    Page<TreatmentEntity> findTreatments(Pageable pageable);
 
     @Query("SELECT t FROM Treatment t WHERE t.name LIKE :searchQuery")
-    Page<Treatment> findTreatments(@Param("searchQuery") String searchQuery, Pageable pageable);
+    Page<TreatmentEntity> findTreatments(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

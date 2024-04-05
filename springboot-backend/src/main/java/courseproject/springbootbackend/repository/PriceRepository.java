@@ -8,17 +8,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.entity.Price;
-import courseproject.springbootbackend.model.entity.Treatment;
+import courseproject.springbootbackend.model.entity.PriceEntity;
+import courseproject.springbootbackend.model.entity.TreatmentEntity;
 
 @Repository
-public interface PriceRepository extends JpaRepository<Price, Integer> {
-    Price findPriceById(Integer id);
+public interface PriceRepository extends JpaRepository<PriceEntity, Integer> {
+    PriceEntity findPriceById(Integer id);
     
     @Query("SELECT p FROM Price p JOIN p.agency a JOIN p.treatment t WHERE t.id = :id ORDER BY p.date DESC")
-    List<Price> findPricesByTreatmentId(@Param("id") Integer id);
+    List<PriceEntity> findPricesByTreatmentId(@Param("id") Integer id);
     
     @Query("SELECT p FROM Price p WHERE p.treatment = :treatment AND p.date < :date AND p.date = " +
         "(SELECT MAX(p2.date) FROM Price p2 WHERE p2.treatment = :treatment AND p2.date <= :date)")
-    Price findPriceForTreatmentAndDate(@Param("treatment") Treatment treatment, @Param("date") Date date);
+    PriceEntity findPriceForTreatmentAndDate(@Param("treatment") TreatmentEntity treatment, @Param("date") Date date);
 } 

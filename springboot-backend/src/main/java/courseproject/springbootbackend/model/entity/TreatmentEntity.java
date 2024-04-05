@@ -1,6 +1,5 @@
 package courseproject.springbootbackend.model.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,15 +15,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "diagnosis")
+@Table(name = "treatment")
 @Builder
-public class Diagnosis {
+public class TreatmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    // @NotBlank(message = "Appropriate name is required")
-    @Column(name = "name")
-    // @Pattern(regexp = "^[a-zA-Z]+$", message = "First name should contain only letters")
     private String name;
 }

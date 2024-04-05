@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.*;
-import courseproject.springbootbackend.model.entity.Agreement;
+import courseproject.springbootbackend.model.entity.AgreementEntity;
 import courseproject.springbootbackend.service.AgreementService;
 import courseproject.springbootbackend.utility.PathsUtils;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class AgreementController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updateAgreement(@PathVariable("id") Integer id, @Validated @RequestBody Agreement Agreement, BindingResult bindingResult) {
+    public ResponseEntity<?> updateAgreement(@PathVariable("id") Integer id, @Validated @RequestBody AgreementEntity Agreement, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }
@@ -45,7 +45,7 @@ public class AgreementController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addAgreement(@Validated @RequestBody Agreement Agreement, BindingResult bindingResult) {
+    public ResponseEntity<?> addAgreement(@Validated @RequestBody AgreementEntity Agreement, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }

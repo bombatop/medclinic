@@ -6,25 +6,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "filepath")
-@Getter
-@Setter
-@NoArgsConstructor
-public class Filepath {
+@Table(name = "diagnosis")
+@Builder
+public class DiagnosisEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @JsonIgnore
-    @Column(name = "path")
-    private String path;
-
+    // @NotBlank(message = "Appropriate name is required")
     @Column(name = "name")
+    // @Pattern(regexp = "^[a-zA-Z]+$", message = "First name should contain only letters")
     private String name;
 }

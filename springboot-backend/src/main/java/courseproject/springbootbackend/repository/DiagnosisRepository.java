@@ -9,18 +9,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.entity.Diagnosis;
+import courseproject.springbootbackend.model.entity.DiagnosisEntity;
 
 @Repository
-public interface DiagnosisRepository extends JpaRepository<Diagnosis, Integer> {
-    Diagnosis findDiagnosisById(Integer id);
+public interface DiagnosisRepository extends JpaRepository<DiagnosisEntity, Integer> {
+    DiagnosisEntity findDiagnosisById(Integer id);
 
     @Query("SELECT d FROM Diagnosis d")
-    List<Diagnosis> findDiagnoses();
+    List<DiagnosisEntity> findDiagnoses();
 
     @Query("SELECT d FROM Diagnosis d")
-    Page<Diagnosis> findDiagnoses(Pageable pageable);
+    Page<DiagnosisEntity> findDiagnoses(Pageable pageable);
 
     @Query("SELECT d FROM Diagnosis d WHERE d.name LIKE :searchQuery")
-    Page<Diagnosis> findDiagnoses(@Param("searchQuery") String searchQuery, Pageable pageable);
+    Page<DiagnosisEntity> findDiagnoses(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

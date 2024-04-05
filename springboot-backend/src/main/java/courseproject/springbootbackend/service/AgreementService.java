@@ -1,7 +1,7 @@
 package courseproject.springbootbackend.service;
 
 import courseproject.springbootbackend.model.*;
-import courseproject.springbootbackend.model.entity.Agreement;
+import courseproject.springbootbackend.model.entity.AgreementEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class AgreementService {
         }
     }
 
-    public ResponseEntity<?> saveAgreement(Agreement doctor) {
+    public ResponseEntity<?> saveAgreement(AgreementEntity doctor) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(repo.save(doctor));
         } catch (Exception e) {

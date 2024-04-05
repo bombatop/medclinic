@@ -3,8 +3,8 @@ package courseproject.springbootbackend.service;
 import java.util.Date;
 
 import courseproject.springbootbackend.model.*;
-import courseproject.springbootbackend.model.entity.Price;
-import courseproject.springbootbackend.model.entity.Treatment;
+import courseproject.springbootbackend.model.entity.PriceEntity;
+import courseproject.springbootbackend.model.entity.TreatmentEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class PriceService {
     @Autowired
     private AgencyRepository agencyRepo;
 
-    public Price getPriceForTreatmentAndDate(Treatment t, Date d) {
+    public PriceEntity getPriceForTreatmentAndDate(TreatmentEntity t, Date d) {
         return priceRepo.findPriceForTreatmentAndDate(t, d);
     }
 
@@ -39,7 +39,7 @@ public class PriceService {
         }
     }
 
-    public ResponseEntity<?> savePrice(Price price) {
+    public ResponseEntity<?> savePrice(PriceEntity price) {
         try {
             // price.setTreatment(treatmentRepo.findTreatmentById(price.getTreatment().getId()));
             // price.setAgency(agencyRepo.findAgencyById(price.getAgency().getId()));
@@ -58,7 +58,7 @@ public class PriceService {
         }
     }
 
-    public ResponseEntity<?> addPriceForTreatment(Price price) {
+    public ResponseEntity<?> addPriceForTreatment(PriceEntity price) {
         try {
             price.setTreatment(treatmentRepo.findTreatmentById(price.getTreatment().getId()));
             price.setAgency(agencyRepo.findAgencyById(price.getAgency().getId()));

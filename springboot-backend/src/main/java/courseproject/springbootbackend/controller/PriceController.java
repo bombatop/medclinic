@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.*;
-import courseproject.springbootbackend.model.entity.Price;
+import courseproject.springbootbackend.model.entity.PriceEntity;
 import courseproject.springbootbackend.service.PriceService;
 import courseproject.springbootbackend.utility.PathsUtils;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class PriceController {
     }
     
     @PostMapping
-    public ResponseEntity<?> addPriceForTreatment(@Validated @RequestBody Price price, BindingResult bindingResult) {
+    public ResponseEntity<?> addPriceForTreatment(@Validated @RequestBody PriceEntity price, BindingResult bindingResult) {
         if (bindingResult.hasErrors() || price == null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }

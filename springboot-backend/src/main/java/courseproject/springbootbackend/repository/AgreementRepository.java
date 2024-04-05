@@ -7,16 +7,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.entity.Agreement;
+import courseproject.springbootbackend.model.entity.AgreementEntity;
 
 @Repository
-public interface AgreementRepository extends JpaRepository<Agreement, Integer> {
+public interface AgreementRepository extends JpaRepository<AgreementEntity, Integer> {
     @Query("SELECT a FROM Agreement a WHERE a.id = :id")
-    Agreement findAgreementById(@Param("id") Integer id);
+    AgreementEntity findAgreementById(@Param("id") Integer id);
 
     @Query("SELECT a FROM Agreement a")
-    List<Agreement> findAgreements();
+    List<AgreementEntity> findAgreements();
 
     @Query("SELECT a FROM Agreement a JOIN Patient p WHERE p.id = :patientId")
-    Agreement findAgreementsByPatientId(@Param("patientId") Integer id);
+    AgreementEntity findAgreementsByPatientId(@Param("patientId") Integer id);
 }

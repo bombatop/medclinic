@@ -1,7 +1,7 @@
 package courseproject.springbootbackend.service;
 
 import courseproject.springbootbackend.model.*;
-import courseproject.springbootbackend.model.entity.Treatment;
+import courseproject.springbootbackend.model.entity.TreatmentEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +46,7 @@ public class TreatmentService {
         }
     }
 
-    public ResponseEntity<?> saveTreatment(Treatment treatment) {
+    public ResponseEntity<?> saveTreatment(TreatmentEntity treatment) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(treatmentRepo.save(treatment));
         } catch (Exception e) {

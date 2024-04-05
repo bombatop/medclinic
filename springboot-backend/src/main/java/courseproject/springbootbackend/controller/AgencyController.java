@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.*;
-import courseproject.springbootbackend.model.entity.Agency;
+import courseproject.springbootbackend.model.entity.AgencyEntity;
 import courseproject.springbootbackend.service.AgencyService;
 import courseproject.springbootbackend.utility.PathsUtils;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +51,7 @@ public class AgencyController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updateAgency(@PathVariable("id") Integer id, @Validated @RequestBody Agency agency,
+    public ResponseEntity<?> updateAgency(@PathVariable("id") Integer id, @Validated @RequestBody AgencyEntity agency,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
@@ -60,7 +60,7 @@ public class AgencyController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addAgency(@Validated @RequestBody Agency agency, BindingResult bindingResult) {
+    public ResponseEntity<?> addAgency(@Validated @RequestBody AgencyEntity agency, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
         }

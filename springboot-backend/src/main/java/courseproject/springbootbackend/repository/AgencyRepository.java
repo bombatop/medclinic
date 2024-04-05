@@ -9,18 +9,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.entity.Agency;
+import courseproject.springbootbackend.model.entity.AgencyEntity;
 
 @Repository
-public interface AgencyRepository extends JpaRepository<Agency, Integer> {
-    Agency findAgencyById(Integer id);
+public interface AgencyRepository extends JpaRepository<AgencyEntity, Integer> {
+    AgencyEntity findAgencyById(Integer id);
 
     @Query("SELECT d FROM Agency d")
-    List<Agency> findAgencies();
+    List<AgencyEntity> findAgencies();
 
     @Query("SELECT d FROM Agency d")
-    Page<Agency> findAgencies(Pageable pageable);
+    Page<AgencyEntity> findAgencies(Pageable pageable);
 
     @Query("SELECT d FROM Agency d WHERE d.name LIKE :searchQuery")
-    Page<Agency> findAgencies(@Param("searchQuery") String searchQuery, Pageable pageable);
+    Page<AgencyEntity> findAgencies(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

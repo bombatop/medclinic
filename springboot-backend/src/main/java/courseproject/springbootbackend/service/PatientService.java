@@ -1,7 +1,7 @@
 package courseproject.springbootbackend.service;
 
 import courseproject.springbootbackend.model.*;
-import courseproject.springbootbackend.model.entity.Patient;
+import courseproject.springbootbackend.model.entity.PatientEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +46,7 @@ public class PatientService {
         }
     }
 
-    public ResponseEntity<?> savePatient(Patient patient) {
+    public ResponseEntity<?> savePatient(PatientEntity patient) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(repo.save(patient));
         } catch (Exception e) {
