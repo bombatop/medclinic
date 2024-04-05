@@ -10,7 +10,7 @@ public record JournalTreatmentCreation(
         Integer treatmentId,
 
         @NotNull(message = "Amount of treatments must be specified")
-        @Min(value = 1, message = "Value must be a valid number")
+        @Min(value = 1, message = "Value must be a positive not null number")
         Integer amount
 ) {
 }

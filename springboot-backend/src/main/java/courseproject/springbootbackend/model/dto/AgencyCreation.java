@@ -1,11 +1,15 @@
 package courseproject.springbootbackend.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record TreatmentCreation(
+public record AgencyCreation(
         @NotBlank(message = "Name is required")
-        String name
+        String name,
+
+        @NotNull
+        Boolean loadedByDefault
 ) {
 }

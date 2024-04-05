@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import courseproject.springbootbackend.repository.AgencyRepository;
-import courseproject.springbootbackend.repository.JournalRepository;
+// import courseproject.springbootbackend.repository.JournalRepository;
 import courseproject.springbootbackend.repository.PriceRepository;
 import courseproject.springbootbackend.repository.TreatmentRepository;
 
@@ -21,8 +21,8 @@ public class PriceService {
     private PriceRepository priceRepo;
     @Autowired
     private TreatmentRepository treatmentRepo;
-    @Autowired
-    private JournalRepository journalRepo;
+    // @Autowired
+    // private JournalRepository journalRepo;
     @Autowired
     private AgencyRepository agencyRepo;
 
