@@ -27,5 +27,5 @@ public class PatientEntity {
     private String name;
 
     @Column(name = "phone_number")
-    private String phonenumber;
+    private String phoneNumber;
 }

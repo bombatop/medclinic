@@ -29,5 +29,6 @@ public class AgencyEntity {
     private String name;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean loadedByDefault = false;
 }

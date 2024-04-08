@@ -11,6 +11,6 @@ public record PatientCreation(
         String name,
 
         @NotBlank(message = "Phone number is required")
-        String phonenumber
+        String phoneNumber
 ) {
 }
