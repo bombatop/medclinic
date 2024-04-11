@@ -15,8 +15,6 @@ import courseproject.springbootbackend.model.entity.JournalTreatmentEntity;
 import courseproject.springbootbackend.model.entity.PatientEntity;
 
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,13 +65,13 @@ public class JournalService {
         return journalRepository.findByPatientId(id);
     }
 
-    public ResponseEntity<?> getJournalsByDateRange(final Date startDate) {
+    public List<JournalEntity> getJournalsByDateRange(final Date startDate) {
         try {
             Date endDate = addDaysToDate(startDate, 7);
-            return ResponseEntity.status(HttpStatus.OK).body(journalRepository.findByDateBetweenOrderByDateAsc(startDate, endDate));
+            return journalRepository.findByDateBetweenOrderByDateAsc(startDate, endDate);
         } 
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            throw new RuntimeException(e.getMessage()); //change later
         }
     }
 
@@ -91,7 +89,7 @@ public class JournalService {
 
     public JournalEntity addJournal(final JournalCreation dto) {
         var patientEntity = patientRepository.findById(dto.patientId())
-                    .orElseThrow(PatientNotFoundException::new);
+                .orElseThrow(PatientNotFoundException::new);
         var doctorEntity = doctorRepository.findById(dto.doctorId())
                 .orElseThrow(DoctorNotFoundException::new);
         var journalEntity = journalMapper.map(dto, patientEntity, doctorEntity);
@@ -99,24 +97,24 @@ public class JournalService {
             journalEntity = journalRepository.save(journalEntity);
             return journalEntity;
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage()); //change later
         }
     }
 
     public JournalEntity updateJournal(final Integer id, final JournalModification dto) {
         JournalEntity journalEntity = journalRepository.findById(id)
-            .orElseThrow(JournalNotFoundException::new);
+                .orElseThrow(JournalNotFoundException::new);
         PatientEntity patientEntity = patientRepository.findById(dto.patientId())
-            .orElseThrow(PatientNotFoundException::new);
+                .orElseThrow(PatientNotFoundException::new);
         DoctorEntity doctorEntity = doctorRepository.findById(dto.doctorId())
-            .orElseThrow(DoctorNotFoundException::new);
+                .orElseThrow(DoctorNotFoundException::new);
         journalEntity.setPatient(patientEntity);
         journalEntity.setDoctor(doctorEntity);
         try {
             journalEntity = journalRepository.save(journalEntity);
             return journalEntity;
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage()); //change later
         }
     }
 

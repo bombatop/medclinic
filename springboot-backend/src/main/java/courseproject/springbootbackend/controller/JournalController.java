@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,7 +46,7 @@ public class JournalController {
     }
 
     @GetMapping("/date/{date}")
-    public ResponseEntity<?> getJournalsByDateRange(
+    public List<JournalEntity> getJournalsByDateRange(
             @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
         return journalService.getJournalsByDateRange(startDate);
     }
