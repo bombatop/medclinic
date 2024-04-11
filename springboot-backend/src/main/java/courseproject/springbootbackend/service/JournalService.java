@@ -4,154 +4,155 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-
+import courseproject.springbootbackend.mapper.JournalMapper;
+import courseproject.springbootbackend.mapper.JournalTreatmentMapper;
+import courseproject.springbootbackend.model.dto.JournalCreation;
+import courseproject.springbootbackend.model.dto.JournalModification;
 import courseproject.springbootbackend.model.dto.JournalTreatmentCreation;
+import courseproject.springbootbackend.model.entity.DoctorEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.model.entity.JournalTreatmentEntity;
-import courseproject.springbootbackend.model.entity.TreatmentEntity;
+import courseproject.springbootbackend.model.entity.PatientEntity;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import courseproject.springbootbackend.repository.DoctorRepository;
 import courseproject.springbootbackend.repository.JournalRepository;
 import courseproject.springbootbackend.repository.PatientRepository;
 import courseproject.springbootbackend.repository.JournalTreatmentRepository;
 import courseproject.springbootbackend.repository.TreatmentRepository;
+import courseproject.springbootbackend.service.exception.DoctorNotFoundException;
+import courseproject.springbootbackend.service.exception.EntityAlreadyExistsException;
 import courseproject.springbootbackend.service.exception.JournalNotFoundException;
+import courseproject.springbootbackend.service.exception.PatientNotFoundException;
+import courseproject.springbootbackend.service.exception.TreatmentNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class JournalService {
-    @Autowired
-    private JournalRepository journalRepo;
-    @Autowired
-    private PatientRepository patientRepo;
-    @Autowired
-    private DoctorRepository doctorRepo;
-    @Autowired
-    private TreatmentRepository treatmentRepo;
-    @Autowired
-    private JournalTreatmentRepository journalTreatmentRepo;
 
-    public ResponseEntity<?> getJournalsForPatient(Integer patientId) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findByPatientId(patientId));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    private final JournalRepository journalRepository;
+
+    private final PatientRepository patientRepository;
+
+    private final DoctorRepository doctorRepository;
+
+    private final TreatmentRepository treatmentRepository;
+
+    private final JournalTreatmentRepository journalTreatmentRepository;
+
+    private final JournalMapper journalMapper;
+
+    private final JournalTreatmentMapper journalTreatmentMapper;
+
+    public List<JournalEntity> getAllJournals() {
+        return journalRepository.findAll();
     }
 
-    public ResponseEntity<?> getJournalsByDateRange(Date startDate) {
-        try {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(startDate);
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            startDate = calendar.getTime();
-            calendar.add(Calendar.DAY_OF_MONTH, 6);
-            calendar.add(Calendar.HOUR_OF_DAY, 23);
-            calendar.add(Calendar.MINUTE, 59);
-            Date endDate = calendar.getTime();
+    public JournalEntity getJournalById(final Integer id) {
+        return journalRepository.findById(id)
+                .orElseThrow(JournalNotFoundException::new);
+    }
+    
+    public List<JournalEntity> getJournalsForPatient(final Integer id) {
+        patientRepository.findById(id)
+                .orElseThrow(PatientNotFoundException::new);
+        return journalRepository.findByPatientId(id);
+    }
 
-            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findByDateBetweenOrderByDateAsc(startDate, endDate));
+    public ResponseEntity<?> getJournalsByDateRange(final Date startDate) {
+        try {
+            Date endDate = addDaysToDate(startDate, 7);
+            return ResponseEntity.status(HttpStatus.OK).body(journalRepository.findByDateBetweenOrderByDateAsc(startDate, endDate));
         } 
         catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    
-    public ResponseEntity<?> getAllJournals() {
+
+    public Date addDaysToDate(final Date startDate, final Integer days) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.add(Calendar.DAY_OF_MONTH, days - 1);
+        calendar.add(Calendar.HOUR_OF_DAY, 23);
+        calendar.add(Calendar.MINUTE, 59);
+        Date endDate = calendar.getTime();
+        return endDate;
+    }
+
+    public JournalEntity addJournal(final JournalCreation dto) {
+        var patientEntity = patientRepository.findById(dto.patientId())
+                    .orElseThrow(PatientNotFoundException::new);
+        var doctorEntity = doctorRepository.findById(dto.doctorId())
+                .orElseThrow(DoctorNotFoundException::new);
+        var journalEntity = journalMapper.map(dto, patientEntity, doctorEntity);
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findAll());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            journalEntity = journalRepository.save(journalEntity);
+            return journalEntity;
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
-    public ResponseEntity<?> getJournalById(Integer id) {
+    public JournalEntity updateJournal(final Integer id, final JournalModification dto) {
+        JournalEntity journalEntity = journalRepository.findById(id)
+            .orElseThrow(JournalNotFoundException::new);
+        PatientEntity patientEntity = patientRepository.findById(dto.patientId())
+            .orElseThrow(PatientNotFoundException::new);
+        DoctorEntity doctorEntity = doctorRepository.findById(dto.doctorId())
+            .orElseThrow(DoctorNotFoundException::new);
+        journalEntity.setPatient(patientEntity);
+        journalEntity.setDoctor(doctorEntity);
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.findById(id));
+            journalEntity = journalRepository.save(journalEntity);
+            return journalEntity;
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
-    public ResponseEntity<?> addJournal(JournalEntity journal) {
+    public void deleteJournal(Integer id) {
+        // var journalEntity = journalRepository.findById(id);
+        journalRepository.deleteById(id);
+    }
+
+    public JournalTreatmentEntity addTreatmentToJournal(Integer id, final JournalTreatmentCreation dto) {
+        var journalEntity = journalRepository.findById(id)
+                    .orElseThrow(JournalNotFoundException::new);
+        var treatmentEntity = treatmentRepository.findById(dto.treatmentId())
+                .orElseThrow(TreatmentNotFoundException::new);
+        var journalTreatmentEntity = journalTreatmentMapper.map(dto, journalEntity, treatmentEntity);
         try {
-            journal.setDoctor(doctorRepo.findDoctorById(journal.getDoctor().getId()));
-            journal.setPatient(patientRepo.findPatientById(journal.getPatient().getId()));
-            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.save(journal));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            journalTreatmentEntity = journalTreatmentRepository.save(journalTreatmentEntity);
+            return journalTreatmentEntity;
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityAlreadyExistsException(e.getMessage());
         }
     }
 
-    public ResponseEntity<?> updateJournal(JournalEntity journal) {
+    public List<JournalTreatmentEntity> addTreatmentsToJournal(Integer id, List<JournalTreatmentCreation> dtoList) {
+        JournalEntity journalEntity = journalRepository.findById(id).orElseThrow(JournalNotFoundException::new);
+        List<JournalTreatmentEntity> journalTreatmentArray = new ArrayList<>();
+        for (JournalTreatmentCreation dto : dtoList) {
+            var treatmentEntity = treatmentRepository.findById(dto.treatmentId())
+                    .orElseThrow(TreatmentNotFoundException::new);
+            var journalTreatmentEntity = journalTreatmentMapper.map(dto, journalEntity, treatmentEntity);
+            journalTreatmentArray.add(journalTreatmentEntity);
+        } 
         try {
-            journal.setDoctor(doctorRepo.findDoctorById(journal.getDoctor().getId()));
-            journal.setPatient(patientRepo.findPatientById(journal.getPatient().getId()));
-            return ResponseEntity.status(HttpStatus.OK).body(journalRepo.save(journal));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
-    public ResponseEntity<?> deleteJournal(Integer id) {
-        try {
-            journalRepo.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
-    public JournalTreatmentEntity addTreatmentToJournal(Integer journalId, JournalTreatmentCreation dto) {
-        Optional<JournalEntity> journal = journalRepo.findById(journalId);
-        if (!journal.isPresent()) {
-            throw new JournalNotFoundException();
-        }
-        Optional<TreatmentEntity> treatment = treatmentRepo.findById(dto.treatmentId());
-        if (!treatment.isPresent()) {
-            throw new JournalNotFoundException();
-        }
-        JournalTreatmentEntity journalTreatment = new JournalTreatmentEntity();
-        try {
-            journalTreatment.setJournal(journal.get());
-            journalTreatment.setTreatment(treatment.get());
-            journalTreatment.setAmount(dto.amount());
-            journalTreatment = journalTreatmentRepo.save(journalTreatment);
-            return journalTreatment;
-        } catch (final DataIntegrityViolationException e) {
-            // log.error(e.getMessage());
-            throw new JournalNotFoundException(); //change
-        }
-    }
-
-    public List<JournalTreatmentEntity> addTreatmentsToJournal(Integer journalId, List<JournalTreatmentCreation> dtos) {
-        Optional<JournalEntity> journal = journalRepo.findById(journalId);
-        if (!journal.isPresent()) {
-            throw new JournalNotFoundException();
-        }
-        try {
-            List<JournalTreatmentEntity> journalTreatments = new ArrayList<>();
-            for (JournalTreatmentCreation dto : dtos) {
-                JournalTreatmentEntity obj = new JournalTreatmentEntity();
-                Optional<TreatmentEntity> treatment = treatmentRepo.findById(journalId);
-                if (!treatment.isPresent()) {
-                    throw new JournalNotFoundException(); //treatment
-                }
-                obj.setJournal(journal.get());
-                obj.setTreatment(treatment.get());
-                obj.setAmount(dto.amount());
-            } 
-            journalTreatments = journalTreatmentRepo.saveAll(journalTreatments);
-            return journalTreatments;
-        } catch (Exception e) {
-            throw new JournalNotFoundException(); //change
+            journalTreatmentArray = journalTreatmentRepository.saveAll(journalTreatmentArray);
+            return journalTreatmentArray;
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityAlreadyExistsException(e.getMessage());
         }
     }
 }

@@ -18,10 +18,10 @@ public record PriceCreation (
         @Min(value = 1, message = "Value must be a positive not null number")
         Integer price,
         
-        @NotNull(message="Treatment is required")
+        @NotNull(message="Treatment id is required")
         Integer treatmentId,
 
-        @NotNull(message = "Agency is required")
+        @NotNull(message = "Agency id is required")
         Integer agencyId
 ) {
 }

@@ -42,7 +42,7 @@ public class JournalEntity {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date date;
 
-    @OneToMany(targetEntity = TreatmentEntity.class, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = JournalTreatmentEntity.class, fetch = FetchType.LAZY)
     @JoinTable(
         name = "journal_treatment",
         joinColumns = @JoinColumn(name = "journal_id"),

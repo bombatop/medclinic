@@ -8,8 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record JournalCreation (
-        @NotNull(message="Patient id is required")
+public record JournalModification(
+
+        @NotNull(message = "Patient id is required")
         Integer patientId,
 
         @NotNull(message = "Doctor id is required")
