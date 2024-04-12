@@ -16,7 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class FilepathEntity {
+public class FileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

@@ -9,7 +9,8 @@ import lombok.Builder;
 
 @Builder
 public record JournalCreation (
-        @NotNull(message="Patient id is required")
+
+        @NotNull(message = "Patient id is required")
         Integer patientId,
 
         @NotNull(message = "Doctor id is required")

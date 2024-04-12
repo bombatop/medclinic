@@ -1,65 +1,70 @@
 package courseproject.springbootbackend.service;
 
+import courseproject.springbootbackend.mapper.DoctorMapper;
+import courseproject.springbootbackend.model.dto.DoctorCreation;
 import courseproject.springbootbackend.model.entity.DoctorEntity;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
 import courseproject.springbootbackend.repository.DoctorRepository;
+import courseproject.springbootbackend.service.exception.DoctorNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class DoctorService {
-    @Autowired
-    private DoctorRepository repo;
+
+    private final DoctorRepository doctorRepository;
+
+    private final DoctorMapper doctorMapper;
     
-    public ResponseEntity<?> getAllDoctors() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findAll());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    public List<DoctorEntity> getAllDoctors() {
+        return doctorRepository.findAll();
     }
     
-    public ResponseEntity<?> getAllDoctors(Pageable pageable) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findAll(pageable));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    public Page<DoctorEntity> getAllDoctors(final Pageable pageable) {
+        return doctorRepository.findAll(pageable);
     }
-    public ResponseEntity<?> getDoctors(String searchQuery, Pageable pageable) {
+
+    public Page<DoctorEntity> getDoctors(final String searchQuery, final Pageable pageable) {
+        return doctorRepository.findByNameContaining(searchQuery, pageable);
+    }
+
+    public DoctorEntity getDoctorById(final Integer id) {
+        return doctorRepository.findDoctorById(id);
+    }
+
+    public DoctorEntity addDoctor(final DoctorCreation dto) {
+        var doctorEntity = doctorMapper.map(dto);
         try {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(repo.findByNameContaining(searchQuery, pageable));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            doctorEntity = doctorRepository.save(doctorEntity);
+            return doctorEntity;
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException(e.getMessage()); // change later
         }
     }
 
-    public ResponseEntity<?> getDoctorById(Integer id) {
+    public DoctorEntity updateDoctor(final Integer id, DoctorCreation dto) {
+        var doctorEntity = doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
+        doctorEntity.setName(dto.name());
+        doctorEntity.setPhoneNumber(dto.phoneNumber());
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.findDoctorById(id));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            doctorEntity = doctorRepository.save(doctorEntity);
+            return doctorEntity;
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException(e.getMessage()); // change later
         }
     }
 
-    public ResponseEntity<?> saveDoctor(DoctorEntity doctor) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(repo.save(doctor));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
-    public ResponseEntity<?> deleteDoctor(Integer id) {
-        try {
-            repo.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    public void deleteDoctor(final Integer id) {
+        doctorRepository.deleteById(id);
     }
 }

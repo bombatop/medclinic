@@ -54,5 +54,5 @@ public class JournalEntity {
         name = "journal_files", 
         joinColumns = @JoinColumn(name = "journal_id"),
         inverseJoinColumns = @JoinColumn(name = "file_id"))
-    private Set<FilepathEntity> files;
+    private Set<FileEntity> files;
 }

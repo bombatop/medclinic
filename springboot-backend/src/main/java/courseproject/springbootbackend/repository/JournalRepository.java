@@ -10,8 +10,6 @@ import courseproject.springbootbackend.model.entity.JournalEntity;
 
 @Repository
 public interface JournalRepository extends JpaRepository<JournalEntity, Integer> {
-    
-    JournalEntity findByFilesId(Integer id);
 
     List<JournalEntity> findByPatientId(Integer id);
 

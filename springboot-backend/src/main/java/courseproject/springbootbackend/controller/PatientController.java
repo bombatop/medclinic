@@ -1,73 +1,61 @@
 package courseproject.springbootbackend.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import courseproject.springbootbackend.model.dto.PatientCreation;
 import courseproject.springbootbackend.model.entity.PatientEntity;
 import courseproject.springbootbackend.service.PatientService;
 import courseproject.springbootbackend.utility.PathsUtils;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(path = PathsUtils.PATIENTS_PATH)
+@RequestMapping(path = PathsUtils.DOCTORS_PATH)
 @RequiredArgsConstructor
 public class PatientController {
-    
-    private final PatientService patientService;
+
+    private final PatientService service;
 
     @GetMapping
-    public ResponseEntity<?> getPatients(
+    public Page<PatientEntity> getPatients(
             @RequestParam(required = false) String searchQuery,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) 
-    {
-        if (page == null || size == null) {
-            return patientService.getAllPatients();
-        }
-
+            @RequestParam Integer page,
+            @RequestParam Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         if (searchQuery != null && !searchQuery.isEmpty()) {
-            return patientService.getPatients(searchQuery, pageable);
+            return service.getPatients(searchQuery, pageable);
         }
-        return patientService.getAllPatients(pageable);
+        return service.getAllPatients(pageable);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getPatientById(@PathVariable("id") Integer id) {
-        return patientService.getPatientById(id);
+    public PatientEntity getPatientById(@PathVariable Integer id) {
+        return service.getPatientById(id);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updatePatient(@PathVariable("id") Integer id, @Validated @RequestBody PatientEntity patient, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
-        }
-        return patientService.savePatient(patient);
+    public PatientEntity updatePatient(@PathVariable Integer id, @Valid @RequestBody PatientCreation doctor) {
+        return service.updatePatient(id, doctor);
     }
 
     @PostMapping
-    public ResponseEntity<?> addPatient(@Validated @RequestBody PatientEntity patient, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(bindingResult.getAllErrors());
-        }
-        return patientService.savePatient(patient);
+    public PatientEntity addPatient(@Valid @RequestBody PatientCreation doctor) {
+        return service.addPatient(doctor);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deletePatient(@PathVariable("id") Integer id) {
-        return patientService.deletePatient(id);
+    public void deletePatient(@PathVariable Integer id) {
+        service.deletePatient(id);
     }
 }

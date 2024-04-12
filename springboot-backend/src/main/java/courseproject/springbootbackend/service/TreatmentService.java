@@ -1,64 +1,69 @@
 package courseproject.springbootbackend.service;
 
+import courseproject.springbootbackend.mapper.TreatmentMapper;
+import courseproject.springbootbackend.model.dto.TreatmentCreation;
 import courseproject.springbootbackend.model.entity.TreatmentEntity;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
 import courseproject.springbootbackend.repository.TreatmentRepository;
+import courseproject.springbootbackend.service.exception.TreatmentNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class TreatmentService {
-    @Autowired
-    private TreatmentRepository treatmentRepo;
-    
-    public ResponseEntity<?> getAllTreatments() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(treatmentRepo.findAll());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
-        }
+
+    private final TreatmentRepository treatmentRepository;
+
+    private final TreatmentMapper treatmentMapper;
+
+    public List<TreatmentEntity> getAllTreatments() {
+        return treatmentRepository.findAll();
     }
-    public ResponseEntity<?> getAllTreatments(Pageable pageable) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(treatmentRepo.findAll(pageable));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
-        }
+
+    public Page<TreatmentEntity> getAllTreatments(final Pageable pageable) {
+        return treatmentRepository.findAll(pageable);
     }
-    public ResponseEntity<?> getTreatments(String searchQuery, Pageable pageable) {
+
+    public Page<TreatmentEntity> getTreatments(final String searchQuery, final Pageable pageable) {
+        return treatmentRepository.findByNameContaining(searchQuery, pageable);
+    }
+
+    public TreatmentEntity getTreatmentById(final Integer id) {
+        return treatmentRepository.findTreatmentById(id);
+    }
+
+    public TreatmentEntity addTreatment(final TreatmentCreation dto) {
+        var treatmentEntity = treatmentMapper.map(dto);
         try {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(treatmentRepo.findByNameContaining(searchQuery, pageable));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            treatmentEntity = treatmentRepository.save(treatmentEntity);
+            return treatmentEntity;
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException(e.getMessage()); // change later
         }
     }
 
-    public ResponseEntity<?> getTreatmentById(Integer id) {
+    public TreatmentEntity updateTreatment(final Integer id, TreatmentCreation dto) {
+        var treatmentEntity = treatmentRepository.findById(id).orElseThrow(TreatmentNotFoundException::new);
+        treatmentEntity.setName(dto.name());
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(treatmentRepo.findTreatmentById(id));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            treatmentEntity = treatmentRepository.save(treatmentEntity);
+            return treatmentEntity;
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException(e.getMessage()); // change later
         }
     }
 
-    public ResponseEntity<?> saveTreatment(TreatmentEntity treatment) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(treatmentRepo.save(treatment));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
-        }
+    public void deleteTreatment(final Integer id) {
+        treatmentRepository.deleteById(id);
     }
-
-    public ResponseEntity<?> deleteTreatment(Integer id) {
-        try {
-            treatmentRepo.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
-        }
-    }
-}   
+}

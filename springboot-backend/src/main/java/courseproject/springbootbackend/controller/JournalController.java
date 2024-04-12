@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.dto.JournalCreation;
-import courseproject.springbootbackend.model.dto.JournalModification;
 import courseproject.springbootbackend.model.dto.JournalTreatmentCreation;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.model.entity.JournalTreatmentEntity;
@@ -36,12 +35,12 @@ public class JournalController {
     }
 
     @GetMapping("{id}")
-    public JournalEntity getJournalById(@PathVariable("id") Integer id) {
+    public JournalEntity getJournalById(@PathVariable Integer id) {
         return journalService.getJournalById(id);
     }
 
     @GetMapping("/patient/{id}")
-    public List<JournalEntity> getJournalsForPatient(@PathVariable("id") Integer id) {
+    public List<JournalEntity> getJournalsForPatient(@PathVariable Integer id) {
         return journalService.getJournalsForPatient(id);
     }
 
@@ -52,7 +51,7 @@ public class JournalController {
     }
 
     @PutMapping("{id}")
-    public JournalEntity updateJournal(@PathVariable("id") Integer id, @Valid @RequestBody JournalModification dto) {
+    public JournalEntity updateJournal(@PathVariable Integer id, @Valid @RequestBody JournalCreation dto) {
         return journalService.updateJournal(id, dto);
     }
 

@@ -1,7 +1,7 @@
 package courseproject.springbootbackend.service;
 
 import courseproject.springbootbackend.configuration.ApplicationConfig;
-import courseproject.springbootbackend.model.entity.FilepathEntity;
+import courseproject.springbootbackend.model.entity.FileEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 
 import java.io.File;
@@ -13,95 +13,94 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+// import org.springframework.http.HttpHeaders;
+// import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import courseproject.springbootbackend.repository.FilepathRepository;
+import courseproject.springbootbackend.repository.FileRepository;
 import courseproject.springbootbackend.repository.JournalRepository;
+import courseproject.springbootbackend.service.exception.JournalNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class FileService {
-    @Autowired
-    private JournalRepository journalRepo;
-    @Autowired
-    private FilepathRepository fileRepo;
-    @Autowired
-    private ApplicationConfig applicationConfig;
 
-    public ResponseEntity<?> downloadFileById(Integer file_id) {
+    private final JournalRepository journalRepository;
+
+    private final FileRepository fileRepository;
+
+    private final ApplicationConfig applicationConfig;
+
+    public byte[] downloadFileById(Integer id) {
         try {
-            String path = fileRepo.findFilepathById(file_id).getPath();
+            String path = fileRepository.findFileById(id).getPath();
             byte[] fileData = Files.readAllBytes(Paths.get(path));
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", fileRepo.findFilepathById(file_id).getName());
-            headers.setContentLength(fileData.length);
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(fileData);
+            // HttpHeaders headers = new HttpHeaders();
+            // headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            // headers.setContentDispositionFormData("attachment", fileRepository.findFileById(id).getName());
+            // headers.setContentLength(fileData.length);
+            // return ResponseEntity.ok()
+            // .headers(headers)
+            // .body(fileData);
+            return fileData;
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            throw new RuntimeException(e.getMessage()); // change
         }
     }
 
-    public ResponseEntity<?> uploadFilesByJournalId(Integer journalId, List<MultipartFile> multipartFiles) {
+    public Set<FileEntity> uploadFilesByJournalId(Integer journalId, List<MultipartFile> multipartFiles) {
         try {
-            String uploadPath = applicationConfig.getUploadPath();
-            String storageFolderPath = uploadPath + File.separator + journalId + File.separator;
+            String storageFolderPath = applicationConfig.getUploadPath() + File.separator + journalId + File.separator;
             File journalFolder = new File(storageFolderPath);
             if (!journalFolder.exists()) {
                 journalFolder.mkdirs();
             }
+            var journalEntity = journalRepository.findById(journalId).orElseThrow(JournalNotFoundException::new);
+            // var journalEntity = journalRepository.findByFilesId(journalId);
+            Set<FileEntity> fileSet = journalEntity.getFiles();
 
-            JournalEntity journal = journalRepo.findByFilesId(journalId);
-            Set<FilepathEntity> updatedJournal = journal.getFiles();
-
-            for (MultipartFile uploadedFile : multipartFiles) {
-                String originalFilename = uploadedFile.getOriginalFilename();
+            for (MultipartFile file : multipartFiles) {
+                String originalFilename = file.getOriginalFilename();
                 String uniqueFilename = generateUniqueFilename(originalFilename);
 
                 Path path = Paths.get(storageFolderPath, uniqueFilename);
-                uploadedFile.transferTo(path.toFile());
+                file.transferTo(path.toFile());
 
-                FilepathEntity newFile = new FilepathEntity();
+                FileEntity newFile = new FileEntity();
                 newFile.setPath(storageFolderPath + uniqueFilename);
                 newFile.setName(originalFilename);
-                newFile = fileRepo.save(newFile);
-                updatedJournal.add(newFile);
+                newFile = fileRepository.save(newFile);
+                fileSet.add(newFile);
             }
 
-            journal.setFiles(updatedJournal);
-            journalRepo.save(journal);
-
-            return ResponseEntity.status(HttpStatus.OK).body(journal.getFiles());
+            journalEntity.setFiles(fileSet);
+            journalRepository.save(journalEntity);
+            return journalEntity.getFiles();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
-    public ResponseEntity<?> deleteFileForJournal(Integer id) {
+    public void deleteFileForJournal(final Integer id) {
         try {
-            String pathToDelete = fileRepo.findFilepathById(id).getPath();
-            JournalEntity journal = journalRepo.findByFilesId(id);
-            journal.getFiles().removeIf(file -> file.getId().equals(id));
-            journalRepo.save(journal);
+            String pathToDelete = fileRepository.findFileById(id).getPath();
+            JournalEntity journalEntity = journalRepository.findById(id).orElseThrow(JournalNotFoundException::new);
+            journalEntity.getFiles().removeIf(file -> file.getId().equals(id));
+            journalRepository.save(journalEntity);
 
             File dir = new File(pathToDelete);
             if (dir.exists()) {
                 dir.delete();
             }
-            fileRepo.deleteById(id);
-
-            return ResponseEntity.status(HttpStatus.OK).body(journal.getFiles());
+            fileRepository.deleteById(id);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            throw new RuntimeException(e.getMessage()); //change
         }
     }
 

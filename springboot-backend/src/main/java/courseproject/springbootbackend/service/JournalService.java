@@ -7,7 +7,6 @@ import java.util.List;
 import courseproject.springbootbackend.mapper.JournalMapper;
 import courseproject.springbootbackend.mapper.JournalTreatmentMapper;
 import courseproject.springbootbackend.model.dto.JournalCreation;
-import courseproject.springbootbackend.model.dto.JournalModification;
 import courseproject.springbootbackend.model.dto.JournalTreatmentCreation;
 import courseproject.springbootbackend.model.entity.DoctorEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
@@ -101,7 +100,7 @@ public class JournalService {
         }
     }
 
-    public JournalEntity updateJournal(final Integer id, final JournalModification dto) {
+    public JournalEntity updateJournal(final Integer id, final JournalCreation dto) {
         JournalEntity journalEntity = journalRepository.findById(id)
                 .orElseThrow(JournalNotFoundException::new);
         PatientEntity patientEntity = patientRepository.findById(dto.patientId())
@@ -118,14 +117,9 @@ public class JournalService {
         }
     }
 
-    public void deleteJournal(Integer id) {
-        // var journalEntity = journalRepository.findById(id);
-        journalRepository.deleteById(id);
-    }
-
     public JournalTreatmentEntity addTreatmentToJournal(Integer id, final JournalTreatmentCreation dto) {
         var journalEntity = journalRepository.findById(id)
-                    .orElseThrow(JournalNotFoundException::new);
+                .orElseThrow(JournalNotFoundException::new);
         var treatmentEntity = treatmentRepository.findById(dto.treatmentId())
                 .orElseThrow(TreatmentNotFoundException::new);
         var journalTreatmentEntity = journalTreatmentMapper.map(dto, journalEntity, treatmentEntity);
@@ -152,5 +146,10 @@ public class JournalService {
         } catch (DataIntegrityViolationException e) {
             throw new EntityAlreadyExistsException(e.getMessage());
         }
+    }
+
+    public void deleteJournal(Integer id) {
+        // var journalEntity = journalRepository.findById(id);
+        journalRepository.deleteById(id);
     }
 }
