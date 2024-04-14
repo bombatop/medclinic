@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(path = PathsUtils.DOCTORS_PATH)
+@RequestMapping(path = PathsUtils.AGENCIES_PATH)
 @RequiredArgsConstructor
 public class AgencyController {
 
@@ -31,7 +31,8 @@ public class AgencyController {
     public Page<AgencyEntity> getAgencies(
             @RequestParam(required = false) String searchQuery,
             @RequestParam Integer page,
-            @RequestParam Integer size) {
+            @RequestParam Integer size)
+    {
         Pageable pageable = PageRequest.of(page, size);
         if (searchQuery != null && !searchQuery.isEmpty()) {
             return service.getAgencies(searchQuery, pageable);

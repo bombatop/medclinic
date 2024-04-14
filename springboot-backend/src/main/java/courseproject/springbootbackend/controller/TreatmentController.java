@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(path = PathsUtils.DOCTORS_PATH)
+@RequestMapping(path = PathsUtils.TREATMENTS_PATH)
 @RequiredArgsConstructor
 public class TreatmentController {
 
