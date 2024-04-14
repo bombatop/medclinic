@@ -11,8 +11,6 @@ import courseproject.springbootbackend.model.entity.DoctorEntity;
 
 @Repository
 public interface DoctorRepository extends JpaRepository<DoctorEntity, Integer> {
-    
-    DoctorEntity findDoctorById(Integer id);
 
     List<DoctorEntity> findAll();
 

@@ -39,7 +39,7 @@ public class TreatmentService {
     }
 
     public TreatmentEntity getTreatmentById(final Integer id) {
-        return treatmentRepository.findTreatmentById(id);
+        return treatmentRepository.findById(id).orElseThrow(TreatmentNotFoundException::new);
     }
 
     public TreatmentEntity addTreatment(final TreatmentCreation dto) {

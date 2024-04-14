@@ -12,8 +12,6 @@ import courseproject.springbootbackend.model.entity.PatientEntity;
 @Repository
 public interface PatientRepository extends JpaRepository<PatientEntity, Integer> {
     
-    PatientEntity findPatientById(Integer id);
-    
     List<PatientEntity> findAll();
 
     Page<PatientEntity> findAll(Pageable pageable);

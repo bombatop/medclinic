@@ -11,8 +11,6 @@ import courseproject.springbootbackend.model.entity.AgencyEntity;
 
 @Repository
 public interface AgencyRepository extends JpaRepository<AgencyEntity, Integer> {
-    
-    AgencyEntity findAgencyById(Integer id);
 
     List<AgencyEntity> findAll();
 

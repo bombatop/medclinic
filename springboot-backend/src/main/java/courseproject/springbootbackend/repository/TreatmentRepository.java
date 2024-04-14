@@ -12,8 +12,6 @@ import courseproject.springbootbackend.model.entity.TreatmentEntity;
 @Repository
 public interface TreatmentRepository extends JpaRepository<TreatmentEntity, Integer> {
 
-    TreatmentEntity findTreatmentById(Integer id);
-
     List<TreatmentEntity> findAll();
 
     Page<TreatmentEntity> findAll(Pageable pageable);

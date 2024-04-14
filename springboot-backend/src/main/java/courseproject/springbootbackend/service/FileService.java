@@ -1,6 +1,7 @@
 package courseproject.springbootbackend.service;
 
 import courseproject.springbootbackend.configuration.ApplicationConfig;
+import courseproject.springbootbackend.mapper.FileMapper;
 import courseproject.springbootbackend.model.entity.FileEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import courseproject.springbootbackend.repository.FileRepository;
 import courseproject.springbootbackend.repository.JournalRepository;
 import courseproject.springbootbackend.service.exception.JournalNotFoundException;
+import courseproject.springbootbackend.service.exception.FileNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -36,11 +38,12 @@ public class FileService {
 
     private final ApplicationConfig applicationConfig;
 
+    private final FileMapper fileMapper;
+
     public byte[] downloadFileById(Integer id) {
         try {
-            String path = fileRepository.findFileById(id).getPath();
+            String path = fileRepository.findById(id).orElseThrow(FileNotFoundException::new).getPath();
             byte[] fileData = Files.readAllBytes(Paths.get(path));
-
             // HttpHeaders headers = new HttpHeaders();
             // headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             // headers.setContentDispositionFormData("attachment", fileRepository.findFileById(id).getName());
@@ -72,9 +75,7 @@ public class FileService {
                 Path path = Paths.get(storageFolderPath, uniqueFilename);
                 file.transferTo(path.toFile());
 
-                FileEntity newFile = new FileEntity();
-                newFile.setPath(storageFolderPath + uniqueFilename);
-                newFile.setName(originalFilename);
+                FileEntity newFile = fileMapper.map(originalFilename, storageFolderPath + uniqueFilename);
                 newFile = fileRepository.save(newFile);
                 fileSet.add(newFile);
             }
@@ -89,12 +90,12 @@ public class FileService {
 
     public void deleteFileForJournal(final Integer id) {
         try {
-            String pathToDelete = fileRepository.findFileById(id).getPath();
+            FileEntity fileEntity = fileRepository.findById(id).orElseThrow(FileNotFoundException::new);
             JournalEntity journalEntity = journalRepository.findById(id).orElseThrow(JournalNotFoundException::new);
             journalEntity.getFiles().removeIf(file -> file.getId().equals(id));
             journalRepository.save(journalEntity);
 
-            File dir = new File(pathToDelete);
+            File dir = new File(fileEntity.getPath());
             if (dir.exists()) {
                 dir.delete();
             }

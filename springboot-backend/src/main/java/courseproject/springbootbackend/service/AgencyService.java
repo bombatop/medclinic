@@ -39,7 +39,7 @@ public class AgencyService {
     }
 
     public AgencyEntity getAgencyById(final Integer id) {
-        return agencyRepository.findAgencyById(id);
+        return agencyRepository.findById(id).orElseThrow(AgencyNotFoundException::new);
     }
 
     public AgencyEntity addAgency(final AgencyCreation dto) {

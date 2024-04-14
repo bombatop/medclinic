@@ -13,8 +13,6 @@ import courseproject.springbootbackend.model.entity.TreatmentEntity;
 
 @Repository
 public interface PriceRepository extends JpaRepository<PriceEntity, Integer> {
-
-    PriceEntity findPriceById(Integer id);
     
     // @Query("SELECT p FROM Price p JOIN p.agency a JOIN p.treatment t WHERE t.id = :id ORDER BY p.date DESC")
     List<PriceEntity> findByTreatmentIdOrderByDateDesc(Integer id);

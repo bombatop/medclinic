@@ -39,7 +39,7 @@ public class PatientService {
     }
 
     public PatientEntity getPatientById(final Integer id) {
-        return patientRepository.findPatientById(id);
+        return patientRepository.findById(id).orElseThrow(PatientNotFoundException::new);
     }
 
     public PatientEntity addPatient(final PatientCreation dto) {
