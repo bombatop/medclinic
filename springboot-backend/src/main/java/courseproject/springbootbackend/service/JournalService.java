@@ -1,6 +1,5 @@
 package courseproject.springbootbackend.service;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -122,31 +121,33 @@ public class JournalService {
                 .orElseThrow(JournalNotFoundException::new);
         var treatmentEntity = treatmentRepository.findById(dto.treatmentId())
                 .orElseThrow(TreatmentNotFoundException::new);
-        var journalTreatmentEntity = journalTreatmentMapper.map(dto, journalEntity, treatmentEntity);
+        var journalTreatmentEntity = journalTreatmentMapper.map(dto, id, treatmentEntity);
         try {
             journalTreatmentEntity = journalTreatmentRepository.save(journalTreatmentEntity);
+            journalEntity.getTreatments().add(journalTreatmentEntity);
+            journalEntity = journalRepository.save(journalEntity);
             return journalTreatmentEntity;
         } catch (DataIntegrityViolationException e) {
             throw new EntityAlreadyExistsException(e.getMessage());
         }
     }
 
-    public List<JournalTreatmentEntity> addTreatmentsToJournal(Integer id, List<JournalTreatmentCreation> dtoList) {
-        JournalEntity journalEntity = journalRepository.findById(id).orElseThrow(JournalNotFoundException::new);
-        List<JournalTreatmentEntity> journalTreatmentArray = new ArrayList<>();
-        for (JournalTreatmentCreation dto : dtoList) {
-            var treatmentEntity = treatmentRepository.findById(dto.treatmentId())
-                    .orElseThrow(TreatmentNotFoundException::new);
-            var journalTreatmentEntity = journalTreatmentMapper.map(dto, journalEntity, treatmentEntity);
-            journalTreatmentArray.add(journalTreatmentEntity);
-        } 
-        try {
-            journalTreatmentArray = journalTreatmentRepository.saveAll(journalTreatmentArray);
-            return journalTreatmentArray;
-        } catch (DataIntegrityViolationException e) {
-            throw new EntityAlreadyExistsException(e.getMessage());
-        }
-    }
+    // public List<JournalTreatmentEntity> addTreatmentsToJournal(Integer id, List<JournalTreatmentCreation> dtoList) {
+    //     JournalEntity journalEntity = journalRepository.findById(id).orElseThrow(JournalNotFoundException::new);
+    //     List<JournalTreatmentEntity> journalTreatmentArray = new ArrayList<>();
+    //     for (JournalTreatmentCreation dto : dtoList) {
+    //         var treatmentEntity = treatmentRepository.findById(dto.treatmentId())
+    //                 .orElseThrow(TreatmentNotFoundException::new);
+    //         var journalTreatmentEntity = journalTreatmentMapper.map(dto, journalEntity, treatmentEntity);
+    //         journalTreatmentArray.add(journalTreatmentEntity);
+    //     } 
+    //     try {
+    //         journalTreatmentArray = journalTreatmentRepository.saveAll(journalTreatmentArray);
+    //         return journalTreatmentArray;
+    //     } catch (DataIntegrityViolationException e) {
+    //         throw new EntityAlreadyExistsException(e.getMessage());
+    //     }
+    // }
 
     public void deleteJournal(Integer id) {
         // var journalEntity = journalRepository.findById(id);

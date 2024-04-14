@@ -39,41 +39,41 @@ public class JournalController {
         return journalService.getJournalById(id);
     }
 
-    @GetMapping("/patient/{id}")
+    @GetMapping("patient/{id}")
     public List<JournalEntity> getJournalsForPatient(@PathVariable Integer id) {
         return journalService.getJournalsForPatient(id);
     }
 
-    @GetMapping("/date/{date}")
+    @GetMapping("date/{date}")
     public List<JournalEntity> getJournalsByDateRange(
             @PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
         return journalService.getJournalsByDateRange(startDate);
-    }
-
-    @PutMapping("{id}")
-    public JournalEntity updateJournal(@PathVariable Integer id, @Valid @RequestBody JournalCreation dto) {
-        return journalService.updateJournal(id, dto);
     }
 
     @PostMapping
     public JournalEntity addJournal(@Valid @RequestBody JournalCreation dto) {
         return journalService.addJournal(dto);
     }
+    
+    @PostMapping("{id}/treatment")
+    public JournalTreatmentEntity addTreatmentToJournal(@PathVariable Integer id,
+        @RequestBody JournalTreatmentCreation dto) {
+        return journalService.addTreatmentToJournal(id, dto);
+    }
+
+    // @PostMapping("{id}/treatments")
+    // public List<JournalTreatmentEntity> addTreatmentsToJournal(@PathVariable Integer id,
+    //     @RequestBody List<JournalTreatmentCreation> dtoList) {
+    //     return journalService.addTreatmentsToJournal(id, dtoList);
+    // }
+
+    @PutMapping("{id}")
+    public JournalEntity updateJournal(@PathVariable Integer id, @Valid @RequestBody JournalCreation dto) {
+        return journalService.updateJournal(id, dto);
+    }
 
     @DeleteMapping("{id}")
     public void deleteJournal(@PathVariable("id") Integer id) {
         journalService.deleteJournal(id);
-    }
-
-
-    @PostMapping("/treatment/{id}")
-    public JournalTreatmentEntity addTreatmentToJournal(@PathVariable Integer id, @RequestBody JournalTreatmentCreation dto) {
-        return journalService.addTreatmentToJournal(id, dto);
-    }
-
-    @PostMapping("/treatments/{id}")
-    public List<JournalTreatmentEntity> addTreatmentsToJournal(@PathVariable Integer id,
-        @RequestBody List<JournalTreatmentCreation> dtoList) {
-        return journalService.addTreatmentsToJournal(id, dtoList);
     }
 }

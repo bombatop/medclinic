@@ -13,8 +13,7 @@ const Journal = () => {
     const navigate = useNavigate();
     const { journalId } = useParams();
     const [journal, setJournal] = useState(null);
-    const [treatment, setTreatment] = useState(null);
-    // const [treatments, setTreatments] = useState(null);
+    const [selectedTreatments, setSelectedTreatments] = useState({});
 
     const handleInputChange = (value, property) => {
         // console.log(value, property);
@@ -25,7 +24,7 @@ const Journal = () => {
 
     useEffect(() => {
         getJournal();
-        getTreatments();
+        // getTreatments();
     }, []);
 
     const getJournal = async () => {
@@ -62,6 +61,21 @@ const Journal = () => {
             navigate('/journals');
         } catch (error) {
             console.error(error);
+        }
+    };
+
+    const handleTreatmentChange = (data) => {
+        if (!data) return;
+        setSelectedTreatments({ treatmentId: data.value.id, amount: 1 }); // Simplified example
+    };
+
+    const addTreatmentToJournal = async () => {
+        try {
+            await http.post(`/journals/${journalId}/treatment`, selectedTreatments);
+            console.log('Treatments added:', selectedTreatments);
+            setSelectedTreatments([]);
+        } catch (error) {
+            console.error('Error adding treatments:', error);
         }
     };
     
@@ -104,6 +118,15 @@ const Journal = () => {
                                 Delete Journal
                             </button>
                         </div>
+                    </div>
+
+                    <div className="mt-4">
+                        <h4>Add Treatments</h4>
+                        <DebouncedSearchSelect
+                            onChange={(value) => handleTreatmentChange(value)}
+                            api="treatments"
+                        />
+                        <button className="btn btn-primary" onClick={addTreatmentToJournal}>Add Treatment</button>
                     </div>
 
                     <div className="col mt-4 journal-file-container">

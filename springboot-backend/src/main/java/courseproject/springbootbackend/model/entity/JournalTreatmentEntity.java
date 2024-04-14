@@ -1,5 +1,6 @@
 package courseproject.springbootbackend.model.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,13 +25,13 @@ public class JournalTreatmentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "journal_id")
-    private JournalEntity journal;
+    @Column(name = "journal_id")
+    private Integer journalId;
 
     @ManyToOne
     @JoinColumn(name = "treatment_id")
     private TreatmentEntity treatment;
 
+    @Column(name = "amount")
     private Integer amount;
 }

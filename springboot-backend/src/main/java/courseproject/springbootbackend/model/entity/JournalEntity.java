@@ -12,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,9 +25,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "journal")
 @Builder
 public class JournalEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    private Date date;
 
     @ManyToOne
     @JoinColumn(name = "patient_id")
@@ -38,15 +40,8 @@ public class JournalEntity {
     @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private Date date;
-
-    @OneToMany(targetEntity = JournalTreatmentEntity.class)
-    @JoinTable(
-        name = "journal_treatment",
-        joinColumns = @JoinColumn(name = "journal_id"),
-        inverseJoinColumns = @JoinColumn(name = "treatment_id"))
-    private Set <JournalTreatmentEntity> treatments;
+    @OneToMany
+    private Set<JournalTreatmentEntity> treatments;
     
     @OneToMany // (cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
