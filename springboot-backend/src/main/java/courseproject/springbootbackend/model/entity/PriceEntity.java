@@ -3,7 +3,6 @@ package courseproject.springbootbackend.model.entity;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,21 +26,15 @@ public class PriceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // @NotNull(message = "Price is required")
-    // @Min(value = 0, message = "Price must be a positive number")
     private Integer price;
 
-    // @NotNull(message = "Date is required")
-    // @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date date;
 
-    // @NotNull(message = "Treatment is required")
-    @ManyToOne(targetEntity = TreatmentEntity.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = TreatmentEntity.class)
     @JoinColumn(name = "treatment_id", referencedColumnName = "id")
     private TreatmentEntity treatment;
 
-    // @NotNull(message = "Agency is required")
-    @ManyToOne(targetEntity = AgencyEntity.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = AgencyEntity.class)
     @JoinColumn(name = "agency_id", referencedColumnName = "id")
     private AgencyEntity agency;
 }

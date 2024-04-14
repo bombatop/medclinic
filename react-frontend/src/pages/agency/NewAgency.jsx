@@ -5,13 +5,17 @@ import http from '../../utils/http-common';
 const NewAgency = () => {
     const navigate = useNavigate();
     const [errorMessages, setErrorMessages] = useState('');
+    
+    const [agency, setAgency] = useState({
+        name: '',
+        loadedByDefault: false
+    });
 
-    const [agency, setAgency] = useState(null);
-
-    const handleInputChange = (event, property) => {
+    const handleInputChange = (value, property) => {
+        if (value === null) return;
         setAgency({
             ...agency,
-            [property]: event.target.value,
+            [property]: value,
         });
     };
 
@@ -34,13 +38,29 @@ const NewAgency = () => {
             <h2>Agency page</h2>
 
             <div className="mb-2">
-                <label htmlFor="name">Name:</label>
+                <label htmlFor="fullname" className="form-label mb-2">
+                    Full name
+                </label>
                 <input
                     type="text"
-                    id="name"
+                    className="form-control"
+                    id="fullname"
                     value={agency?.name || ''}
-                    onChange={(event) => handleInputChange(event, 'name')}
+                    onChange={(event) => handleInputChange(event.target.value, 'name')}
                 />
+            </div>
+
+            <div className="form-check mb-2">
+                <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="default-checkbox"
+                    checked={agency?.loadedByDefault}
+                    onChange={(event) => handleInputChange(event.target.checked, 'loadedByDefault')}
+                />
+                <label className="form-check-label" htmlFor="default-checkbox">
+                    Loaded by default
+                </label>
             </div>
 
             <button type="submit" className="btn btn-primary" onClick={addAgency}>

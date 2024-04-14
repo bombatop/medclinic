@@ -34,7 +34,7 @@ public class FileController {
     }
 
     @DeleteMapping("{id}")
-    public void deleteFileForJournal(@PathVariable Integer id) {
-        service.deleteFileForJournal(id);
+    public void deleteFile(@PathVariable Integer id) {
+        service.deleteFile(id);
     }
 }

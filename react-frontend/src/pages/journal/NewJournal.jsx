@@ -22,12 +22,14 @@ const NewJournal = () => {
 
     const addJournal = async () => {
         try {
-            const formattedJournal = {
-                ...journal,
+            const params = {
+                patientId: journal.patient.id,
+                doctorId: journal.doctor.id,
                 date: format(journal.date, `yyyy-MM-dd'T'HH:mm`, { locale: ru }),
             };
-            const response = await http.post('/journals', formattedJournal);
-            navigate(`/journals/${response.data.id}`);
+            const response = await http.post('/journals', params);
+            console.log(response);
+            navigate(`/journal/${response.data.id}`);
         } catch (error) {
             if (error.response?.data) {
                 const errorObjects = error.response.data.map((error) => error.defaultMessage);

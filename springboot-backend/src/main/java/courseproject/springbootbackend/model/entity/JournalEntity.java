@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Set;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,25 +30,25 @@ public class JournalEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "patient_id")
     private PatientEntity patient;
 
-    @ManyToOne(fetch = FetchType.LAZY) 
+    @ManyToOne
     @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date date;
 
-    @OneToMany(targetEntity = JournalTreatmentEntity.class, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = JournalTreatmentEntity.class)
     @JoinTable(
         name = "journal_treatment",
         joinColumns = @JoinColumn(name = "journal_id"),
         inverseJoinColumns = @JoinColumn(name = "treatment_id"))
     private Set <JournalTreatmentEntity> treatments;
-
-    @OneToMany(fetch = FetchType.LAZY)
+    
+    @OneToMany // (cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
         name = "journal_files", 
         joinColumns = @JoinColumn(name = "journal_id"),

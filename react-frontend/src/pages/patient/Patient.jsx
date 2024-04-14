@@ -12,7 +12,7 @@ const Patient = () => {
         id: patientId
     });
     const [journals, setJournals] = useState([]);
-    const [agencies, setAgencies] = useState([]);
+    // const [agencies, setAgencies] = useState([]);
 
     const formatDate = (dateStr, formatStr) => format(parseISO(dateStr), formatStr, { locale: ru });
 
@@ -29,7 +29,7 @@ const Patient = () => {
 
     useEffect(() => {
         getJournals();
-        getAgencies();
+        // getAgencies();
     }, [patient?.id])
 
     const fetchData = async (endpoint, params, callback) => {
@@ -51,9 +51,9 @@ const Patient = () => {
         await fetchData(`/journals/patient/${patient.id}`, null, setJournals);
     };
 
-    const getAgencies = async () => {
-        await fetchData(`/agreements/${patient.id}`, null, setAgencies);
-    };
+    // const getAgencies = async () => {
+    //     await fetchData(`/agreements/${patient.id}`, null, setAgencies);
+    // };
 
     const updatePatient = async () => {
         try {

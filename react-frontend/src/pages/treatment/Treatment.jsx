@@ -56,15 +56,29 @@ const Treatment = () => {
 
     const addPrice = async () => {
         try {
-            const response = await http.post('/prices', {
-                ...newPrice,
-                treatmentId: treatment.id,
-                date: format(newPrice.date, 'yyyy-MM-dd HH:mm'),
+            const params = {
+                treatmentId: parseInt(treatmentId),
+                agencyId: parseInt(newPrice.agency.value.id),
+                price: parseInt(newPrice.price),
+                date: format(newPrice.date, `yyyy-MM-dd'T'HH:mm`),
+            };
+            const response = await http.post('/prices', params);
+            console.log(treatment, response);
+            setTreatment((prevTreatment) => {
+                const updatedPricesByAgency = { ...prevTreatment.pricesByAgency };
+                if (updatedPricesByAgency[response.data.agency.id]) {
+                    updatedPricesByAgency[response.data.agency.id].pricesList.push(response.data);
+                } else {
+                    updatedPricesByAgency[response.data.agency.id] = {
+                        agencyInfo: response.data.agency,
+                        pricesList: [response.data]
+                    };
+                }
+                return {
+                    ...prevTreatment,
+                    pricesByAgency: updatedPricesByAgency
+                };
             });
-            setTreatment((prev) => ({
-                ...prev,
-                prices: [...prev.prices, response.data],
-            }));
             setNewPrice({ agency: '', price: '', date: new Date() });
         } catch (error) {
             console.error(error);
@@ -74,14 +88,24 @@ const Treatment = () => {
     const deletePrice = async (priceId) => {
         try {
             await http.delete(`/prices/${priceId}`);
-            setTreatment((prev) => ({
-                ...prev,
-                prices: prev.prices.filter((price) => price.id !== priceId),
-            }));
+            setTreatment((prevTreatment) => {
+                const updatedPricesByAgency = { ...prevTreatment.pricesByAgency };
+                Object.keys(updatedPricesByAgency).forEach(agencyId => {
+                    updatedPricesByAgency[agencyId].pricesList = updatedPricesByAgency[agencyId].pricesList.filter(price => price.id !== priceId);
+                    if (updatedPricesByAgency[agencyId].pricesList.length === 0) {
+                        delete updatedPricesByAgency[agencyId];
+                    }
+                });
+                return {
+                    ...prevTreatment,
+                    pricesByAgency: updatedPricesByAgency
+                };
+            });
         } catch (error) {
             console.error(error);
         }
     };
+
 
     const deleteTreatment = async () => {
         try {

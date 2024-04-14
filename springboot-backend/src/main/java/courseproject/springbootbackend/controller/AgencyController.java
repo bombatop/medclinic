@@ -46,13 +46,13 @@ public class AgencyController {
     }
 
     @PutMapping("{id}")
-    public AgencyEntity updateAgency(@PathVariable Integer id, @Valid @RequestBody AgencyCreation doctor) {
-        return service.updateAgency(id, doctor);
+    public AgencyEntity updateAgency(@PathVariable Integer id, @Valid @RequestBody AgencyCreation dto) {
+        return service.updateAgency(id, dto);
     }
 
     @PostMapping
-    public AgencyEntity addAgency(@Valid @RequestBody AgencyCreation doctor) {
-        return service.addAgency(doctor);
+    public AgencyEntity addAgency(@Valid @RequestBody AgencyCreation dto) {
+        return service.addAgency(dto);
     }
 
     @DeleteMapping("{id}")

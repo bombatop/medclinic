@@ -75,9 +75,9 @@ public class FileService {
                 Path path = Paths.get(storageFolderPath, uniqueFilename);
                 file.transferTo(path.toFile());
 
-                FileEntity newFile = fileMapper.map(originalFilename, storageFolderPath + uniqueFilename);
-                newFile = fileRepository.save(newFile);
-                fileSet.add(newFile);
+                FileEntity fileEntity = fileMapper.map(originalFilename, storageFolderPath + uniqueFilename);
+                fileEntity = fileRepository.save(fileEntity);
+                fileSet.add(fileEntity);
             }
 
             journalEntity.setFiles(fileSet);
@@ -88,10 +88,10 @@ public class FileService {
         }
     }
 
-    public void deleteFileForJournal(final Integer id) {
+    public void deleteFile(final Integer id) {
         try {
             FileEntity fileEntity = fileRepository.findById(id).orElseThrow(FileNotFoundException::new);
-            JournalEntity journalEntity = journalRepository.findById(id).orElseThrow(JournalNotFoundException::new);
+            JournalEntity journalEntity = journalRepository.findByFileId(id); //assuming file does not exist w/o journal (meaning cascade is implemented)
             journalEntity.getFiles().removeIf(file -> file.getId().equals(id));
             journalRepository.save(journalEntity);
 

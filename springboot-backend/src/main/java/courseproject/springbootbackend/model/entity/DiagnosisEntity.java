@@ -23,8 +23,6 @@ public class DiagnosisEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    // @NotBlank(message = "Appropriate name is required")
     @Column(name = "name")
-    // @Pattern(regexp = "^[a-zA-Z]+$", message = "First name should contain only letters")
     private String name;
 }

@@ -13,42 +13,19 @@ const Journal = () => {
     const navigate = useNavigate();
     const { journalId } = useParams();
     const [journal, setJournal] = useState(null);
-    // const [treatment, setTreatment] = useState(null);
+    const [treatment, setTreatment] = useState(null);
     // const [treatments, setTreatments] = useState(null);
 
     const handleInputChange = (value, property) => {
-        console.log(value, property);
-
+        // console.log(value, property);
         if (value === null) 
             return;
-
-        //bad validation to prevent changing date after changing price
-        if (journal.prices.length === 0 || property !== 'date') {
-            setJournal({
-                ...journal,
-                [property]: value,
-            });
-            updateJournal();
-        }
-    };
-
-    const handleDoctorChange = (value) => {
-        setJournal({
-            ...journal,
-            doctor: value,
-        });
-    };
-
-    const handlePatientChange = (value) => {
-        setJournal({
-            ...journal,
-            patient: value,
-        });
+        updateJournal();
     };
 
     useEffect(() => {
         getJournal();
-        // getTreatments();
+        getTreatments();
     }, []);
 
     const getJournal = async () => {
@@ -65,11 +42,13 @@ const Journal = () => {
     };
 
     const updateJournal = async () => {
-        if (journal.prices.length > 0) {
-            return;
-        }
         try {
-            const response = await http.put(`/journals/${journalId}`, { ...journal, date: format(journal.date, `yyyy-MM-dd'T'HH:mm`) });
+            const params = {
+                patientId: journal.patient.id,
+                doctorId: journal.doctor.id,
+                date: format(journal.date, `yyyy-MM-dd'T'HH:mm`)
+            }
+            const response = await http.put(`/journals/${journalId}`, params);
             console.log('Journal updated:', response.data);
         } catch (error) {
             console.error(error);

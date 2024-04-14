@@ -56,17 +56,19 @@ const Agency = () => {
         <div className="container mt-4">
             <h2>Agency page</h2>
 
-            <label htmlFor="fullname" className="form-label mb-2">
-                Full name
-            </label>
-            <input
-                type="text"
-                className="form-control"
-                id="fullname"
-                value={agency?.name || ''}
-                onChange={(event) => handleInputChange(event.target.value, 'name')}
-            />
-
+            <div className="mb-2">
+                <label htmlFor="fullname" className="form-label mb-2">
+                    Full name
+                </label>
+                <input
+                    type="text"
+                    className="form-control"
+                    id="fullname"
+                    value={agency?.name || ''}
+                    onChange={(event) => handleInputChange(event.target.value, 'name')}
+                />
+            </div>
+            
             <div className="form-check mb-2">
                 <input
                     type="checkbox"

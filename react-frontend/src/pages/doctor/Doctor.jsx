@@ -92,7 +92,7 @@ const Doctor = () => {
             </button>
             <button
                 variant="danger"
-                className="ms-2 mb-2"
+                className="btn btn-danger ms-2 mb-2"
                 onClick={deleteDoctor}
             >
                 Delete Doctor

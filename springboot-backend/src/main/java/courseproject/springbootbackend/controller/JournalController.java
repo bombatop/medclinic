@@ -60,19 +60,20 @@ public class JournalController {
         return journalService.addJournal(dto);
     }
 
-    @PostMapping("/treatment")
+    @DeleteMapping("{id}")
+    public void deleteJournal(@PathVariable("id") Integer id) {
+        journalService.deleteJournal(id);
+    }
+
+
+    @PostMapping("/treatment/{id}")
     public JournalTreatmentEntity addTreatmentToJournal(@PathVariable Integer id, @RequestBody JournalTreatmentCreation dto) {
         return journalService.addTreatmentToJournal(id, dto);
     }
 
-    @PostMapping("/treatments")
+    @PostMapping("/treatments/{id}")
     public List<JournalTreatmentEntity> addTreatmentsToJournal(@PathVariable Integer id,
         @RequestBody List<JournalTreatmentCreation> dtoList) {
         return journalService.addTreatmentsToJournal(id, dtoList);
-    }
-
-    @DeleteMapping("{id}")
-    public void deleteJournal(@PathVariable("id") Integer id) {
-        journalService.deleteJournal(id);
     }
 }
