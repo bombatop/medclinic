@@ -25,9 +25,6 @@ public class JournalTreatmentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "journal_id")
-    private Integer journalId;
-
     @ManyToOne
     @JoinColumn(name = "treatment_id")
     private TreatmentEntity treatment;

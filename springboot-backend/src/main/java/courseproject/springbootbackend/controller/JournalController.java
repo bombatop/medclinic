@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.dto.JournalCreation;
 import courseproject.springbootbackend.model.dto.JournalTreatmentCreation;
+import courseproject.springbootbackend.model.dto.JournalTreatmentModification;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.model.entity.JournalTreatmentEntity;
 import courseproject.springbootbackend.service.JournalService;
@@ -54,26 +55,34 @@ public class JournalController {
     public JournalEntity addJournal(@Valid @RequestBody JournalCreation dto) {
         return journalService.addJournal(dto);
     }
-    
-    @PostMapping("{id}/treatment")
-    public JournalTreatmentEntity addTreatmentToJournal(@PathVariable Integer id,
-        @RequestBody JournalTreatmentCreation dto) {
-        return journalService.addTreatmentToJournal(id, dto);
-    }
-
-    // @PostMapping("{id}/treatments")
-    // public List<JournalTreatmentEntity> addTreatmentsToJournal(@PathVariable Integer id,
-    //     @RequestBody List<JournalTreatmentCreation> dtoList) {
-    //     return journalService.addTreatmentsToJournal(id, dtoList);
-    // }
 
     @PutMapping("{id}")
-    public JournalEntity updateJournal(@PathVariable Integer id, @Valid @RequestBody JournalCreation dto) {
+    public JournalEntity updateJournal(@PathVariable Integer id,
+            @Valid @RequestBody JournalCreation dto) {
         return journalService.updateJournal(id, dto);
     }
 
+    @PostMapping("{id}/treatments")
+    public JournalTreatmentEntity addTreatmentToJournal(@PathVariable Integer id,
+            @RequestBody JournalTreatmentCreation dto) {
+        return journalService.addTreatmentToJournal(id, dto);
+    }
+
+    @PutMapping("{journalId}/treatments/{treatmentId}")
+    public JournalTreatmentEntity updateTreatmentOfJournal(@PathVariable Integer journalId,
+            @PathVariable Integer treatmentId,
+            @RequestBody JournalTreatmentModification dto) {
+        return journalService.updateTreatmentOfJournal(journalId, treatmentId, dto);
+    }
+
+    @DeleteMapping("{journalId}/treatments/{treatmentId}")
+    public void deleteJournalTreatment(@PathVariable Integer journalId,
+            @PathVariable Integer treatmentId) {
+        journalService.deleteJournalTreatment(journalId, treatmentId);
+    }
+
     @DeleteMapping("{id}")
-    public void deleteJournal(@PathVariable("id") Integer id) {
+    public void deleteJournal(@PathVariable Integer id) {
         journalService.deleteJournal(id);
     }
 }

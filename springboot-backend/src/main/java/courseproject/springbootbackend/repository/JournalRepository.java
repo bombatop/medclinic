@@ -19,4 +19,8 @@ public interface JournalRepository extends JpaRepository<JournalEntity, Integer>
     JournalEntity findByFileId(@Param("id") Integer id);
 
     List<JournalEntity> findByDateBetweenOrderByDateAsc(Date startDate, Date endDate);
+
+    @Query("SELECT CASE WHEN COUNT(jt) > 0 THEN true ELSE false END FROM JournalEntity j " +
+            "JOIN j.treatments jt WHERE j.id = :journalId AND jt.treatment.id = :treatmentId")
+    boolean existsJournalTreatmentInJournal(Integer journalId, Integer treatmentId);
 }

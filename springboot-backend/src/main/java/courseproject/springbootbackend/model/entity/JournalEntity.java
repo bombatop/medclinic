@@ -3,13 +3,14 @@ package courseproject.springbootbackend.model.entity;
 import java.util.Date;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
@@ -30,6 +31,7 @@ public class JournalEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date date;
 
     @ManyToOne
@@ -43,10 +45,9 @@ public class JournalEntity {
     @OneToMany
     private Set<JournalTreatmentEntity> treatments;
     
-    @OneToMany // (cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(
-        name = "journal_files", 
-        joinColumns = @JoinColumn(name = "journal_id"),
-        inverseJoinColumns = @JoinColumn(name = "file_id"))
+    @OneToMany
     private Set<FileEntity> files;
+
+    // @Version
+    // private Integer version;
 }

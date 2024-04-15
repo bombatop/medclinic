@@ -25,7 +25,7 @@ public class FileEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @JsonIgnore //move to response dto
+    @JsonIgnore
     @Column(name = "path")
     private String path;
 

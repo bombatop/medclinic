@@ -34,7 +34,7 @@ function DebouncedSearchSelect({ api, defaultValue, onChange }) {
 
     return (
         <AsyncSelect
-            // cacheOptions
+            cacheOptions
             defaultOptions
             loadOptions={loadOptions}
             isClearable={false}
