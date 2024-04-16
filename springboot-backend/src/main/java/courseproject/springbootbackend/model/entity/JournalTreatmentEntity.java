@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "journal_treatment")
+@Table(name = "treatment_amount")
 @Builder
 public class JournalTreatmentEntity {
     @Id

@@ -1,6 +1,7 @@
 package courseproject.springbootbackend.model.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -18,6 +19,6 @@ public record JournalCreation (
 
         @NotNull(message = "Date is required")
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-        Date date
+        LocalDateTime date
 ) {
 }

@@ -163,32 +163,8 @@ public class JournalService {
             throw new EntityAlreadyExistsException(e.getMessage());
         }
     }
-
-    /*
-    public List<JournalTreatmentEntity> addTreatmentsToJournal(Integer journalId, List<JournalTreatmentCreation> dtoList) {
-        var journalEntity = journalRepository.findById(journalId)
-                .orElseThrow(JournalNotFoundException::new);
-        List<JournalTreatmentEntity> journalTreatmentArray = new ArrayList<>();
-        for (var dto : dtoList) {
-            var treatmentEntity = treatmentRepository.findById(dto.treatmentId())
-                    .orElseThrow(TreatmentNotFoundException::new);
-            var journalTreatmentEntity = journalTreatmentMapper.map(dto, journalId, treatmentEntity);
-            journalTreatmentArray.add(journalTreatmentEntity);
-        } 
-        try {
-            journalTreatmentArray = journalTreatmentRepository.saveAll(journalTreatmentArray);
-            for (var journalTreatmentEntity : journalTreatmentArray) {
-                journalEntity.getTreatments().add(journalTreatmentEntity);
-            }
-            journalEntity = journalRepository.save(journalEntity);
-            return journalTreatmentArray;
-        } catch (DataIntegrityViolationException e) {
-            throw new EntityAlreadyExistsException(e.getMessage());
-        }
-    }
-    */
     
-    public void deleteJournalTreatment(Integer journalId, Integer treatmentId) {
+    public void deleteJournalTreatment(final Integer journalId, final Integer treatmentId) {
         JournalEntity journal = journalRepository.findById(journalId)
                 .orElseThrow(JournalNotFoundException::new);
         JournalTreatmentEntity treatment = journalTreatmentRepository.findById(treatmentId)
@@ -199,7 +175,7 @@ public class JournalService {
     }
 
 
-    public void deleteJournal(Integer id) {
+    public void deleteJournal(final Integer id) {
         journalRepository.deleteById(id);
     }
 }

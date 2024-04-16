@@ -36,6 +36,7 @@ const Journal = () => {
                 date: new Date(response.data.date),
             });
             setTreatments(response.data.treatments || []);
+            console.log('Journal fetch successful:', response.data);
         } catch (error) {
             console.error(error);
         }
