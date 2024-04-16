@@ -1,21 +1,12 @@
 package courseproject.springbootbackend.service;
 
-import courseproject.springbootbackend.configuration.ApplicationConfig;
 import courseproject.springbootbackend.mapper.FileMapper;
 import courseproject.springbootbackend.model.entity.FileEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Instant;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
-
-// import org.springframework.http.HttpHeaders;
-// import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,87 +27,40 @@ public class FileService {
 
     private final FileRepository fileRepository;
 
-    private final ApplicationConfig applicationConfig;
 
     private final FileMapper fileMapper;
 
-    public byte[] downloadFileById(Integer id) {
-        try {
-            String path = fileRepository.findById(id).orElseThrow(FileNotFoundException::new).getPath();
-            byte[] fileData = Files.readAllBytes(Paths.get(path));
-            // HttpHeaders headers = new HttpHeaders();
-            // headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            // headers.setContentDispositionFormData("attachment", fileRepository.findFileById(id).getName());
-            // headers.setContentLength(fileData.length);
-            // return ResponseEntity.ok()
-            // .headers(headers)
-            // .body(fileData);
-            return fileData;
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage()); // change
-        }
+    public byte[] downloadFileById(final Integer id) {
+        var fileEntity = fileRepository.findById(id).orElseThrow(FileNotFoundException::new);
+        return fileEntity.getData(); 
     }
 
-    public Set<FileEntity> uploadFilesByJournalId(Integer journalId, List<MultipartFile> multipartFiles) {
-        try {
-            String storageFolderPath = applicationConfig.getUploadPath() + File.separator + journalId + File.separator;
-            File journalFolder = new File(storageFolderPath);
-            if (!journalFolder.exists()) {
-                journalFolder.mkdirs();
-            }
-            var journalEntity = journalRepository.findById(journalId).orElseThrow(JournalNotFoundException::new);
-            // var journalEntity = journalRepository.findByFilesId(journalId);
-            Set<FileEntity> fileSet = journalEntity.getFiles();
+    public Set<FileEntity> uploadFilesByJournalId(final Integer journalId, final List<MultipartFile> files) {
+        var journalEntity = journalRepository.findById(journalId).orElseThrow(JournalNotFoundException::new);
+        Set<FileEntity> journalFileEntities = journalEntity.getFiles();
 
-            for (MultipartFile file : multipartFiles) {
-                String originalFilename = file.getOriginalFilename();
-                String uniqueFilename = generateUniqueFilename(originalFilename);
-
-                Path path = Paths.get(storageFolderPath, uniqueFilename);
-                file.transferTo(path.toFile());
-
-                FileEntity fileEntity = fileMapper.map(originalFilename, storageFolderPath + uniqueFilename);
+        for (MultipartFile file : files) {
+            try {
+                FileEntity fileEntity = fileMapper.map(file);
                 fileEntity = fileRepository.save(fileEntity);
-                fileSet.add(fileEntity);
+                journalFileEntities.add(fileEntity);
+            } catch (IOException e) {
+                throw new RuntimeException("Error processing file upload: " + e.getMessage());
             }
-
-            journalEntity.setFiles(fileSet);
-            journalRepository.save(journalEntity);
-            return journalEntity.getFiles();
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
         }
+        journalEntity.setFiles(journalFileEntities);
+        journalRepository.save(journalEntity);
+        return journalFileEntities;
     }
 
     public void deleteFile(final Integer id) {
-        try {
-            FileEntity fileEntity = fileRepository.findById(id).orElseThrow(FileNotFoundException::new);
-            JournalEntity journalEntity = journalRepository.findByFileId(id); //assuming file does not exist w/o journal (meaning cascade is implemented)
-            journalEntity.getFiles().removeIf(file -> file.getId().equals(id));
-            journalRepository.save(journalEntity);
+        FileEntity file = fileRepository.findById(id)
+                .orElseThrow(FileNotFoundException::new);
+        JournalEntity journal = journalRepository.findByFilesContains(file)
+                .orElseThrow(FileNotFoundException::new);
 
-            File dir = new File(fileEntity.getPath());
-            if (dir.exists()) {
-                dir.delete();
-            }
-            fileRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage()); //change
-        }
-    }
-
-    private String generateUniqueFilename(String originalFilename) {
-        String timestamp = Instant.now().toString().replace(":", "_").replace(".", "_");
-        String randomString = UUID.randomUUID().toString().replace("-", "");
-        String extension = extractFileExtension(originalFilename);
-        return timestamp + "_" + randomString + extension;
-    }
-
-    private String extractFileExtension(String filename) {
-        int dotIndex = filename.lastIndexOf('.');
-        if (dotIndex > 0 && dotIndex < filename.length() - 1) {
-            return filename.substring(dotIndex);
-        }
-        return "";
+        journal.getFiles().remove(file);
+        journalRepository.save(journal);
+        fileRepository.delete(file);
     }
 }

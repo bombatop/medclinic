@@ -21,20 +21,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FileController {
     
-    private final FileService service;
+    private final FileService fileService;
 
     @RequestMapping("{id}")
     public byte[] downloadFileById(@PathVariable Integer id) {
-        return service.downloadFileById(id);
+        return fileService.downloadFileById(id);
     }
     
     @PostMapping("{id}")
     public Set<FileEntity> uploadFilesByJournalId(@PathVariable Integer id, @RequestParam("files") List<MultipartFile> files) {
-        return service.uploadFilesByJournalId(id, files);
+        return fileService.uploadFilesByJournalId(id, files);
     }
 
     @DeleteMapping("{id}")
     public void deleteFile(@PathVariable Integer id) {
-        service.deleteFile(id);
+        fileService.deleteFile(id);
     }
 }

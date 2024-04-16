@@ -2,12 +2,14 @@ package courseproject.springbootbackend.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import courseproject.springbootbackend.model.entity.FileEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 
 @Repository
@@ -23,4 +25,6 @@ public interface JournalRepository extends JpaRepository<JournalEntity, Integer>
     @Query("SELECT CASE WHEN COUNT(jt) > 0 THEN true ELSE false END FROM JournalEntity j " +
             "JOIN j.treatments jt WHERE j.id = :journalId AND jt.treatment.id = :treatmentId")
     boolean existsJournalTreatmentInJournal(Integer journalId, Integer treatmentId);
+
+    Optional<JournalEntity> findByFilesContains(FileEntity file);
 }

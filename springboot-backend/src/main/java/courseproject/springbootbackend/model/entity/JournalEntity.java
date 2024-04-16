@@ -1,6 +1,6 @@
 package courseproject.springbootbackend.model.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -32,7 +32,7 @@ public class JournalEntity {
     private Integer id;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private Date date;
+    private LocalDateTime date;
 
     @ManyToOne
     @JoinColumn(name = "patient_id")
