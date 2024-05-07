@@ -10,12 +10,14 @@ import Doctor from './pages/doctor/Doctor';
 import Journal from './pages/journal/Journal';
 import Patient from './pages/patient/Patient';
 import Treatment from './pages/treatment/Treatment';
+import Diagnosis from './pages/diagnosis/Diagnosis';
 
 import NewAgency from './pages/agency/NewAgency';
 import NewDoctor from './pages/doctor/NewDoctor';
 import NewJournal from './pages/journal/NewJournal';
 import NewPatient from './pages/patient/NewPatient';
 import NewTreatment from './pages/treatment/NewTreatment';
+import NewDiagnosis from './pages/diagnosis/NewDiagnosis';
 
 import ProfitsReport from './pages/ProfitsReport';
 import ErrorPage from './templates/ErrorPage';
@@ -25,6 +27,7 @@ import Doctors from './pages/doctor/Doctors';
 import Journals from './pages/journal/Journals';
 import Patients from './pages/patient/Patients';
 import Treatments from './pages/treatment/Treatments';
+import Diagnoses from './pages/diagnosis/Diagnoses';
 
 function App() {
     return (
@@ -43,12 +46,14 @@ function App() {
                         <Route path='/treatment/:treatmentId' element={<Treatment />} />
                         <Route path='/agency/:agencyId' element={<Agency />} />
                         <Route path='/doctor/:doctorId' element={<Doctor />} />
+                        <Route path='/diagnosis/:diagnosisId' element={<Diagnosis />} />
                         <Route path='/journal/:journalId' element={<Journal />} />
 
                         <Route path="/patients" element={<Patients />} />
                         <Route path="/treatments" element={<Treatments />} />
                         <Route path='/agencies' element={<Agencies />} />
                         <Route path='/doctors' element={<Doctors />} />
+                        <Route path='/diagnoses' element={<Diagnoses />} />
                         <Route path='/journals' element={<Journals />} />
                         <Route path='/' element={<Journals />} />
 
@@ -56,6 +61,7 @@ function App() {
                         <Route path='/newTreatment' element={<NewTreatment />} />
                         <Route path='/newAgency' element={<NewAgency />} />
                         <Route path='/newDoctor' element={<NewDoctor />} />
+                        <Route path='/newDiagnosis' element={<NewDiagnosis />} />
                         <Route path='/newJournal' element={<NewJournal />} />
 
                         <Route path='/report' element={<ProfitsReport />} />

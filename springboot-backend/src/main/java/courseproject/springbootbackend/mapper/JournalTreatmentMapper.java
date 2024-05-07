@@ -10,11 +10,8 @@ import courseproject.springbootbackend.model.entity.TreatmentEntity;
 public class JournalTreatmentMapper {
 
     public JournalTreatmentEntity map(final JournalTreatmentCreation dto,
-        // final Integer journalId,
         final TreatmentEntity treatmentEntity) {
         return JournalTreatmentEntity.builder()
-                // .journal(journalEntity)
-                // .journalId(journalId)
                 .treatment(treatmentEntity)
                 .amount(dto.amount())
                 .build();

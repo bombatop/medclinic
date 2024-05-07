@@ -44,6 +44,9 @@ public class JournalEntity {
 
     @OneToMany
     private Set<JournalTreatmentEntity> treatments;
+
+    @OneToMany
+    private Set<JournalDiagnosisEntity> diagnoses;
     
     @OneToMany
     private Set<FileEntity> files;

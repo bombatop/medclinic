@@ -19,10 +19,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "diagnosis")
 @Builder
 public class DiagnosisEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "name")
+    @Column(name = "icd_code", nullable = false, length = 15)
+    private String icdCode;
+
+    @Column(name = "name", nullable = false, length = 255)
     private String name;
 }

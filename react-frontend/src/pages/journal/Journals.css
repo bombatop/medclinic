@@ -27,3 +27,60 @@
 .card-text-custom {
     font-size: 14px;
 }
+
+
+.diagnosis-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.diagnosis-item h5 {
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.toothcodes-container {
+    margin-bottom: 5px;
+}
+
+.toothcode {
+    display: inline-block;
+    margin-right: 5px;
+    padding: 3px 5px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.button-group {
+    display: flex;
+    gap: 5px;
+}
+
+.edit-button,
+.delete-button {
+    padding: 5px 10px;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.edit-button {
+    background-color: #007bff;
+}
+
+.edit-button:hover {
+    background-color: #0056b3;
+}
+
+.delete-button {
+    background-color: #dc3545;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+}

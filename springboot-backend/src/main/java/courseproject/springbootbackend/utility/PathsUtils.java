@@ -22,6 +22,8 @@ public class PathsUtils {
     public static final String AGREEMENTS_PATH = "/api-v1/agreements";
 
     public static final String TREATMENTS_PATH = "/api-v1/treatments";
+    
+    public static final String DIAGNOSIS_PATH = "/api-v1/diagnoses";
 
     public static final String SIGNUP_PATH = "/signup";
 }

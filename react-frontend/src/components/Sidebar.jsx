@@ -32,6 +32,12 @@ const Sidebar = ({ className }) => {
                         Agencies
                     </Link>
                 </li>
+
+                <li className="nav-item">
+                    <Link className="nav-link link-dark" to="/Diagnoses">
+                        Diagnoses
+                    </Link>
+                </li>
             </ul>
         </div>
     );

@@ -6,6 +6,7 @@ import { CgSoftwareDownload, CgTrash, CgClose } from "react-icons/cg";
 
 import http from '../../utils/http-common';
 import FileUploader from './FileUploader';
+import ToothSelectionModal from './ToothSelectionModal';
 
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
@@ -14,14 +15,15 @@ const Journal = () => {
     const navigate = useNavigate();
     const { journalId } = useParams();
     const [journal, setJournal] = useState(null);
-    const [treatments, setTreatments] = useState([]);
-    const [newTreatment, setNewTreatment] = useState({});
 
     const handleInputChange = (value, property) => {
-        // console.log(value, property);
         if (value === null) 
             return;
-        updateJournal();
+        setJournal((prev) => {
+            const updatedJournal = { ...prev, [property]: value };
+            updateJournal(updatedJournal);
+            return updatedJournal;
+        });
     };
 
     useEffect(() => {
@@ -36,19 +38,20 @@ const Journal = () => {
                 date: new Date(response.data.date),
             });
             setTreatments(response.data.treatments || []);
+            setDiagnoses(response.data.diagnoses || []);
             console.log('Journal fetch successful:', response.data);
         } catch (error) {
             console.error(error);
         }
     };
 
-    const updateJournal = async () => {
+    const updateJournal = async (journal) => {
         try {
             const params = {
                 patientId: journal.patient.id,
                 doctorId: journal.doctor.id,
                 date: format(journal.date, `yyyy-MM-dd'T'HH:mm`)
-            }
+            };
             const response = await http.put(`/journals/${journalId}`, params);
             console.log('Journal updated:', response.data);
         } catch (error) {
@@ -66,22 +69,21 @@ const Journal = () => {
         }
     };
 
-    // TREATMENT ADD SECTION
-    const handleTreatmentChange = (data) => {
-        if (!data) return;
-        setNewTreatment({ journalTreatmentId: data.value.id, amount: 1 }); // Simplified example
-    };
 
+    const [treatments, setTreatments] = useState([]);
+    const [newTreatment, setNewTreatment] = useState({});
+
+    // TREATMENT POST
     const addTreatmentToJournal = async (selectedTreatment) => {
         try {
             const response = await http.post(`/journals/${journalId}/treatments`, selectedTreatment);
-            setTreatments(prev => [...prev, response.data]); // Assume response.data contains the new treatment
+            setTreatments(prev => [...prev, response.data]);
         } catch (error) {
             console.error('Error adding treatments:', error);
         }
     };
 
-    // TREATMENT LIST AND UPDATE SECTION
+    // TREATMENT LIST AND PUT SECTION
     useEffect(() => {
         if (journal && journal.treatments) {
             const initialAmounts = journal.treatments.reduce((acc, current) => {
@@ -110,15 +112,66 @@ const Journal = () => {
         }
     };
     
-    // TREATMENT DELETE SECTION
+    // TREATMENT DELETE
     const deleteTreatment = async (treatmentId) => {
         try {
             await http.delete(`/journals/${journalId}/treatments/${treatmentId}`);
-            setTreatments(prev => prev.filter(t => t.id !== treatmentId)); // Remove the treatment from the list
+            setTreatments(prev => prev.filter(t => t.id !== treatmentId));
         } catch (error) {
             console.error('Error deleting treatment:', error);
         }
     };
+
+
+    const [diagnoses, setDiagnoses] = useState([]);
+    
+    // DIAGNOSIS POST
+    const addDiagnosisToJournal = async (diagnosis, toothcodes) => {
+        if (!diagnosis || !toothcodes) {
+            console.error('Both diagnosis ID and toothcode are required');
+            return;
+        }
+        try {
+            const response = await http.post(`/journals/${journalId}/diagnosis`, {diagnosisId: diagnosis.id, toothcodes: toothcodes});
+            setDiagnoses(prev => [...prev, response.data]);
+        } catch (error) {
+            console.error('Error adding diagnosis:', error);
+        }
+    };
+
+    // DIAGNOSIS DELETE
+    const deleteDiagnosis = async (diagnosisId) => {
+        try {
+            await http.delete(`/journals/${journalId}/diagnosis/${diagnosisId}`);
+            setDiagnoses(prev => prev.filter(d => d.id !== diagnosisId));
+        } catch (error) {
+            console.error('Error deleting diagnosis:', error);
+        }
+    };
+
+    const [showModal, setShowModal] = useState(false);
+
+    const [editingDiagnosis, setEditingDiagnosis] = useState(null);
+
+    const handleEditDiagnosis = (diagnosis) => {
+        setEditingDiagnosis(diagnosis);
+        setShowModal(true);
+    };
+
+    const saveDiagnosis = (diagnosis, toothCodes) => {
+        if (editingDiagnosis) {
+            // Update existing diagnosis
+            const updatedDiagnoses = diagnoses.map(d =>
+                d.id === diagnosis.id ? { ...d, toothcodes: toothCodes } : d
+            );
+            setDiagnoses(updatedDiagnoses);
+        } else {
+            // Add new diagnosis
+            addDiagnosisToJournal(diagnosis, toothCodes);
+        }
+        setEditingDiagnosis(null);
+    };
+
 
     return (
         <div className="container mt-4">
@@ -179,8 +232,41 @@ const Journal = () => {
                                         className="form-control"
                                     />
                                 </div>
-                                <button className="btn btn-danger col-2"onClick={() => deleteTreatment(treatment.id)}>
+                                <button className="btn btn-danger col-2" onClick={() => deleteTreatment(treatment.id)}>
                                     <CgTrash size={22} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <div className="col-md-5 mt-4">
+                        <h4>Add Diagnoses</h4>
+
+                        <button className="btn btn-primary" onClick={() => setShowModal(true)}>Add Diagnosis</button>
+                        <ToothSelectionModal
+                            show={showModal}
+                            onClose={() => {
+                                setShowModal(false);
+                                setEditingDiagnosis(null);
+                            }}
+                            onSelect={saveDiagnosis}
+                            initialDiagnosis={editingDiagnosis}
+                            initialToothCodes={editingDiagnosis ? editingDiagnosis.toothcodes : []}
+                        />
+
+                        {diagnoses.map(diagnosis => (
+                            <div key={diagnosis.id} className="diagnosis-item">
+                                <h5>{diagnosis.diagnosis.name}</h5>
+                                <div className="toothcodes-container">
+                                    {diagnosis.toothcodes.map((code, index) => (
+                                        <span key={index} className="toothcode">{code}</span>
+                                    ))}
+                                </div>
+                                <button onClick={() => handleEditDiagnosis(diagnosis)} className="edit-button">
+                                    Edit
+                                </button>
+                                <button onClick={() => deleteDiagnosis(diagnosis.id)} className="delete-button">
+                                    Delete
                                 </button>
                             </div>
                         ))}

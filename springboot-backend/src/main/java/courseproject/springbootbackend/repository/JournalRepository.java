@@ -1,6 +1,6 @@
 package courseproject.springbootbackend.repository;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,11 +20,15 @@ public interface JournalRepository extends JpaRepository<JournalEntity, Integer>
     @Query("SELECT j FROM JournalEntity j JOIN j.files f WHERE f.id = :id")
     JournalEntity findByFileId(@Param("id") Integer id);
 
-    List<JournalEntity> findByDateBetweenOrderByDateAsc(Date startDate, Date endDate);
+    List<JournalEntity> findByDateBetweenOrderByDateAsc(LocalDateTime startDate, LocalDateTime endDate);
 
     @Query("SELECT CASE WHEN COUNT(jt) > 0 THEN true ELSE false END FROM JournalEntity j " +
             "JOIN j.treatments jt WHERE j.id = :journalId AND jt.treatment.id = :treatmentId")
     boolean existsJournalTreatmentInJournal(Integer journalId, Integer treatmentId);
+
+    @Query("SELECT CASE WHEN COUNT(jd) > 0 THEN true ELSE false END FROM JournalEntity j " +
+            "JOIN j.diagnoses jd WHERE j.id = :journalId AND jd.diagnosis.id = :diagnosisId")
+    boolean existsJournalDiagnosisInJournal(Integer journalId, Integer diagnosisId);
 
     Optional<JournalEntity> findByFilesContains(FileEntity file);
 }
