@@ -15,7 +15,7 @@ import courseproject.springbootbackend.model.entity.JournalEntity;
 @Repository
 public interface JournalRepository extends JpaRepository<JournalEntity, Integer> {
 
-    List<JournalEntity> findByPatientId(Integer id);
+    List<JournalEntity> findByPatientIdOrderByDateDesc(Integer id);
 
     @Query("SELECT j FROM JournalEntity j JOIN j.files f WHERE f.id = :id")
     JournalEntity findByFileId(@Param("id") Integer id);
@@ -31,8 +31,12 @@ public interface JournalRepository extends JpaRepository<JournalEntity, Integer>
     boolean existsJournalDiagnosisInJournal(Integer journalId, Integer diagnosisId);
 
     Optional<JournalEntity> findByFilesContains(FileEntity file);
+    
+    @Query("SELECT j FROM JournalEntity j WHERE j.previousEntry IS NULL AND j.date > :date " +
+           "AND j.patient.id = :patientId ORDER BY j.date ASC")
+    List<JournalEntity> findByPreviousEntryIsNullAndDateAfterAndPatient(LocalDateTime date, Integer patientId);
 
-    Optional<JournalEntity> findByPreviousJournal(JournalEntity previousJournal);
-
-    Optional<JournalEntity> findByNextJournal(JournalEntity nextJournal);
+    @Query("SELECT j FROM JournalEntity j WHERE j.nextEntry IS NULL AND j.date < :date " +
+           "AND j.patient.id = :patientId ORDER BY j.date ASC")
+    List<JournalEntity> findByNextEntryIsNullAndDateBeforeAndPatient(LocalDateTime date, Integer patientId);
 }

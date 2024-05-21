@@ -1,23 +1,40 @@
-import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import DebouncedSearchSelect from '../../components/DebouncedSearchSelect';
-import { CgSoftwareDownload, CgTrash, CgClose } from "react-icons/cg";
+import { CgTrash, CgPen } from "react-icons/cg";
 
 import http from '../../utils/http-common';
 import FileUploader from './FileUploader';
 import ToothSelectionModal from './ToothSelectionModal';
+import JournalSelectionModal from './JournalSelectionModal';
 
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
 
 const Journal = () => {
     const navigate = useNavigate();
+    // JOURNAL MAIN SECTION
     const { journalId } = useParams();
     const [journal, setJournal] = useState(null);
+    const [treatments, setTreatments] = useState([]);
+    const [newTreatment, setNewTreatment] = useState({});
+    const [diagnoses, setDiagnoses] = useState([]);
+    const [showModalTooth, setShowModalTooth] = useState(false);
+    const [editingDiagnosis, setEditingDiagnosis] = useState(null);
 
+    // JOURNAL PLANNING SECTION
+    const [journals, setJournals] = useState([]);
+    const [previousEntry, setPreviousEntry] = useState(null);
+    const [nextEntry, setNextEntry] = useState(null);
+    const [modalType, setModalType] = useState('');
+    const [isEditingPrevious, setIsEditingPrevious] = useState(false);
+    const [isEditingNext, setIsEditingNext] = useState(false);
+    const [showModalJournal, setShowModalJournal] = useState(false);
+
+    // PUT
     const handleInputChange = (value, property) => {
-        if (value === null) 
+        if (value === null)
             return;
         setJournal((prev) => {
             const updatedJournal = { ...prev, [property]: value };
@@ -26,6 +43,7 @@ const Journal = () => {
         });
     };
 
+    // GET
     useEffect(() => {
         getJournal();
     }, [journalId]);
@@ -39,12 +57,15 @@ const Journal = () => {
             });
             setTreatments(response.data.treatments || []);
             setDiagnoses(response.data.diagnoses || []);
+            setPreviousEntry(response.data.previousEntry);
+            setNextEntry(response.data.nextEntry);
             console.log('Journal fetch successful:', response.data);
         } catch (error) {
             console.error(error);
         }
     };
 
+    // PUT
     const updateJournal = async (journal) => {
         try {
             const params = {
@@ -59,6 +80,7 @@ const Journal = () => {
         }
     };
 
+    // DELETE
     const deleteJournal = async () => {
         try {
             await http.delete(`/journals/${journalId}`);
@@ -69,11 +91,7 @@ const Journal = () => {
         }
     };
 
-
-    const [treatments, setTreatments] = useState([]);
-    const [newTreatment, setNewTreatment] = useState({});
-
-    // TREATMENT POST
+    // POST
     const addTreatmentToJournal = async (selectedTreatment) => {
         try {
             const response = await http.post(`/journals/${journalId}/treatments`, selectedTreatment);
@@ -83,7 +101,7 @@ const Journal = () => {
         }
     };
 
-    // TREATMENT LIST AND PUT SECTION
+    // LIST AND PUT
     useEffect(() => {
         if (journal && journal.treatments) {
             const initialAmounts = journal.treatments.reduce((acc, current) => {
@@ -94,6 +112,7 @@ const Journal = () => {
         }
     }, [journal]);
 
+    // AMOUNT MANAGEMENT
     const handleAmountChange = (journalTreatmentId, event) => {
         const newAmount = Math.max(1, parseInt(event.target.value, 10));
         setNewTreatment((prevAmounts) => ({
@@ -111,8 +130,8 @@ const Journal = () => {
             console.error('Error updating treatment amount:', error);
         }
     };
-    
-    // TREATMENT DELETE
+
+    // DELETE
     const deleteTreatment = async (treatmentId) => {
         try {
             await http.delete(`/journals/${journalId}/treatments/${treatmentId}`);
@@ -122,24 +141,21 @@ const Journal = () => {
         }
     };
 
-
-    const [diagnoses, setDiagnoses] = useState([]);
-    
-    // DIAGNOSIS POST
+    // POST
     const addDiagnosisToJournal = async (diagnosis, toothcodes) => {
         if (!diagnosis || !toothcodes) {
             console.error('Both diagnosis ID and toothcode are required');
             return;
         }
         try {
-            const response = await http.post(`/journals/${journalId}/diagnosis`, {diagnosisId: diagnosis.id, toothcodes: toothcodes});
+            const response = await http.post(`/journals/${journalId}/diagnosis`, { diagnosisId: diagnosis.id, toothcodes: toothcodes });
             setDiagnoses(prev => [...prev, response.data]);
         } catch (error) {
             console.error('Error adding diagnosis:', error);
         }
     };
 
-    // DIAGNOSIS DELETE
+    // DELETE
     const deleteDiagnosis = async (diagnosisId) => {
         try {
             await http.delete(`/journals/${journalId}/diagnosis/${diagnosisId}`);
@@ -149,29 +165,65 @@ const Journal = () => {
         }
     };
 
-    const [showModal, setShowModal] = useState(false);
-
-    const [editingDiagnosis, setEditingDiagnosis] = useState(null);
-
+    // MODAL SHOW
     const handleEditDiagnosis = (diagnosis) => {
         setEditingDiagnosis(diagnosis);
-        setShowModal(true);
+        setShowModalTooth(true);
     };
 
-    const saveDiagnosis = (diagnosis, toothCodes) => {
+    // PUT ELSE POST
+    const saveDiagnosis = async (diagnosis, toothCodes) => {
         if (editingDiagnosis) {
-            // Update existing diagnosis
-            const updatedDiagnoses = diagnoses.map(d =>
-                d.id === diagnosis.id ? { ...d, toothcodes: toothCodes } : d
-            );
-            setDiagnoses(updatedDiagnoses);
+            try {
+                const response = await http.put(`/journals/${journalId}/diagnosis/${diagnosis.id}`,
+                    { diagnosisId: diagnosis.id, toothcodes: toothCodes });
+                setDiagnoses(prevDiagnoses =>
+                    prevDiagnoses.map(d => d.id === response.data.id ? response.data : d)
+                );
+            } catch (error) {
+                console.error('Error updating diagnosis:', error);
+            }
         } else {
-            // Add new diagnosis
-            addDiagnosisToJournal(diagnosis, toothCodes);
+            await addDiagnosisToJournal(diagnosis, toothCodes);
         }
         setEditingDiagnosis(null);
+        setShowModalTooth(false);
     };
 
+    const getJournalsToLink = async (type) => {
+        try {
+            const endpoint = type === 'previous' ? 'all-prev' : 'all-next';
+            const response = await http.get(`/journals/${endpoint}/${journalId}`);
+            console.log(`journal ${endpoint} fetch: `, response.data);
+            setJournals(response.data); // Set the journals state here
+        } catch (error) {
+            console.error('Error fetching journals:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (showModalJournal) {
+            getJournalsToLink(modalType);
+        }
+    }, [showModalJournal]);
+
+    const updateJournalLink = async (type, selectedEntry) => {
+        try {
+            if (type === 'previous') {
+                await http.put(`/journals/${selectedEntry.id}/next/${journalId}`);
+            } else {
+                await http.put(`/journals/${journalId}/next/${selectedEntry.id}`);
+            }
+            getJournal();
+        } catch (error) {
+            console.error('Error updating journal link:', error);
+        }
+    };
+
+    const handleSelectJournal = (journal) => {
+        updateJournalLink(modalType, journal);
+        setShowModalJournal(false);
+    };
 
     return (
         <div className="container mt-4">
@@ -238,15 +290,15 @@ const Journal = () => {
                             </div>
                         ))}
                     </div>
-                    
+
                     <div className="col-md-5 mt-4">
                         <h4>Add Diagnoses</h4>
 
-                        <button className="btn btn-primary" onClick={() => setShowModal(true)}>Add Diagnosis</button>
+                        <button className="btn btn-primary" onClick={() => setShowModalTooth(true)}>Add Diagnosis</button>
                         <ToothSelectionModal
-                            show={showModal}
+                            show={showModalTooth}
                             onClose={() => {
-                                setShowModal(false);
+                                setShowModalTooth(false);
                                 setEditingDiagnosis(null);
                             }}
                             onSelect={saveDiagnosis}
@@ -272,6 +324,65 @@ const Journal = () => {
                         ))}
                     </div>
 
+                    <div className="col-md-5 mt-4">
+                        <h4>Treatment Plan</h4>
+                        <div className="treatment-plan-section">
+                            <div className="row g-3 align-items-center">
+                                <div className="col-auto">
+                                    <label className="col-form-label">Prev Journal:</label>
+                                </div>
+                                <div className="col-auto">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        readOnly
+                                        value={previousEntry ? previousEntry.date : 'No previous journal'}
+                                    />
+                                </div>
+                                <div className="col-auto">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={() => {
+                                            setIsEditingPrevious(true);
+                                            setModalType('previous');
+                                            setShowModalJournal(true);
+                                        }}
+                                    >
+                                        <CgPen />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="row g-3 align-items-center mt-3">
+                                <div className="col-auto">
+                                    <label className="col-form-label">Next Journal:</label>
+                                </div>
+                                <div className="col-auto">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        readOnly
+                                        value={nextEntry ? nextEntry.date : 'No next journal'}
+                                    />
+                                </div>
+                                <div className="col-auto">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={() => {
+                                            setIsEditingNext(true);
+                                            setModalType('next');
+                                            setShowModalJournal(true);
+                                        }}
+                                    >
+                                        <CgPen />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="col mt-4 journal-file-container">
                         <h4>Upload Files</h4>
                         <FileUploader
@@ -281,6 +392,13 @@ const Journal = () => {
                     </div>
                 </>
             )}
+            <JournalSelectionModal
+                show={showModalJournal}
+                onClose={() => setShowModalJournal(false)}
+                onSelect={handleSelectJournal}
+                type={modalType}
+                journals={journals} // Pass the journals state here
+            />
         </div>
     );
 }

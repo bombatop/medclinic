@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import courseproject.springbootbackend.model.dto.JournalCreation;
+import courseproject.springbootbackend.model.dto.JournalLinkCreation;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.service.JournalService;
 import courseproject.springbootbackend.utility.PathsUtils;
@@ -49,9 +50,31 @@ public class JournalController {
         return journalService.getJournalsByDateRange(startDate.atStartOfDay());
     }
 
+    @GetMapping("all-next/{id}")
+    public List<JournalEntity> getAvailableNextEntries(@PathVariable Integer id) {
+        return journalService.getAvailableNextEntries(id);
+    }
+
+    @GetMapping("all-prev/{id}")
+    public List<JournalEntity> getAvailablePreviousEntries(@PathVariable Integer id) {
+        return journalService.getAvailablePreviousEntries(id);
+    }
+
     @PostMapping
     public JournalEntity addJournal(@Valid @RequestBody JournalCreation dto) {
         return journalService.addJournal(dto);
+    }
+
+    @PostMapping("link")
+    public JournalEntity addJournalAndLinkJournalEntry(@Valid @RequestBody JournalLinkCreation dto) {
+       return journalService.addJournalAndLinkJournalEntry(dto);
+    }
+
+    @PutMapping("{id}/next/{nextId}")
+    public JournalEntity linkNextJournal(
+            @PathVariable Integer id,
+            @PathVariable Integer nextId) {
+        return journalService.linkNextEntry(id, nextId);
     }
 
     @PutMapping("{id}")

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -52,12 +53,14 @@ public class JournalEntity {
     @OneToMany
     private Set<FileEntity> files;
 
+    @JsonIgnoreProperties({ "previousEntry", "nextEntry", "diagnoses", "treatments", "files" })
     @OneToOne
-    @JoinColumn(name = "previous_journal_id")
-    private JournalEntity previousJournal;
+    @JoinColumn(name = "previous_entry_id")
+    private JournalEntity previousEntry;
 
-    @OneToOne(mappedBy = "previousJournal")
-    private JournalEntity nextJournal;
+    @JsonIgnoreProperties({ "previousEntry", "nextEntry", "diagnoses", "treatments", "files" })
+    @OneToOne(mappedBy = "previousEntry")
+    private JournalEntity nextEntry;
 
     // @Version
     // private Integer version;

@@ -5,7 +5,6 @@ import lombok.Builder;
 
 @Builder
 public record DiagnosisCreation(
-
         @NotBlank(message = "ICD Code is required")
         String icdCode,
         
