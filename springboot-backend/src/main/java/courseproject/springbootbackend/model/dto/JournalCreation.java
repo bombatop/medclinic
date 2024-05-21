@@ -10,7 +10,6 @@ import lombok.Builder;
 
 @Builder
 public record JournalCreation (
-
         @NotNull(message = "Patient id is required")
         Integer patientId,
 

@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,6 +51,13 @@ public class JournalEntity {
     
     @OneToMany
     private Set<FileEntity> files;
+
+    @OneToOne
+    @JoinColumn(name = "previous_journal_id")
+    private JournalEntity previousJournal;
+
+    @OneToOne(mappedBy = "previousJournal")
+    private JournalEntity nextJournal;
 
     // @Version
     // private Integer version;

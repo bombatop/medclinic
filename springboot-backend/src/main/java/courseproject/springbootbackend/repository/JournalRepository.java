@@ -31,4 +31,8 @@ public interface JournalRepository extends JpaRepository<JournalEntity, Integer>
     boolean existsJournalDiagnosisInJournal(Integer journalId, Integer diagnosisId);
 
     Optional<JournalEntity> findByFilesContains(FileEntity file);
+
+    Optional<JournalEntity> findByPreviousJournal(JournalEntity previousJournal);
+
+    Optional<JournalEntity> findByNextJournal(JournalEntity nextJournal);
 }

@@ -30,7 +30,7 @@ public class JournalDiagnosisEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "treatment_id")
+    @JoinColumn(name = "diagnosis_id")
     private DiagnosisEntity diagnosis;
 
     @ElementCollection
