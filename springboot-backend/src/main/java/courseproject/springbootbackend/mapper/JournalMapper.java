@@ -15,21 +15,25 @@ public class JournalMapper {
         final PatientEntity patientEntity,
         final DoctorEntity doctorEntity) {
         return JournalEntity.builder()
-                .date(dto.date())
                 .patient(patientEntity)
                 .doctor(doctorEntity)
+                .status(dto.status())
+                .dateStart(dto.dateStart())
+                .dateEnd(dto.dateEnd())
                 .build();
     }
 
+    // not used
     public JournalEntity map(final JournalLinkCreation dto,
             final PatientEntity patientEntity,
             final DoctorEntity doctorEntity,
             final JournalEntity prevJournalEntity) {
         return JournalEntity.builder()
-                .date(dto.date())
                 .patient(patientEntity)
                 .doctor(doctorEntity)
                 .previousEntry(prevJournalEntity)
+                .dateStart(dto.dateStart())
+                .dateEnd(dto.dateEnd())
                 .build();
     }
 }

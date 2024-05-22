@@ -1,6 +1,6 @@
 package courseproject.springbootbackend.model.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -12,7 +12,7 @@ import lombok.Builder;
 public record PriceCreation (
         @NotNull(message="Date is required")
         @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm")
-        Date date,
+        LocalDateTime date,
 
         @NotNull(message = "Price is required")
         @Min(value = 1, message = "Value must be a positive not null number")

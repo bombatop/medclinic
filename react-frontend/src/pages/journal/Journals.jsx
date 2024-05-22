@@ -33,7 +33,7 @@ const Journals = () => {
     const table = useMemo(() => {
         const updatedTable = {};
         journals?.forEach(journal => {
-            const dt = format(parseISO(journal.date), 'yyyy-MM-dd');
+            const dt = format(parseISO(journal.dateStart), 'yyyy-MM-dd');
             if (!updatedTable[dt]) {
                 updatedTable[dt] = [];
             }
@@ -67,7 +67,7 @@ const Journals = () => {
                         {table[keyDate].map((journal) => (
                             <div className="card mt-2" key={journal.id}>
                                 <Link className={`card-header text-center p-1 card-header-custom`} to={`/journal/${journal.id}`}>
-                                    {formatDate(journal.date, 'HH:mm')}
+                                    {formatDate(journal.dateStart, 'HH:mm')} - {formatDate(journal.dateEnd, 'HH:mm')}
                                 </Link>
                                 <div className="card-body mb-0 p-2 card-body-custom">
                                     <div className={`card-title card-title-custom`}>

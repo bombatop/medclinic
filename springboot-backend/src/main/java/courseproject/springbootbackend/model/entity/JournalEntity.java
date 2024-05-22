@@ -4,9 +4,12 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import courseproject.springbootbackend.model.entity.misc.JournalStatus;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,40 +31,46 @@ import lombok.NoArgsConstructor;
 @Table(name = "journal")
 @Builder
 public class JournalEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime date;
+    @Column(name = "date_start")
+    private LocalDateTime dateStart;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @Column(name = "date_end")
+    private LocalDateTime dateEnd;
+
+    @JsonIncludeProperties({ "id", "name" })
     @ManyToOne
     @JoinColumn(name = "patient_id")
     private PatientEntity patient;
 
+    @JsonIncludeProperties({ "id", "name" })
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;
+
+    @Enumerated(EnumType.STRING)
+    private JournalStatus status;
 
     @OneToMany
     private Set<JournalTreatmentEntity> treatments;
 
     @OneToMany
     private Set<JournalDiagnosisEntity> diagnoses;
-    
+
     @OneToMany
     private Set<FileEntity> files;
 
-    @JsonIgnoreProperties({ "previousEntry", "nextEntry", "diagnoses", "treatments", "files" })
+    @JsonIncludeProperties({ "id", "dateStart", "dateEnd" })
     @OneToOne
     @JoinColumn(name = "previous_entry_id")
     private JournalEntity previousEntry;
 
-    @JsonIgnoreProperties({ "previousEntry", "nextEntry", "diagnoses", "treatments", "files" })
+    @JsonIncludeProperties({ "id", "dateStart", "dateEnd" })
     @OneToOne(mappedBy = "previousEntry")
     private JournalEntity nextEntry;
-
-    // @Version
-    // private Integer version;
 }

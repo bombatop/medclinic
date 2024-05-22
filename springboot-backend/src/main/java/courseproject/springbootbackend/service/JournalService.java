@@ -8,6 +8,7 @@ import courseproject.springbootbackend.model.dto.JournalLinkCreation;
 import courseproject.springbootbackend.model.entity.DoctorEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.model.entity.PatientEntity;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -48,13 +49,13 @@ public class JournalService {
     public List<JournalEntity> getJournalsForPatient(final Integer id) {
         patientRepository.findById(id)
                 .orElseThrow(PatientNotFoundException::new);
-        return journalRepository.findByPatientIdOrderByDateDesc(id);
+        return journalRepository.findByPatientIdOrderByDateStartDesc(id);
     }
 
     public List<JournalEntity> getJournalsByDateRange(final LocalDateTime startDate) {
         try {
             LocalDateTime endDate = startDate.plusDays(7).minusSeconds(1);
-            return journalRepository.findByDateBetweenOrderByDateAsc(startDate, endDate);
+            return journalRepository.findByDateStartBetweenOrderByDateStartAsc(startDate, endDate);
         } 
         catch (Exception e) {
             throw new RuntimeException(e.getMessage()); //change later
@@ -75,6 +76,7 @@ public class JournalService {
         }
     }
 
+    // not used so far
     public JournalEntity addJournalAndLinkJournalEntry(final JournalLinkCreation dto) {
         var currentJournalEntity = journalRepository.findById(dto.prevEntryId())
                 .orElseThrow(JournalNotFoundException::new);
@@ -118,16 +120,32 @@ public class JournalService {
         return journalRepository.save(currentJournalEntity);
     }
 
+    public JournalEntity unlinkNextEntry(final Integer currentEntryId) {
+        var currentJournalEntity = journalRepository.findById(currentEntryId)
+                .orElseThrow(JournalNotFoundException::new);
+
+        var nextJournalEntity = currentJournalEntity.getNextEntry();
+        if (nextJournalEntity == null) {
+            throw new JournalAlreadyLinkedException("No next entry linked to the current entry.");
+        }
+
+        currentJournalEntity.setNextEntry(null);
+        nextJournalEntity.setPreviousEntry(null);
+
+        journalRepository.save(nextJournalEntity);
+        return journalRepository.save(currentJournalEntity);
+    }
+
     public List<JournalEntity> getAvailableNextEntries(final Integer journalId) {
         var journalEntity = journalRepository.findById(journalId)
                 .orElseThrow(JournalNotFoundException::new);
-        return journalRepository.findByPreviousEntryIsNullAndDateAfterAndPatient(journalEntity.getDate(), journalEntity.getPatient().getId());
+        return journalRepository.findByPreviousEntryIsNullAndDateAfterAndPatient(journalEntity.getDateEnd(), journalEntity.getPatient().getId());
     }
 
     public List<JournalEntity> getAvailablePreviousEntries(final Integer journalId) {
         var journalEntity = journalRepository.findById(journalId)
                 .orElseThrow(JournalNotFoundException::new);
-        return journalRepository.findByNextEntryIsNullAndDateBeforeAndPatient(journalEntity.getDate(),
+        return journalRepository.findByNextEntryIsNullAndDateBeforeAndPatient(journalEntity.getDateStart(),
                 journalEntity.getPatient().getId());
     }
 
@@ -138,9 +156,14 @@ public class JournalService {
                 .orElseThrow(PatientNotFoundException::new);
         DoctorEntity doctorEntity = doctorRepository.findById(dto.doctorId())
                 .orElseThrow(DoctorNotFoundException::new);
+        // if (!journalEntity.getPatient().equals(patientEntity)) {
+        //     throw new JournalAlreadyLinkedException("Can't change patient for a linked journal");
+        // }
         journalEntity.setPatient(patientEntity);
         journalEntity.setDoctor(doctorEntity);
-        journalEntity.setDate(dto.date());
+        journalEntity.setDateEnd(dto.dateEnd());
+        journalEntity.setDateStart(dto.dateStart());
+        journalEntity.setStatus(dto.status());
         try {
             journalEntity = journalRepository.save(journalEntity);
             return journalEntity;
@@ -148,6 +171,7 @@ public class JournalService {
             throw new RuntimeException(e.getMessage()); //change later
         }
     }
+
 
     public void deleteJournal(final Integer id) {
         journalRepository.deleteById(id);

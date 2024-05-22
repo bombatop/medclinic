@@ -8,7 +8,6 @@ const NewDoctor = () => {
         name: null,
         phoneNumber: null
     });
-    const [errorMessages, setErrorMessages] = useState(null);
 
     const handleInputChange = (event, property) => {
         setDoctor({
@@ -26,10 +25,6 @@ const NewDoctor = () => {
             navigate(`/doctor/${response.data.id}`);
         } catch (error) {
             console.error(error);
-            if (error.response && error.response.data) {
-                const errorObjects = error.response.data.map((error) => error.defaultMessage);
-                setErrorMessages(errorObjects);
-            }
         }
     };
 
@@ -68,16 +63,6 @@ const NewDoctor = () => {
             </div>
 
             <button type="submit" className="btn btn-primary mt-3" onClick={addDoctor}>Add new doctor</button>
-
-            {errorMessages && (
-                <div className="mt-3">
-                    <ul className="list-group">
-                        {errorMessages.map((errorMessage, index) => (
-                            <li className="list-group-item alert alert-danger p-3 mt-2" style={{ maxWidth: 400 }} key={index}>{errorMessage}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
         </div>
     );
 };

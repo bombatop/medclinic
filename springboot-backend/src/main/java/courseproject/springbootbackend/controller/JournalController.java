@@ -65,6 +65,7 @@ public class JournalController {
         return journalService.addJournal(dto);
     }
 
+    // not used so far
     @PostMapping("link")
     public JournalEntity addJournalAndLinkJournalEntry(@Valid @RequestBody JournalLinkCreation dto) {
        return journalService.addJournalAndLinkJournalEntry(dto);
@@ -75,6 +76,11 @@ public class JournalController {
             @PathVariable Integer id,
             @PathVariable Integer nextId) {
         return journalService.linkNextEntry(id, nextId);
+    }
+
+    @PutMapping("{id}/unlink-next")
+    public JournalEntity unlinkNextJournal(@PathVariable Integer id) {
+        return journalService.unlinkNextEntry(id);
     }
 
     @PutMapping("{id}")

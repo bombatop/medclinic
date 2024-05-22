@@ -1,6 +1,7 @@
 package courseproject.springbootbackend.model.entity;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,7 +29,8 @@ public class PriceEntity {
 
     private Integer price;
 
-    private Date date;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime date;
 
     @ManyToOne(targetEntity = TreatmentEntity.class)
     @JoinColumn(name = "treatment_id", referencedColumnName = "id")

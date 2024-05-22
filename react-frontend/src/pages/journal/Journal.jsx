@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import DebouncedSearchSelect from '../../components/DebouncedSearchSelect';
-import { CgTrash, CgPen } from "react-icons/cg";
+import { CgTrash, CgPen, CgCross, CgClose } from "react-icons/cg";
 
 import http from '../../utils/http-common';
 import FileUploader from './FileUploader';
@@ -11,25 +11,27 @@ import JournalSelectionModal from './JournalSelectionModal';
 
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
 
 const Journal = () => {
     const navigate = useNavigate();
-    // JOURNAL MAIN SECTION
+
     const { journalId } = useParams();
     const [journal, setJournal] = useState(null);
+
     const [treatments, setTreatments] = useState([]);
     const [newTreatment, setNewTreatment] = useState({});
+
     const [diagnoses, setDiagnoses] = useState([]);
     const [showModalTooth, setShowModalTooth] = useState(false);
     const [editingDiagnosis, setEditingDiagnosis] = useState(null);
 
-    // JOURNAL PLANNING SECTION
     const [journals, setJournals] = useState([]);
     const [previousEntry, setPreviousEntry] = useState(null);
     const [nextEntry, setNextEntry] = useState(null);
-    const [modalType, setModalType] = useState('');
     const [isEditingPrevious, setIsEditingPrevious] = useState(false);
     const [isEditingNext, setIsEditingNext] = useState(false);
+    const [modalType, setModalType] = useState('');
     const [showModalJournal, setShowModalJournal] = useState(false);
 
     // PUT
@@ -53,7 +55,8 @@ const Journal = () => {
             const response = await http.get(`/journals/${journalId}`);
             setJournal({
                 ...response.data,
-                date: new Date(response.data.date),
+                dateStart: new Date(response.data.dateStart),
+                dateEnd: new Date(response.data.dateEnd),
             });
             setTreatments(response.data.treatments || []);
             setDiagnoses(response.data.diagnoses || []);
@@ -71,7 +74,9 @@ const Journal = () => {
             const params = {
                 patientId: journal.patient.id,
                 doctorId: journal.doctor.id,
-                date: format(journal.date, `yyyy-MM-dd'T'HH:mm`)
+                status: journal.status,
+                dateStart: format(journal.dateStart, `yyyy-MM-dd'T'HH:mm`, { locale: ru }),
+                dateEnd: format(journal.dateEnd, `yyyy-MM-dd'T'HH:mm`, { locale: ru })
             };
             const response = await http.put(`/journals/${journalId}`, params);
             console.log('Journal updated:', response.data);
@@ -219,6 +224,14 @@ const Journal = () => {
             console.error('Error updating journal link:', error);
         }
     };
+    const unlinkNextJournal = async (journal) => {
+        try {
+            await http.put(`/journals/${journal.id}/unlink-next`);
+            getJournal();
+        } catch (error) {
+            console.error('Error unlinking next journal:', error);
+        }
+    };
 
     const handleSelectJournal = (journal) => {
         updateJournalLink(modalType, journal);
@@ -248,8 +261,8 @@ const Journal = () => {
                         <div className="col-md-3">
                             <div className="from-group">
                                 <DatePicker
-                                    selected={journal.date}
-                                    onChange={(date) => handleInputChange(date, 'date')}
+                                    selected={journal.dateStart}
+                                    onChange={(date) => handleInputChange(date, 'dateStart')}
                                     showTimeSelect
                                     timeFormat="HH:mm"
                                     timeIntervals={10}
@@ -258,6 +271,29 @@ const Journal = () => {
                                     timeCaption="время"
                                 />
                             </div>
+                            <div className="from-group">
+                                <DatePicker
+                                    selected={journal.dateEnd}
+                                    onChange={(date) => handleInputChange(date, 'dateEnd')}
+                                    showTimeSelect
+                                    timeFormat="HH:mm"
+                                    timeIntervals={10}
+                                    dateFormat="d MMMM, yyyy HH:mm"
+                                    className="form-control"
+                                    timeCaption="время"
+                                />
+                            </div>
+                        </div>
+                        <div className="col-md-3">
+                            <select
+                                className="form-control"
+                                value={journal.status}
+                                onChange={(e) => handleInputChange(e.target.value, 'status')}
+                            >
+                                <option value="SCHEDULED">Scheduled</option>
+                                <option value="COMPLETED">Completed</option>
+                                <option value="CANCELLED">Cancelled</option>
+                            </select>
                         </div>
                         <div className="col-md-3">
                             <button type="button" className="btn btn-danger" onClick={deleteJournal}>
@@ -336,7 +372,7 @@ const Journal = () => {
                                         type="text"
                                         className="form-control"
                                         readOnly
-                                        value={previousEntry ? previousEntry.date : 'No previous journal'}
+                                        value={previousEntry ? previousEntry.dateStart : 'No previous journal'}
                                     />
                                 </div>
                                 <div className="col-auto">
@@ -351,6 +387,17 @@ const Journal = () => {
                                     >
                                         <CgPen />
                                     </button>
+                                    {previousEntry && (
+                                        <div className="col-auto">
+                                            <button
+                                                type="button"
+                                                className="btn btn-danger"
+                                                onClick={() => unlinkNextJournal(journal.previousEntry)}
+                                            >
+                                                <CgClose />
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -363,7 +410,7 @@ const Journal = () => {
                                         type="text"
                                         className="form-control"
                                         readOnly
-                                        value={nextEntry ? nextEntry.date : 'No next journal'}
+                                        value={nextEntry ? nextEntry.dateStart : 'No next journal'}
                                     />
                                 </div>
                                 <div className="col-auto">
@@ -378,6 +425,17 @@ const Journal = () => {
                                     >
                                         <CgPen />
                                     </button>
+                                    {nextEntry && (
+                                        <div className="col-auto">
+                                            <button
+                                                type="button"
+                                                className="btn btn-danger"
+                                                onClick={() => unlinkNextJournal(journal)}
+                                            >
+                                                <CgClose />
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -397,7 +455,7 @@ const Journal = () => {
                 onClose={() => setShowModalJournal(false)}
                 onSelect={handleSelectJournal}
                 type={modalType}
-                journals={journals} // Pass the journals state here
+                journals={journals}
             />
         </div>
     );

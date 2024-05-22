@@ -10,11 +10,12 @@ import 'react-datepicker/dist/react-datepicker.css';
 const NewJournal = () => {
     const navigate = useNavigate();
     const [journal, setJournal] = useState({
-        date: new Date(),
+        dateStart: new Date(),
+        dateEnd: new Date(),
         patient: null,
-        doctor: null
+        doctor: null,
+        status: "SCHEDULED"
     });
-    const [errorMessages, setErrorMessages] = useState([]);
 
     const handleInputChange = (value, property) => {
         setJournal({ ...journal, [property]: value });
@@ -25,18 +26,14 @@ const NewJournal = () => {
             const params = {
                 patientId: journal.patient.id,
                 doctorId: journal.doctor.id,
-                date: format(journal.date, `yyyy-MM-dd'T'HH:mm`, { locale: ru }),
+                status: journal.status,
+                dateStart: format(journal.dateStart, `yyyy-MM-dd'T'HH:mm`, { locale: ru }),
+                dateEnd: format(journal.dateEnd, `yyyy-MM-dd'T'HH:mm`, { locale: ru }),
             };
             const response = await http.post('/journals', params);
-            console.log(response);
             navigate(`/journal/${response.data.id}`);
         } catch (error) {
-            if (error.response?.data) {
-                const errorObjects = error.response.data.map((error) => error.defaultMessage);
-                setErrorMessages(errorObjects);
-            } else {
-                console.error(error);
-            }
+            console.error(error);
         }
     };
 
@@ -61,8 +58,8 @@ const NewJournal = () => {
                 <div className="form-group mb-2">
                     <label htmlFor="date-picker-div">Date:</label>
                     <DatePicker
-                        selected={journal.date}
-                        onChange={(date) => handleInputChange(date, 'date')}
+                        selected={journal.dateStart}
+                        onChange={(date) => handleInputChange(date, 'dateStart')}
                         showTimeSelect
                         timeFormat="HH:mm"
                         timeIntervals={10}
@@ -72,17 +69,35 @@ const NewJournal = () => {
                         timeCaption="время"
                     />
                 </div>
+                <div className="form-group mb-2">
+                    <label htmlFor="date-picker-div">Date:</label>
+                    <DatePicker
+                        selected={journal.dateEnd}
+                        onChange={(date) => handleInputChange(date, 'dateEnd')}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={10}
+                        dateFormat="d MMMM, yyyy HH:mm"
+                        className="form-control"
+                        locale={ru}
+                        timeCaption="время"
+                    />
+                </div>
+               <div className="col-md-3">
+                    <select
+                        className="form-control"
+                        value={journal.status}
+                        onChange={(e) => handleInputChange(e.target.value, 'status')}
+                    >
+                        <option value="SCHEDULED">Scheduled</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="CANCELLED">Cancelled</option>
+                    </select>
+                </div>
             </div>
             <button type="submit" className="btn btn-primary" onClick={addJournal}>
                 Add new journal
             </button>
-            {errorMessages.length > 0 && (
-                <div className="alert alert-danger mt-2" role="alert">
-                    {errorMessages.map((errorMessage, index) => (
-                        <div key={index}>{errorMessage}</div>
-                    ))}
-                </div>
-            )}
         </div>
     );
 };

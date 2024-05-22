@@ -60,10 +60,9 @@ const Treatment = () => {
                 treatmentId: parseInt(treatmentId),
                 agencyId: parseInt(newPrice.agency.value.id),
                 price: parseInt(newPrice.price),
-                date: format(newPrice.date, `yyyy-MM-dd'T'HH:mm`),
+                date: format(newPrice.date, `yyyy-MM-dd'T'HH:mm`, { locale: ru }),
             };
             const response = await http.post('/prices', params);
-            console.log(treatment, response);
             setTreatment((prevTreatment) => {
                 const updatedPricesByAgency = { ...prevTreatment.pricesByAgency };
                 if (updatedPricesByAgency[response.data.agency.id]) {
@@ -79,7 +78,7 @@ const Treatment = () => {
                     pricesByAgency: updatedPricesByAgency
                 };
             });
-            setNewPrice({ agency: '', price: '', date: new Date() });
+            setNewPrice((prev) => ({ ...prev, price: '', date: new Date() }));
         } catch (error) {
             console.error(error);
         }
