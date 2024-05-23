@@ -23,20 +23,23 @@ public class JournalTreatmentController {
     private final JournalTreatmentService journalTreatmentService;
     
     @PostMapping("{journalId}/treatments")
-    public JournalTreatmentEntity addTreatmentToJournal(@PathVariable Integer journalId,
+    public JournalTreatmentEntity addTreatmentToJournal(
+            @PathVariable Integer journalId,
             @RequestBody JournalTreatmentCreation dto) {
         return journalTreatmentService.addTreatmentToJournal(journalId, dto);
     }
 
     @PutMapping("{journalId}/treatments/{treatmentId}")
-    public JournalTreatmentEntity updateTreatmentOfJournal(@PathVariable Integer journalId,
+    public JournalTreatmentEntity updateTreatmentOfJournal(
+            @PathVariable Integer journalId,
             @PathVariable Integer treatmentId,
             @RequestBody JournalTreatmentModification dto) {
         return journalTreatmentService.updateTreatmentOfJournal(journalId, treatmentId, dto);
     }
 
     @DeleteMapping("{journalId}/treatments/{treatmentId}")
-    public void deleteJournalTreatment(@PathVariable Integer journalId,
+    public void deleteJournalTreatment(
+            @PathVariable Integer journalId,
             @PathVariable Integer treatmentId) {
         journalTreatmentService.deleteJournalTreatment(journalId, treatmentId);
     }

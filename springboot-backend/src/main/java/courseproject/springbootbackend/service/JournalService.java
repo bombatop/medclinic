@@ -10,6 +10,8 @@ import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.model.entity.PatientEntity;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +39,8 @@ public class JournalService {
 
     private final JournalMapper journalMapper;
 
-    public List<JournalEntity> getAllJournals() {
-        return journalRepository.findAll();
+    public Page<JournalEntity> getAllJournals(Pageable pageable) {
+        return journalRepository.findAll(pageable);
     }
 
     public JournalEntity getJournalById(final Integer id) {

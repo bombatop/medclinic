@@ -4,8 +4,6 @@ import courseproject.springbootbackend.mapper.PatientMapper;
 import courseproject.springbootbackend.model.dto.PatientCreation;
 import courseproject.springbootbackend.model.entity.PatientEntity;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
@@ -26,16 +24,12 @@ public class PatientService {
 
     private final PatientMapper patientMapper;
 
-    public List<PatientEntity> getAllPatients() {
-        return patientRepository.findAll();
-    }
-
-    public Page<PatientEntity> getAllPatients(final Pageable pageable) {
-        return patientRepository.findAll(pageable);
-    }
-
     public Page<PatientEntity> getPatients(final String searchQuery, final Pageable pageable) {
-        return patientRepository.findByNameContaining(searchQuery, pageable);
+        if (searchQuery == null || searchQuery.isEmpty()) {
+            return patientRepository.findAll(pageable);
+        } else {
+            return patientRepository.searchPatients(searchQuery, pageable);
+        }
     }
 
     public PatientEntity getPatientById(final Integer id) {
@@ -55,6 +49,8 @@ public class PatientService {
     public PatientEntity updatePatient(final Integer id, PatientCreation dto) {
         var patientEntity = patientRepository.findById(id).orElseThrow(PatientNotFoundException::new);
         patientEntity.setName(dto.name());
+        patientEntity.setSurname(dto.surname());
+        patientEntity.setPatronymic(dto.patronymic());
         patientEntity.setPhoneNumber(dto.phoneNumber());
         try {
             patientEntity = patientRepository.save(patientEntity);

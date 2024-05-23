@@ -46,7 +46,9 @@ public class DoctorController {
     }
 
     @PutMapping("{id}")
-    public DoctorEntity updateDoctor(@PathVariable Integer id, @Valid @RequestBody DoctorCreation doctor) {
+    public DoctorEntity updateDoctor(
+            @PathVariable Integer id,
+            @Valid @RequestBody DoctorCreation doctor) {
         return service.updateDoctor(id, doctor);
     }
 

@@ -29,7 +29,9 @@ public class FileController {
     }
     
     @PostMapping("{id}")
-    public Set<FileEntity> uploadFilesByJournalId(@PathVariable Integer id, @RequestParam("files") List<MultipartFile> files) {
+    public Set<FileEntity> uploadFilesByJournalId(
+            @PathVariable Integer id,
+            @RequestParam("files") List<MultipartFile> files) {
         return fileService.uploadFilesByJournalId(id, files);
     }
 

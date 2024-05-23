@@ -45,7 +45,9 @@ public class DiagnosisController {
     }
 
     @PutMapping("{id}")
-    public DiagnosisEntity updateDiagnosis(@PathVariable Integer id, @Valid @RequestBody DiagnosisCreation diagnosis) {
+    public DiagnosisEntity updateDiagnosis(
+            @PathVariable Integer id,
+            @Valid @RequestBody DiagnosisCreation diagnosis) {
         return service.updateDiagnosis(id, diagnosis);
     }
 

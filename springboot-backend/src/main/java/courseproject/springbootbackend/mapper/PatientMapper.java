@@ -11,6 +11,8 @@ public class PatientMapper {
     public PatientEntity map(final PatientCreation dto) {
         return PatientEntity.builder()
                 .name(dto.name())
+                .surname(dto.surname())
+                .patronymic(dto.patronymic())
                 .phoneNumber(dto.phoneNumber())
                 .build();
     }

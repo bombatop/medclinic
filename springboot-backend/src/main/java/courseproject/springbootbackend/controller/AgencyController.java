@@ -46,7 +46,9 @@ public class AgencyController {
     }
 
     @PutMapping("{id}")
-    public AgencyEntity updateAgency(@PathVariable Integer id, @Valid @RequestBody AgencyCreation dto) {
+    public AgencyEntity updateAgency(
+        @PathVariable Integer id,
+        @Valid @RequestBody AgencyCreation dto) {
         return service.updateAgency(id, dto);
     }
 

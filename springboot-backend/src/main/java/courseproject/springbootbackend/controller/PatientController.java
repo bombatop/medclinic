@@ -29,15 +29,11 @@ public class PatientController {
 
     @GetMapping
     public Page<PatientEntity> getPatients(
-            @RequestParam(required = false) String searchQuery,
-            @RequestParam Integer page,
-            @RequestParam Integer size)
-    {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchQuery) {
         Pageable pageable = PageRequest.of(page, size);
-        if (searchQuery != null && !searchQuery.isEmpty()) {
-            return service.getPatients(searchQuery, pageable);
-        }
-        return service.getAllPatients(pageable);
+        return service.getPatients(searchQuery, pageable);
     }
 
     @GetMapping("{id}")
@@ -46,13 +42,15 @@ public class PatientController {
     }
 
     @PutMapping("{id}")
-    public PatientEntity updatePatient(@PathVariable Integer id, @Valid @RequestBody PatientCreation doctor) {
-        return service.updatePatient(id, doctor);
+    public PatientEntity updatePatient(
+            @PathVariable Integer id,
+            @Valid @RequestBody PatientCreation patient) {
+        return service.updatePatient(id, patient);
     }
 
     @PostMapping
-    public PatientEntity addPatient(@Valid @RequestBody PatientCreation doctor) {
-        return service.addPatient(doctor);
+    public PatientEntity addPatient(@Valid @RequestBody PatientCreation patient) {
+        return service.addPatient(patient);
     }
 
     @DeleteMapping("{id}")
