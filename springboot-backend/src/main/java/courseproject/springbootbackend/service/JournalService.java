@@ -2,6 +2,9 @@ package courseproject.springbootbackend.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.time.temporal.ChronoUnit;
+import java.time.format.DateTimeFormatter;
+
 import courseproject.springbootbackend.mapper.JournalMapper;
 import courseproject.springbootbackend.model.dto.JournalCreation;
 import courseproject.springbootbackend.model.dto.JournalLinkCreation;
@@ -12,6 +15,7 @@ import courseproject.springbootbackend.model.entity.PatientEntity;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +28,7 @@ import courseproject.springbootbackend.service.exception.EntityAlreadyExistsExce
 import courseproject.springbootbackend.service.exception.JournalAlreadyLinkedException;
 import courseproject.springbootbackend.service.exception.JournalNotFoundException;
 import courseproject.springbootbackend.service.exception.PatientNotFoundException;
+import courseproject.springbootbackend.service.specification.JournalSpecification;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -39,41 +44,22 @@ public class JournalService {
 
     private final JournalMapper journalMapper;
 
-    public Page<JournalEntity> getJournals(
-            final Pageable pageable,
-            final Integer doctorId,
-            final LocalDateTime startDate,
-            final LocalDateTime endDate) {
-        if (doctorId != null && startDate != null && endDate != null) {
-            return journalRepository.findByDoctorIdAndDateBetween(doctorId, startDate, endDate, pageable);
-        } else if (doctorId != null) {
-            return journalRepository.findByDoctorId(doctorId, pageable);
-        } else if (startDate != null && endDate != null) {
-            return journalRepository.findByDateBetween(startDate, endDate, pageable);
-        } else {
-            return journalRepository.findAll(pageable);
-        }
+    public Page<JournalEntity> getJournals(Pageable pageable, Integer doctorId, Integer patientId, String startDateStr, String endDateStr) {
+        LocalDateTime start = startDateStr != null
+            ? LocalDateTime.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME).truncatedTo(ChronoUnit.DAYS)
+            : null;
+
+        LocalDateTime end = endDateStr != null
+            ? LocalDateTime.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME).plusDays(1).minusSeconds(1)
+            : null;
+
+        Specification<JournalEntity> spec = JournalSpecification.getJournals(doctorId, patientId, start, end);
+        return journalRepository.findAll(spec, pageable);
     }
 
     public JournalEntity getJournalById(final Integer id) {
         return journalRepository.findById(id)
                 .orElseThrow(JournalNotFoundException::new);
-    }
-    
-    public List<JournalEntity> getJournalsForPatient(final Integer id) {
-        patientRepository.findById(id)
-                .orElseThrow(PatientNotFoundException::new);
-        return journalRepository.findByPatientIdOrderByDateDesc(id);
-    }
-
-    public List<JournalEntity> getJournalsByDateRange(final LocalDateTime startDate) {
-        try {
-            LocalDateTime endDate = startDate.plusDays(7).minusSeconds(1);
-            return journalRepository.findByDateBetweenOrderByDateAsc(startDate, endDate);
-        } 
-        catch (Exception e) {
-            throw new RuntimeException(e.getMessage()); //change later
-        }
     }
 
     public JournalEntity addJournal(final JournalCreation dto) {
@@ -189,5 +175,5 @@ public class JournalService {
 
     public void deleteJournal(final Integer id) {
         journalRepository.deleteById(id);
-    } 
+    }
 }

@@ -1,10 +1,6 @@
 package courseproject.springbootbackend.controller;
 
 import java.util.List;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,34 +38,19 @@ public class JournalController {
             @RequestParam(defaultValue = "dateStart") String sortField,
             @RequestParam(defaultValue = "asc") String sortOrder,
             @RequestParam(required = false) Integer doctorId,
+            @RequestParam(required = false) Integer patientId,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate) {
+
         Sort sort = Sort.by(Sort.Direction.fromString(sortOrder), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
-        LocalDateTime start = startDate != null
-            ? LocalDateTime.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME).truncatedTo(ChronoUnit.DAYS)
-            : null;
-        LocalDateTime end = endDate != null
-            ? LocalDateTime.parse(endDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME).plusDays(1).minusSeconds(1)
-            : null;
-        return journalService.getJournals(pageable, doctorId, start, end);
+
+        return journalService.getJournals(pageable, doctorId, patientId, startDate, endDate);
     }
 
     @GetMapping("{id}")
     public JournalEntity getJournalById(@PathVariable Integer id) {
         return journalService.getJournalById(id);
-    }
-
-    @GetMapping("patient/{id}")
-    public List<JournalEntity> getJournalsForPatient(@PathVariable Integer id) {
-        return journalService.getJournalsForPatient(id);
-    }
-
-    @GetMapping("date/{date}")
-    public List<JournalEntity> getJournalsByDateRange(
-            @PathVariable("date") String dateString) {
-        LocalDate startDate = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        return journalService.getJournalsByDateRange(startDate.atStartOfDay());
     }
 
     @GetMapping("all-next/{id}")

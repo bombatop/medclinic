@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -15,7 +14,7 @@ import courseproject.springbootbackend.model.entity.FileEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 
 @Repository
-public interface JournalRepository extends JpaRepository<JournalEntity, Integer> {
+public interface JournalRepository extends JpaRepository<JournalEntity, Integer>, JpaSpecificationExecutor<JournalEntity>{
 
     List<JournalEntity> findByPatientIdOrderByDateDesc(Integer id);
 
@@ -41,10 +40,4 @@ public interface JournalRepository extends JpaRepository<JournalEntity, Integer>
     @Query("SELECT j FROM JournalEntity j WHERE j.nextEntry IS NULL AND j.date <= :date " +
            "AND j.patient.id = :patientId ORDER BY j.date ASC")
     List<JournalEntity> findPreviousEntry(@Param("date") LocalDateTime date, @Param("patientId") Integer patientId);
-
-    Page<JournalEntity> findByDoctorId(Integer doctorId, Pageable pageable);
-
-    Page<JournalEntity> findByDateBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
-
-    Page<JournalEntity> findByDoctorIdAndDateBetween(Integer doctorId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 }

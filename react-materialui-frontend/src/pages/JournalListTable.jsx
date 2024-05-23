@@ -37,20 +37,25 @@ const statusLabels = {
 
 const JournalListTable = () => {
     const [journals, setJournals] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
     const [sortField, setSortField] = useState('date');
     const [sortOrder, setSortOrder] = useState('asc');
+
     const [startDate, setStartDate] = useState(dayjs());
     const [endDate, setEndDate] = useState(null);
+
     const [patients, setPatients] = useState([]);
     const [loadingPatients, setLoadingPatients] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
+
     const [doctors, setDoctors] = useState([]);
     const [loadingDoctors, setLoadingDoctors] = useState(false);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
+
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedJournalId, setSelectedJournalId] = useState(null);
 
