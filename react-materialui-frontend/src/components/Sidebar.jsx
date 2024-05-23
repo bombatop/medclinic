@@ -1,6 +1,5 @@
-// components/Sidebar.jsx
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -19,6 +18,7 @@ const drawerWidth = 240;
 
 function Sidebar({ isOpen, toggleDrawer }) {
     const theme = useTheme();
+    const location = useLocation();
     const [openSection, setOpenSection] = useState(null);
 
     useEffect(() => {
@@ -37,6 +37,8 @@ function Sidebar({ isOpen, toggleDrawer }) {
             setOpenSection(section);
         }
     };
+
+    const isCurrentPath = (path) => location.pathname === path;
 
     return (
         <Drawer
@@ -62,15 +64,27 @@ function Sidebar({ isOpen, toggleDrawer }) {
                     {openSection === 'reception' ? <ExpandLess /> : <ExpandMore />}
                 </ListItemButton>
                 <Collapse in={openSection === 'reception'} timeout="auto" unmountOnExit>
+                    <ListItemButton
+                        component={Link}
+                        to="/patients"
+                        sx={{ pl: 9, bgcolor: isCurrentPath('/patients') ? 'action.selected' : 'inherit' }}
+                    >
+                        <ListItemText primary="Картотека" />
+                    </ListItemButton>
                     <List component="div" disablePadding>
-                        <ListItemButton component={Link} to="/journals-table" sx={{ pl: 9}}>
+                        <ListItemButton
+                            component={Link}
+                            to="/journals-table"
+                            sx={{ pl: 9, bgcolor: isCurrentPath('/journals-table') ? 'action.selected' : 'inherit' }}
+                        >
                             <ListItemText primary="Записи" />
                         </ListItemButton>
-                        <ListItemButton component={Link} to="/journals-calendar" sx={{ pl: 9 }}>
+                        <ListItemButton
+                            component={Link}
+                            to="/journals-calendar"
+                            sx={{ pl: 9, bgcolor: isCurrentPath('/journals-calendar') ? 'action.selected' : 'inherit' }}
+                        >
                             <ListItemText primary="Расписание" />
-                        </ListItemButton>
-                        <ListItemButton component={Link} to="/patients" sx={{ pl: 9 }}>
-                            <ListItemText primary="Картотека" />
                         </ListItemButton>
                     </List>
                 </Collapse>
@@ -84,16 +98,32 @@ function Sidebar({ isOpen, toggleDrawer }) {
                 </ListItemButton>
                 <Collapse in={openSection === 'references'} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                        <ListItemButton component={Link} to="/treatments" sx={{ pl: 9 }}>
+                        <ListItemButton
+                            component={Link}
+                            to="/treatments"
+                            sx={{ pl: 9, bgcolor: isCurrentPath('/treatments') ? 'action.selected' : 'inherit' }}
+                        >
                             <ListItemText primary="Услуги" />
                         </ListItemButton>
-                        <ListItemButton component={Link} to="/agencies" sx={{ pl: 9 }}>
+                        <ListItemButton
+                            component={Link}
+                            to="/agencies"
+                            sx={{ pl: 9, bgcolor: isCurrentPath('/agencies') ? 'action.selected' : 'inherit' }}
+                        >
                             <ListItemText primary="Агентства" />
                         </ListItemButton>
-                        <ListItemButton component={Link} to="/prices" sx={{ pl: 9 }}>
+                        <ListItemButton
+                            component={Link}
+                            to="/prices"
+                            sx={{ pl: 9, bgcolor: isCurrentPath('/prices') ? 'action.selected' : 'inherit' }}
+                        >
                             <ListItemText primary="Цены" />
                         </ListItemButton>
-                        <ListItemButton component={Link} to="/diagnoses" sx={{ pl: 9 }}>
+                        <ListItemButton
+                            component={Link}
+                            to="/diagnoses"
+                            sx={{ pl: 9, bgcolor: isCurrentPath('/diagnoses') ? 'action.selected' : 'inherit' }}
+                        >
                             <ListItemText primary="Диагнозы" />
                         </ListItemButton>
                     </List>
@@ -108,7 +138,11 @@ function Sidebar({ isOpen, toggleDrawer }) {
                 </ListItemButton>
                 <Collapse in={openSection === 'staff'} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                        <ListItemButton component={Link} to="/doctors" sx={{ pl: 9 }}>
+                        <ListItemButton
+                            component={Link}
+                            to="/doctors"
+                            sx={{ pl: 9, bgcolor: isCurrentPath('/doctors') ? 'action.selected' : 'inherit' }}
+                        >
                             <ListItemText primary="Доктора" />
                         </ListItemButton>
                     </List>

@@ -4,7 +4,6 @@ import courseproject.springbootbackend.mapper.DoctorMapper;
 import courseproject.springbootbackend.model.dto.DoctorCreation;
 import courseproject.springbootbackend.model.entity.DoctorEntity;
 
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,16 +25,12 @@ public class DoctorService {
 
     private final DoctorMapper doctorMapper;
     
-    public List<DoctorEntity> getAllDoctors() {
-        return doctorRepository.findAll();
-    }
-    
-    public Page<DoctorEntity> getAllDoctors(final Pageable pageable) {
-        return doctorRepository.findAll(pageable);
-    }
-
     public Page<DoctorEntity> getDoctors(final String searchQuery, final Pageable pageable) {
-        return doctorRepository.findByNameContaining(searchQuery, pageable);
+        if (searchQuery == null || searchQuery.isEmpty()) {
+            return doctorRepository.findAll(pageable);
+        } else {
+            return doctorRepository.searchDoctors(searchQuery, pageable);
+        }
     }
 
     public DoctorEntity getDoctorById(final Integer id) {

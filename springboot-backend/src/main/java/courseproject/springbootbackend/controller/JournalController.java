@@ -2,6 +2,7 @@ package courseproject.springbootbackend.controller;
 
 import java.util.List;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,12 +33,25 @@ import lombok.RequiredArgsConstructor;
 public class JournalController {
     
     private final JournalService journalService;
-
+    
     @GetMapping
     public Page<JournalEntity> getJournals(
-            @RequestParam(defaultValue = "0") int page, 
-            @RequestParam(defaultValue = "10") int size) {
-        return journalService.getAllJournals(PageRequest.of(page, size));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "dateStart") String sortField,
+            @RequestParam(defaultValue = "asc") String sortOrder,
+            @RequestParam(required = false) Integer doctorId,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortOrder), sortField);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        LocalDateTime start = startDate != null
+            ? LocalDateTime.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            : null;
+        LocalDateTime end = endDate != null
+            ? LocalDateTime.parse(endDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME).plusDays(1).minusSeconds(1)
+            : null;
+        return journalService.getJournals(pageable, doctorId, start, end);
     }
 
     @GetMapping("{id}")

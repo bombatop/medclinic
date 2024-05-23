@@ -43,12 +43,12 @@ public class JournalEntity {
     @Column(name = "date_end")
     private LocalDateTime dateEnd;
 
-    @JsonIncludeProperties({ "id", "name" })
+    @JsonIncludeProperties({ "id", "name", "surname", "patronymic" })
     @ManyToOne
     @JoinColumn(name = "patient_id")
     private PatientEntity patient;
 
-    @JsonIncludeProperties({ "id", "name" })
+    @JsonIncludeProperties({ "id", "name", "surname", "patronymic" })
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;

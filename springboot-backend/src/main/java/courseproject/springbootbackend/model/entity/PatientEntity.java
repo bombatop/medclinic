@@ -1,5 +1,8 @@
 package courseproject.springbootbackend.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +34,10 @@ public class PatientEntity {
 
     @Column(name = "patronymic")
     private String patronymic;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 
     @Column(name = "phone_number")
     private String phoneNumber;

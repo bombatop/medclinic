@@ -14,6 +14,7 @@ public class PatientMapper {
                 .surname(dto.surname())
                 .patronymic(dto.patronymic())
                 .phoneNumber(dto.phoneNumber())
+                .birthDate(dto.birthDate())
                 .build();
     }
 }

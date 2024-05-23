@@ -3,6 +3,7 @@ package courseproject.springbootbackend.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,8 +32,17 @@ public class PatientController {
     public Page<PatientEntity> getPatients(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String searchQuery) {
-        Pageable pageable = PageRequest.of(page, size);
+            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(required = false) String sortOrder) {
+        if (sortField == null || sortField.isEmpty()) {
+            sortField = "surname";
+        }
+        if (sortOrder == null || sortOrder.isEmpty()) {
+            sortOrder = "asc";
+        }
+        Sort sort = Sort.by(Sort.Order.by(sortField).with(Sort.Direction.fromString(sortOrder)));
+        Pageable pageable = PageRequest.of(page, size, sort);
         return service.getPatients(searchQuery, pageable);
     }
 

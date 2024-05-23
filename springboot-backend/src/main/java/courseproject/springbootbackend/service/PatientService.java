@@ -52,6 +52,7 @@ public class PatientService {
         patientEntity.setSurname(dto.surname());
         patientEntity.setPatronymic(dto.patronymic());
         patientEntity.setPhoneNumber(dto.phoneNumber());
+        patientEntity.setBirthDate(dto.birthDate());
         try {
             patientEntity = patientRepository.save(patientEntity);
             return patientEntity;

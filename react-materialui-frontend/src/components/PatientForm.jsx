@@ -13,13 +13,13 @@ const PatientForm = ({ patientId, onClose }) => {
         patronymic: '',
         birthDate: dayjs(),
         phoneNumber: '',
-        email: '',
     });
 
     const [errors, setErrors] = useState({});
 
     const surnameRef = useRef();
     const nameRef = useRef();
+    const phoneRef = useRef();
 
     useEffect(() => {
         if (patientId) {
@@ -32,7 +32,6 @@ const PatientForm = ({ patientId, onClose }) => {
                         patronymic: data.patronymic || '',
                         birthDate: data.birthDate ? dayjs(data.birthDate) : dayjs(),
                         phoneNumber: data.phoneNumber || '',
-                        email: data.email || '',
                     });
                 })
                 .catch(error => console.error('Error fetching patient:', error));
@@ -64,6 +63,10 @@ const PatientForm = ({ patientId, onClose }) => {
             tempErrors.name = "Пожалуйста, заполните это поле.";
             nameRef.current.focus();
         }
+        if (!patient.phoneNumber) {
+            tempErrors.phoneNumber = "Пожалуйста, заполните это поле.";
+            phoneRef.current.focus();
+        }
         setErrors(tempErrors);
         return Object.values(tempErrors).every(x => x === "");
     };
@@ -74,11 +77,11 @@ const PatientForm = ({ patientId, onClose }) => {
             const request = patientId
                 ? api.put(`/patients/${patientId}`, {
                     ...patient,
-                    birthDate: patient.birthDate.format('YYYY-MM-DD') // Format the date as 'yyyy-MM-dd'
+                    birthDate: patient.birthDate.format('YYYY-MM-DD')
                 })
                 : api.post('/patients', {
                     ...patient,
-                    birthDate: patient.birthDate.format('YYYY-MM-DD') // Format the date as 'yyyy-MM-dd'
+                    birthDate: patient.birthDate.format('YYYY-MM-DD')
                 });
 
             request
@@ -130,32 +133,21 @@ const PatientForm = ({ patientId, onClose }) => {
                         label="Дата рождения"
                         value={patient.birthDate}
                         onChange={handleDateChange}
-                        PopperProps={{ sx: { zIndex: 1500 } }}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                required
-                                error={!!errors.birthDate}
-                                helperText={errors.birthDate}
-                                size="small"
-                            />
-                        )}
                     />
                 </FormControl>
-                <TextField
-                    label="Телефон"
-                    name="phoneNumber"
-                    value={patient.phoneNumber || ''}
-                    onChange={handleChange}
-                    size="small"
-                />
-                <TextField
-                    label="E-mail"
-                    name="email"
-                    value={patient.email || ''}
-                    onChange={handleChange}
-                    size="small"
-                />
+                <FormControl error={!!errors.phoneNumber}>
+                    <TextField
+                        label="Телефон"
+                        name="phoneNumber"
+                        value={patient.phoneNumber || ''}
+                        onChange={handleChange}
+                        required
+                        inputRef={phoneRef}
+                        error={!!errors.phoneNumber}
+                        helperText={errors.phoneNumber}
+                        size="small"
+                    />
+                </FormControl>
                 <Button type="submit" variant="contained" color="primary">
                     Сохранить
                 </Button>

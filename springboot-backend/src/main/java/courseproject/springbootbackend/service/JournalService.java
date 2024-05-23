@@ -39,8 +39,20 @@ public class JournalService {
 
     private final JournalMapper journalMapper;
 
-    public Page<JournalEntity> getAllJournals(Pageable pageable) {
-        return journalRepository.findAll(pageable);
+    public Page<JournalEntity> getJournals(
+            final Pageable pageable,
+            final Integer doctorId,
+            final LocalDateTime startDate,
+            final LocalDateTime endDate) {
+        if (doctorId != null && startDate != null && endDate != null) {
+            return journalRepository.findByDoctorIdAndDateStartBetween(doctorId, startDate, endDate, pageable);
+        } else if (doctorId != null) {
+            return journalRepository.findByDoctorId(doctorId, pageable);
+        } else if (startDate != null && endDate != null) {
+            return journalRepository.findByDateStartBetween(startDate, endDate, pageable);
+        } else {
+            return journalRepository.findAll(pageable);
+        }
     }
 
     public JournalEntity getJournalById(final Integer id) {

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,4 +41,10 @@ public interface JournalRepository extends JpaRepository<JournalEntity, Integer>
     @Query("SELECT j FROM JournalEntity j WHERE j.nextEntry IS NULL AND j.dateEnd <= :dateStart " +
            "AND j.patient.id = :patientId ORDER BY j.dateStart ASC")
     List<JournalEntity> findByNextEntryIsNullAndDateBeforeAndPatient(LocalDateTime dateStart, Integer patientId);
+
+    Page<JournalEntity> findByDoctorId(Integer doctorId, Pageable pageable);
+
+    Page<JournalEntity> findByDateStartBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+
+    Page<JournalEntity> findByDoctorIdAndDateStartBetween(Integer doctorId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 }

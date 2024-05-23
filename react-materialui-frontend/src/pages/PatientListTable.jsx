@@ -1,25 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from "../utils/http-common";
+import debounce from 'lodash.debounce';
+import dayjs from 'dayjs';
+
 import {
-    Box,
-    Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    TextField,
-    IconButton,
-    Typography,
-    Pagination,
-    Select,
-    MenuItem
+    TableCell, TableContainer, TableHead, TableRow,
+    Pagination, Select, MenuItem, CircularProgress,
+    Paper, TextField, IconButton, Typography,
+    Box, Button, Table, TableBody, InputAdornment
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+
 import PatientModal from '../components/PatientModal';
+import SortableTableCell from '../components/SortableTableCell';
 
 const PatientsListTable = () => {
     const [patients, setPatients] = useState([]);
@@ -30,15 +24,19 @@ const PatientsListTable = () => {
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
+    const [sortField, setSortField] = useState('surname');
+    const [sortOrder, setSortOrder] = useState('asc');
 
-    const fetchPatients = async (query = '', page = 1, size = 10) => {
-        setLoading(true);
+
+    const fetchPatients = async (query = '', page = 1, size = 10, sortField = 'surname', sortOrder = 'asc') => {
         try {
             const response = await api.get('/patients', {
                 params: {
                     searchQuery: query,
                     page: page - 1,
                     size,
+                    sortField,
+                    sortOrder,
                 },
             });
             setPatients(response.data.content);
@@ -49,13 +47,29 @@ const PatientsListTable = () => {
         setLoading(false);
     };
 
+    const debouncedFetchPatients = useCallback(debounce((query) => {
+        fetchPatients(query, page, size, sortField, sortOrder);
+    }, 300), [page, size, sortField, sortOrder]);
+
     useEffect(() => {
-        fetchPatients(searchQuery, page, size);
-    }, [searchQuery, page, size]);
+        setLoading(true);
+        fetchPatients(searchQuery, page, size, sortField, sortOrder);
+    }, [page, size, sortField, sortOrder]);
+
+    useEffect(() => {
+        setLoading(true);
+        debouncedFetchPatients(searchQuery);
+    }, [searchQuery, debouncedFetchPatients]);
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
-        setPage(1); // Reset to first page on search
+        setPage(1);
+    };
+
+    const handleSort = (field) => {
+        const isAsc = sortField === field && sortOrder === 'asc';
+        setSortOrder(isAsc ? 'desc' : 'asc');
+        setSortField(field);
     };
 
     const handleDelete = async (id) => {
@@ -91,18 +105,34 @@ const PatientsListTable = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 sx={{ mb: 2, width: '100%' }}
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            {loading && <CircularProgress size={25} />}
+                        </InputAdornment>
+                    ),
+                }}
             />
             <TableContainer component={Paper}>
-                <Table>
+                <Table size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Фамилия</TableCell>
-                            <TableCell>Имя</TableCell>
-                            <TableCell>Отчество</TableCell>
-                            <TableCell>Дата рождения</TableCell>
-                            <TableCell>Телефон</TableCell>
-                            <TableCell>E-mail</TableCell>
-                            <TableCell>Действия</TableCell>
+                            <SortableTableCell field="surname" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
+                                Фамилия
+                            </SortableTableCell>
+                            <SortableTableCell field="name" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
+                                Имя
+                            </SortableTableCell>
+                            <SortableTableCell field="patronymic" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
+                                Отчество
+                            </SortableTableCell>
+                            <SortableTableCell field="birthDate" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
+                                Дата рождения
+                            </SortableTableCell>
+                            <SortableTableCell field="phoneNumber" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
+                                Телефон
+                            </SortableTableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -111,9 +141,8 @@ const PatientsListTable = () => {
                                 <TableCell>{patient.surname}</TableCell>
                                 <TableCell>{patient.name}</TableCell>
                                 <TableCell>{patient.patronymic}</TableCell>
-                                <TableCell>{patient.birthDate}</TableCell>
+                                <TableCell>{dayjs(patient.birthDate).format('DD.MM.YYYY')}</TableCell>
                                 <TableCell>{patient.phoneNumber}</TableCell>
-                                <TableCell>{patient.email}</TableCell>
                                 <TableCell>
                                     <IconButton onClick={() => handleOpenModal(patient.id)}>
                                         <EditIcon />
@@ -127,7 +156,7 @@ const PatientsListTable = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            {loading && <Typography>Загрузка...</Typography>}
+
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
                 <Pagination
                     count={totalPages}
