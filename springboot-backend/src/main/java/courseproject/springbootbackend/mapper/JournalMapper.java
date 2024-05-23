@@ -18,8 +18,8 @@ public class JournalMapper {
                 .patient(patientEntity)
                 .doctor(doctorEntity)
                 .status(dto.status())
-                .dateStart(dto.dateStart())
-                .dateEnd(dto.dateEnd())
+                .date(dto.date())
+                .timeEnd(dto.timeEnd())
                 .build();
     }
 
@@ -32,8 +32,8 @@ public class JournalMapper {
                 .patient(patientEntity)
                 .doctor(doctorEntity)
                 .previousEntry(prevJournalEntity)
-                .dateStart(dto.dateStart())
-                .dateEnd(dto.dateEnd())
+                .date(dto.date())
+                .timeEnd(dto.timeEnd())
                 .build();
     }
 }

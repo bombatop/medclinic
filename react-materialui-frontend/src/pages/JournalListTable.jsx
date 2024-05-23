@@ -41,7 +41,7 @@ const JournalListTable = () => {
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
-    const [sortField, setSortField] = useState('dateStart');
+    const [sortField, setSortField] = useState('date');
     const [sortOrder, setSortOrder] = useState('asc');
     const [startDate, setStartDate] = useState(dayjs());
     const [endDate, setEndDate] = useState(null);
@@ -54,7 +54,7 @@ const JournalListTable = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedJournalId, setSelectedJournalId] = useState(null);
 
-    const fetchJournals = async (page = 1, size = 10, sortField = 'dateStart', sortOrder = 'asc') => {
+    const fetchJournals = async (page = 1, size = 10, sortField = 'date', sortOrder = 'asc') => {
         try {
             const params = {
                 page: page - 1,
@@ -249,11 +249,14 @@ const JournalListTable = () => {
                             <SortableTableCell field="doctor.name" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
                                 Специалист
                             </SortableTableCell>
-                            <SortableTableCell field="dateStart" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
+                            <SortableTableCell field="date" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
                                 Дата начала
                             </SortableTableCell>
-                            <SortableTableCell field="dateEnd" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
-                                Дата окончания
+                            <SortableTableCell field="date" handleSort={handleSort}>
+                                Время начала
+                            </SortableTableCell>
+                            <SortableTableCell field="timeEnd" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
+                                Время окончания
                             </SortableTableCell>
                             <SortableTableCell field="status" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
                                 Статус
@@ -268,8 +271,9 @@ const JournalListTable = () => {
                         {journals.map((journal) => (
                             <TableRow key={journal.id}>
                                 <TableCell>{journal.doctor.surname + ' ' + journal.doctor.name + ' ' + journal.doctor.patronymic}</TableCell>
-                                <TableCell>{dayjs(journal.dateStart).format('DD.MM.YYYY / HH:mm')}</TableCell>
-                                <TableCell>{dayjs(journal.dateEnd).format('DD.MM.YYYY / HH:mm')}</TableCell>
+                                <TableCell>{dayjs(journal.date).format('DD.MM.YYYY')}</TableCell>
+                                <TableCell>{dayjs(journal.date).format('HH:mm')}</TableCell>
+                                <TableCell>{journal.timeEnd}</TableCell>
                                 <TableCell style={{ color: statusColors[journal.status] }}>
                                     {statusLabels[journal.status]}
                                 </TableCell>

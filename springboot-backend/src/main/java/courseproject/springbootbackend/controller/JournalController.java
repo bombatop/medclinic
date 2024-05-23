@@ -2,6 +2,7 @@ package courseproject.springbootbackend.controller;
 
 import java.util.List;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -46,7 +47,7 @@ public class JournalController {
         Sort sort = Sort.by(Sort.Direction.fromString(sortOrder), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
         LocalDateTime start = startDate != null
-            ? LocalDateTime.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            ? LocalDateTime.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME).truncatedTo(ChronoUnit.DAYS)
             : null;
         LocalDateTime end = endDate != null
             ? LocalDateTime.parse(endDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME).plusDays(1).minusSeconds(1)

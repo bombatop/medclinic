@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { TextField, Button, Box, FormControl, CircularProgress, MenuItem, Select, InputLabel, Autocomplete } from '@mui/material';
-import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, DateTimePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/ru';
 import dayjs from 'dayjs';
@@ -17,8 +17,8 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
     const [journal, setJournal] = useState({
         patientId: '',
         doctorId: '',
-        dateStart: dayjs(),
-        dateEnd: dayjs(),
+        date: dayjs(),
+        timeEnd: dayjs().add(1, 'hour'),
         status: 'SCHEDULED'
     });
 
@@ -32,8 +32,8 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
 
     const patientRef = useRef();
     const doctorRef = useRef();
-    const dateStartRef = useRef();
-    const dateEndRef = useRef();
+    const dateRef = useRef();
+    const timeEndRef = useRef();
 
     const fetchDoctors = async (query = '') => {
         setLoadingDoctors(true);
@@ -68,7 +68,7 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
     useEffect(() => {
         fetchDoctors();
     }, []);
-    
+
     const debouncedFetchDoctors = useCallback(debounce((query) => {
         fetchDoctors(query);
     }, 300), []);
@@ -82,8 +82,8 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
             setJournal({
                 patientId: journalData.patient.id || '',
                 doctorId: journalData.doctor.id || '',
-                dateStart: journalData.dateStart ? dayjs(journalData.dateStart) : dayjs(),
-                dateEnd: journalData.dateEnd ? dayjs(journalData.dateEnd) : dayjs(),
+                date: journalData.date ? dayjs(journalData.date) : dayjs(),
+                timeEnd: journalData.timeEnd ? dayjs(journalData.timeEnd, 'HH:mm') : dayjs().add(1, 'hour'),
                 status: journalData.status || 'SCHEDULED'
             });
             setSelectedPatient(journalData.patient);
@@ -100,14 +100,14 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
             setJournal({
                 patientId: data.patient.id || '',
                 doctorId: data.doctor.id || '',
-                dateStart: data.dateStart ? dayjs(data.dateStart) : dayjs(),
-                dateEnd: data.dateEnd ? dayjs(data.dateEnd) : dayjs(),
+                date: data.date ? dayjs(data.date) : dayjs(),
+                timeEnd: data.timeEnd ? dayjs(data.timeEnd, 'HH:mm') : dayjs().add(1, 'hour'),
                 status: data.status || 'SCHEDULED'
             });
             setSelectedPatient(data.patient);
             setSelectedDoctor(data.doctor);
-            setPatients([data.patient]); // Add initial data to options
-            setDoctors([data.doctor]); // Add initial data to options
+            setPatients([data.patient]);
+            setDoctors([data.doctor]);
         } catch (error) {
             console.error('Error fetching journal:', error);
         }
@@ -121,17 +121,17 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
         }));
     };
 
-    const handleDateStartChange = (date) => {
+    const handleDateChange = (date) => {
         setJournal(prevState => ({
             ...prevState,
-            dateStart: date
+            date: date
         }));
     };
 
-    const handleDateEndChange = (date) => {
+    const handleTimeChange = (time) => {
         setJournal(prevState => ({
             ...prevState,
-            dateEnd: date
+            timeEnd: time
         }));
     };
 
@@ -145,13 +145,12 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
             tempErrors.doctorId = "Пожалуйста, выберите доктора.";
             doctorRef.current.focus();
         }
-        if (!journal.dateStart || !journal.dateStart.isValid()) {
-            tempErrors.dateStart = "Пожалуйста, выберите дату начала.";
-            dateStartRef.current.focus();
+        if (!journal.date || !journal.date.isValid()) {
+            tempErrors.date = "Пожалуйста, выберите дату и время начала.";
+            dateRef.current.focus();
         }
-        if (!journal.dateEnd || !journal.dateEnd.isValid()) {
-            tempErrors.dateEnd = "Пожалуйста, выберите дату начала.";
-            dateEndRef.current.focus();
+        if (!journal.timeEnd || !journal.timeEnd.isValid()) {
+            tempErrors.timeEnd = "Пожалуйста, выберите время окончания.";
         }
         setErrors(tempErrors);
         return Object.values(tempErrors).every(x => x === "");
@@ -163,13 +162,13 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
             const request = journalId
                 ? api.put(`/journals/${journalId}`, {
                     ...journal,
-                    dateStart: journal.dateStart.format('YYYY-MM-DDTHH:mm'),
-                    dateEnd: journal.dateEnd.format('YYYY-MM-DDTHH:mm')
+                    date: journal.date.format('YYYY-MM-DDTHH:mm'),
+                    timeEnd: journal.timeEnd.format('HH:mm')
                 })
                 : api.post('/journals', {
                     ...journal,
-                    dateStart: journal.dateStart.format('YYYY-MM-DDTHH:mm'),
-                    dateEnd: journal.dateEnd.format('YYYY-MM-DDTHH:mm')
+                    date: journal.date.format('YYYY-MM-DDTHH:mm'),
+                    timeEnd: journal.timeEnd.format('HH:mm')
                 });
 
             request
@@ -179,6 +178,7 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
                 .catch(error => console.error('Error saving journal:', error));
         }
     };
+
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
@@ -267,25 +267,27 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
                         )}
                     />
                 </FormControl>
-                <FormControl error={!!errors.dateStart}>
+                <FormControl error={!!errors.date}>
                     <DateTimePicker
-                        label="Дата начала"
-                        value={journal.dateStart}
-                        onChange={handleDateStartChange}
+                        label="Дата"
+                        value={journal.date}
+                        onChange={handleDateChange}
                         textField={(params) => (
-                            <TextField {...params} required error={!!errors.dateStart} helperText={errors.dateStart} inputRef={dateStartRef} />
+                            <TextField {...params} required error={!!errors.date} helperText={errors.date} inputRef={dateRef} />
                         )}
                     />
                 </FormControl>
-                <DateTimePicker
-                    label="Дата окончания"
-                    value={journal.dateEnd}
-                    minDate={journal.dateStart}
-                    onChange={handleDateEndChange}
-                    textField={(params) => (
-                        <TextField {...params} />
-                    )}
-                />
+                <FormControl error={!!errors.timeEnd}>
+                    <TimePicker
+                        label="Время окончания"
+                        value={journal.timeEnd}
+                        onChange={handleTimeChange}
+                        textField={(params) => (
+                            <TextField {...params} required error={!!errors.timeEnd} helperText={errors.timeEnd} inputRef={timeEndRef} />
+                        )}
+                    />
+                </FormControl>
+
                 <FormControl>
                     <InputLabel>Статус</InputLabel>
                     <Select

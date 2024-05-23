@@ -45,11 +45,11 @@ public class JournalService {
             final LocalDateTime startDate,
             final LocalDateTime endDate) {
         if (doctorId != null && startDate != null && endDate != null) {
-            return journalRepository.findByDoctorIdAndDateStartBetween(doctorId, startDate, endDate, pageable);
+            return journalRepository.findByDoctorIdAndDateBetween(doctorId, startDate, endDate, pageable);
         } else if (doctorId != null) {
             return journalRepository.findByDoctorId(doctorId, pageable);
         } else if (startDate != null && endDate != null) {
-            return journalRepository.findByDateStartBetween(startDate, endDate, pageable);
+            return journalRepository.findByDateBetween(startDate, endDate, pageable);
         } else {
             return journalRepository.findAll(pageable);
         }
@@ -63,13 +63,13 @@ public class JournalService {
     public List<JournalEntity> getJournalsForPatient(final Integer id) {
         patientRepository.findById(id)
                 .orElseThrow(PatientNotFoundException::new);
-        return journalRepository.findByPatientIdOrderByDateStartDesc(id);
+        return journalRepository.findByPatientIdOrderByDateDesc(id);
     }
 
     public List<JournalEntity> getJournalsByDateRange(final LocalDateTime startDate) {
         try {
             LocalDateTime endDate = startDate.plusDays(7).minusSeconds(1);
-            return journalRepository.findByDateStartBetweenOrderByDateStartAsc(startDate, endDate);
+            return journalRepository.findByDateBetweenOrderByDateAsc(startDate, endDate);
         } 
         catch (Exception e) {
             throw new RuntimeException(e.getMessage()); //change later
@@ -153,13 +153,13 @@ public class JournalService {
     public List<JournalEntity> getAvailableNextEntries(final Integer journalId) {
         var journalEntity = journalRepository.findById(journalId)
                 .orElseThrow(JournalNotFoundException::new);
-        return journalRepository.findByPreviousEntryIsNullAndDateAfterAndPatient(journalEntity.getDateEnd(), journalEntity.getPatient().getId());
+        return journalRepository.findNextEntry(journalEntity.getDate(), journalEntity.getPatient().getId());
     }
 
     public List<JournalEntity> getAvailablePreviousEntries(final Integer journalId) {
         var journalEntity = journalRepository.findById(journalId)
                 .orElseThrow(JournalNotFoundException::new);
-        return journalRepository.findByNextEntryIsNullAndDateBeforeAndPatient(journalEntity.getDateStart(),
+        return journalRepository.findPreviousEntry(journalEntity.getDate(),
                 journalEntity.getPatient().getId());
     }
 
@@ -175,8 +175,8 @@ public class JournalService {
         // }
         journalEntity.setPatient(patientEntity);
         journalEntity.setDoctor(doctorEntity);
-        journalEntity.setDateEnd(dto.dateEnd());
-        journalEntity.setDateStart(dto.dateStart());
+        journalEntity.setDate(dto.date());
+        journalEntity.setTimeEnd(dto.timeEnd());
         journalEntity.setStatus(dto.status());
         try {
             journalEntity = journalRepository.save(journalEntity);
