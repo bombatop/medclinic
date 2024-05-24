@@ -11,6 +11,7 @@ import courseproject.springbootbackend.model.dto.JournalLinkCreation;
 import courseproject.springbootbackend.model.entity.DoctorEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.model.entity.PatientEntity;
+import courseproject.springbootbackend.model.entity.misc.JournalStatus;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -44,16 +45,16 @@ public class JournalService {
 
     private final JournalMapper journalMapper;
 
-    public Page<JournalEntity> getJournals(Pageable pageable, Integer doctorId, Integer patientId, String startDateStr, String endDateStr) {
+    public Page<JournalEntity> getJournals(Pageable pageable, Integer doctorId, Integer patientId, JournalStatus status, String startDateStr, String endDateStr) {
         LocalDateTime start = startDateStr != null
             ? LocalDateTime.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME).truncatedTo(ChronoUnit.DAYS)
             : null;
 
         LocalDateTime end = endDateStr != null
-            ? LocalDateTime.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME).plusDays(1).minusSeconds(1)
+            ? LocalDateTime.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME).truncatedTo(ChronoUnit.DAYS).plusDays(1).minusSeconds(1)
             : null;
 
-        Specification<JournalEntity> spec = JournalSpecification.getJournals(doctorId, patientId, start, end);
+        Specification<JournalEntity> spec = JournalSpecification.getJournals(doctorId, patientId, status, start, end);
         return journalRepository.findAll(spec, pageable);
     }
 

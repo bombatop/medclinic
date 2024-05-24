@@ -1,0 +1,131 @@
+/* Calendar container */
+.rbc-calendar,
+.rbc-calendar * {
+    font-family: 'Raleway', 'Open Sans', sans-serif;
+}
+
+/* Timeslot group */
+.rbc-timeslot-group {
+    min-height: 80px;
+}
+
+/* Event container */
+.rbc-events-container {
+    /* Removed flex styling to allow proper event stacking */
+}
+
+/* Event styling */
+.rbc-event {
+    margin: 0 5px;
+    outline: 2px solid;
+    transition: outline-color 0.1s;
+    border: none !important;
+    color: black;
+    box-sizing: border-box;
+}
+
+/* Remove focus outline */
+.rbc-event:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Event label */
+.rbc-event-label {
+    font-weight: 550;
+    text-align: left;
+    width: 100%;
+}
+
+/* Event content */
+.rbc-event-content {
+    font-weight: 50;
+    font-size: 0.8em;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
+
+.rbc-event-content span {
+    margin-top: 3px;
+}
+
+/* Scheduled event styling */
+.rbc-event.SCHEDULED {
+    background-color: #F7E0C3;
+    outline-color: #EDD6A6;
+}
+
+/* Completed event styling */
+.rbc-event.COMPLETED {
+    background-color: #DDF4E5;
+    outline-color: #C7E8CE;
+}
+
+/* Cancelled event styling */
+.rbc-event.CANCELLED {
+    background-color: #F4F4F4;
+    outline-color: #E0E0E0;
+}
+
+/* Event hover states */
+.rbc-event.SCHEDULED:hover {
+    outline-color: #E8B16F;
+}
+
+.rbc-event.COMPLETED:hover {
+    outline-color: #96C2A8;
+}
+
+.rbc-event.CANCELLED:hover {
+    outline-color: #B5B5B5;
+}
+
+/* Toolbar styling */
+.rbc-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rbc-toolbar button,
+.rbc-toolbar span,
+.rbc-header {
+    font-family: 'Raleway', 'Open Sans', sans-serif;
+}
+
+/* Today button styling */
+.rbc-toolbar .rbc-today-btn {
+    margin-right: auto;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Toolbar label styling */
+.rbc-toolbar .rbc-toolbar-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+/* Arrow button styling */
+.rbc-toolbar .rbc-arrow-btn {
+    cursor: pointer;
+    font-size: 18px;
+    margin: 0 10px;
+}
+
+/* View buttons styling */
+.rbc-toolbar .rbc-view-buttons {
+    margin-left: auto;
+    display: flex;
+    gap: 0px;
+}
+
+.rbc-toolbar .rbc-view-buttons button {
+    margin: 0 2px;
+}

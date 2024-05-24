@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ClearIcon from '@mui/icons-material/Clear';
+import AddIcon from '@mui/icons-material/Add';
 
 import SortableTableCell from '../components/SortableTableCell';
 import JournalModal from '../components/JournalModal';
@@ -161,6 +161,7 @@ const JournalListTable = () => {
                     variant="contained"
                     color="primary"
                     onClick={() => handleOpenModal(null)}
+                    startIcon={<AddIcon />}
                 >
                     Создать
                 </Button>

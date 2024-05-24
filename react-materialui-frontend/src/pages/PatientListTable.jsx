@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 import PatientModal from '../components/PatientModal';
 import SortableTableCell from '../components/SortableTableCell';
@@ -96,8 +97,8 @@ const PatientsListTable = () => {
             <Typography variant="h4" gutterBottom>
                 Картотека
             </Typography>
-            <Button variant="contained" color="primary" sx={{ mb: 2 }} onClick={() => handleOpenModal()}>
-                Добавить пациента
+            <Button variant="contained" color="primary" sx={{ mb: 2 }} onClick={() => handleOpenModal()} startIcon={< AddIcon />}>
+                Добавить
             </Button>
             <TextField
                 variant="outlined"

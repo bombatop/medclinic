@@ -3,13 +3,14 @@ package courseproject.springbootbackend.service.specification;
 import org.springframework.data.jpa.domain.Specification;
 
 import courseproject.springbootbackend.model.entity.JournalEntity;
+import courseproject.springbootbackend.model.entity.misc.JournalStatus;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.criteria.Predicate;
 
 public class JournalSpecification {
 
-    public static Specification<JournalEntity> getJournals(Integer doctorId, Integer patientId, LocalDateTime start, LocalDateTime end) {
+    public static Specification<JournalEntity> getJournals(Integer doctorId, Integer patientId, JournalStatus status, LocalDateTime start, LocalDateTime end) {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
 
@@ -19,6 +20,10 @@ public class JournalSpecification {
 
             if (patientId != null) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("patient").get("id"), patientId));
+            }
+
+            if (status != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("status"), status));
             }
 
             if (start != null) {

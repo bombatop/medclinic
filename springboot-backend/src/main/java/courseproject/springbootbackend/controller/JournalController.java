@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import courseproject.springbootbackend.model.dto.JournalCreation;
 import courseproject.springbootbackend.model.dto.JournalLinkCreation;
 import courseproject.springbootbackend.model.entity.JournalEntity;
+import courseproject.springbootbackend.model.entity.misc.JournalStatus;
 import courseproject.springbootbackend.service.JournalService;
 import courseproject.springbootbackend.utility.PathsUtils;
 import jakarta.validation.Valid;
@@ -39,13 +40,14 @@ public class JournalController {
             @RequestParam(defaultValue = "asc") String sortOrder,
             @RequestParam(required = false) Integer doctorId,
             @RequestParam(required = false) Integer patientId,
+            @RequestParam(required = false) JournalStatus status,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate) {
 
         Sort sort = Sort.by(Sort.Direction.fromString(sortOrder), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return journalService.getJournals(pageable, doctorId, patientId, startDate, endDate);
+        return journalService.getJournals(pageable, doctorId, patientId, status, startDate, endDate);
     }
 
     @GetMapping("{id}")
