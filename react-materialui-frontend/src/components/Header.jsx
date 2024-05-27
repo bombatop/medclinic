@@ -19,7 +19,7 @@ function Header({ toggleDrawer }) {
                     <MenuIcon />
                 </IconButton>
                 <Typography variant="h6" noWrap component="div">
-                    Стоматолог и Я
+                    Стоматология
                 </Typography>
             </Toolbar>
         </AppBar>

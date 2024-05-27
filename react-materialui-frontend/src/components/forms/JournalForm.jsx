@@ -13,7 +13,7 @@ const statusOptions = [
     { value: 'CANCELLED', label: 'Отменено', color: 'gray' }
 ];
 
-const JournalForm = ({ journalId, journalData, onClose }) => {
+const JournalForm = ({ entityData, onClose }) => {
     const [journal, setJournal] = useState({
         patientId: '',
         doctorId: '',
@@ -78,20 +78,18 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
     }, 300), []);
 
     useEffect(() => {
-        if (journalData) {
+        if (entityData) {
             setJournal({
-                patientId: journalData.patient.id || '',
-                doctorId: journalData.doctor.id || '',
-                date: journalData.date ? dayjs(journalData.date) : dayjs(),
-                timeEnd: journalData.timeEnd ? dayjs(journalData.timeEnd, 'HH:mm') : dayjs().add(1, 'hour'),
-                status: journalData.status || 'SCHEDULED'
+                patientId: entityData.patient.id || '',
+                doctorId: entityData.doctor.id || '',
+                date: entityData.date ? dayjs(entityData.date) : dayjs(),
+                timeEnd: entityData.timeEnd ? dayjs(entityData.timeEnd, 'HH:mm') : dayjs().add(1, 'hour'),
+                status: entityData.status || 'SCHEDULED'
             });
-            setSelectedPatient(journalData.patient);
-            setSelectedDoctor(journalData.doctor);
-        } else if (journalId) {
-            fetchJournal(journalId);
+            setSelectedPatient(entityData.patient);
+            setSelectedDoctor(entityData.doctor);
         }
-    }, [journalId, journalData]);
+    }, [entityData]);
 
     const fetchJournal = async (id) => {
         try {
@@ -159,8 +157,8 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            const request = journalId
-                ? api.put(`/journals/${journalId}`, {
+            const request = entityData.id
+                ? api.put(`/journals/${entityData.id}`, {
                     ...journal,
                     date: journal.date.format('YYYY-MM-DDTHH:mm'),
                     timeEnd: journal.timeEnd.format('HH:mm')
@@ -221,6 +219,7 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
                                         </>
                                     ),
                                 }}
+                                
                             />
                         )}
                     />
@@ -275,6 +274,11 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
                         textField={(params) => (
                             <TextField {...params} required error={!!errors.date} helperText={errors.date} inputRef={dateRef} />
                         )}
+                        slotProps={{
+                            textField: {
+                                size: 'small'
+                            }
+                        }}
                     />
                 </FormControl>
                 <FormControl error={!!errors.timeEnd}>
@@ -285,6 +289,11 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
                         textField={(params) => (
                             <TextField {...params} required error={!!errors.timeEnd} helperText={errors.timeEnd} inputRef={timeEndRef} />
                         )}
+                        slotProps={{
+                            textField: {
+                                size: 'small'
+                            }
+                        }}
                     />
                 </FormControl>
 
@@ -295,6 +304,7 @@ const JournalForm = ({ journalId, journalData, onClose }) => {
                         name="status"
                         value={journal.status}
                         onChange={handleChange}
+                        size="small"
                     >
                         {statusOptions.map(option => (
                             <MenuItem key={option.value} value={option.value}>

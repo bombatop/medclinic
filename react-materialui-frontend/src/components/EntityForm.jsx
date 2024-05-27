@@ -7,7 +7,19 @@ import 'dayjs/locale/ru';
 import api from '../utils/http-common';
 
 const EntityForm = ({ entityData, endpoint, fields, onClose }) => {
-    const [entity, setEntity] = useState(entityData || {});
+    const [entity, setEntity] = useState(() => {
+        if (entityData && entityData.id) {
+            return fields.reduce((acc, field) => {
+                acc[field.name] = field.type === 'date' ? dayjs(entityData[field.name]) : entityData[field.name] || '';
+                return acc;
+            }, {});
+        } else {
+            return fields.reduce((acc, field) => {
+                acc[field.name] = field.type === 'date' ? null : '';
+                return acc;
+            }, {});
+        }
+    });
     const [errors, setErrors] = useState({});
     const refs = useRef({});
 
@@ -52,7 +64,7 @@ const EntityForm = ({ entityData, endpoint, fields, onClose }) => {
         e.preventDefault();
         if (validate()) {
             const formattedEntity = fields.reduce((acc, field) => {
-                acc[field.name] = field.type === 'date' ? entity[field.name].format('YYYY-MM-DD') : entity[field.name];
+                acc[field.name] = field.type === 'date' && entity[field.name] ? entity[field.name].format('YYYY-MM-DD') : entity[field.name];
                 return acc;
             }, {});
 
@@ -78,7 +90,15 @@ const EntityForm = ({ entityData, endpoint, fields, onClose }) => {
                                 label={field.label}
                                 value={entity[field.name]}
                                 onChange={(date) => handleDateChange(field.name, date)}
-                                inputRef={el => refs.current[field.name] = el}
+                                slotProps={{
+                                    textField: {
+                                        required: field.required,
+                                        error: !!errors[field.name],
+                                        helperText: errors[field.name],
+                                        inputRef: el => refs.current[field.name] = el,
+                                        size: 'small'
+                                    }
+                                }}
                             />
                         ) : (
                             <TextField

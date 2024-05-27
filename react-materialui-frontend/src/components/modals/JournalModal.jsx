@@ -7,7 +7,7 @@ const JournalModal = ({ open, handleClose, data }) => {
         <EntityModal
             open={open}
             handleClose={handleClose}
-            journalData={data}
+            entityData={data}
             title="журнал"
             FormComponent={JournalForm}
         />
