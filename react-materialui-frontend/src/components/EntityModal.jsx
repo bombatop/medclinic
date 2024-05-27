@@ -1,7 +1,6 @@
 import React from 'react';
 import { Modal, Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import JournalForm from './JournalForm';
 
 const style = {
     position: 'absolute',
@@ -14,22 +13,22 @@ const style = {
     p: 4,
 };
 
-const JournalModal = ({ open, handleClose, journalId }) => {
+const ModalComponent = ({ open, handleClose, FormComponent, entityData, title }) => {
     return (
         <Modal open={open} onClose={handleClose}>
             <Box sx={style}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="h6">
-                        {journalId ? 'Редактировать журнал' : 'Добавить журнал'}
+                        {entityData ? `Редактировать ${title}` : `Добавить ${title}`}
                     </Typography>
                     <IconButton onClick={handleClose}>
                         <CloseIcon />
                     </IconButton>
                 </Box>
-                <JournalForm journalId={journalId} onClose={handleClose} />
+                <FormComponent entityData={entityData} onClose={handleClose} />
             </Box>
         </Modal>
     );
 };
 
-export default JournalModal;
+export default ModalComponent;

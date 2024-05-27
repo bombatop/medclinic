@@ -1,7 +1,7 @@
 package courseproject.springbootbackend.service;
 
 import courseproject.springbootbackend.mapper.PatientMapper;
-import courseproject.springbootbackend.model.dto.PatientCreation;
+import courseproject.springbootbackend.model.dto.PatientData;
 import courseproject.springbootbackend.model.entity.PatientEntity;
 
 import org.springframework.data.domain.Page;
@@ -36,7 +36,7 @@ public class PatientService {
         return patientRepository.findById(id).orElseThrow(PatientNotFoundException::new);
     }
 
-    public PatientEntity addPatient(final PatientCreation dto) {
+    public PatientEntity addPatient(final PatientData dto) {
         var patientEntity = patientMapper.map(dto);
         try {
             patientEntity = patientRepository.save(patientEntity);
@@ -46,13 +46,9 @@ public class PatientService {
         }
     }
 
-    public PatientEntity updatePatient(final Integer id, PatientCreation dto) {
+    public PatientEntity updatePatient(final Integer id, PatientData dto) {
         var patientEntity = patientRepository.findById(id).orElseThrow(PatientNotFoundException::new);
-        patientEntity.setName(dto.name());
-        patientEntity.setSurname(dto.surname());
-        patientEntity.setPatronymic(dto.patronymic());
-        patientEntity.setPhoneNumber(dto.phoneNumber());
-        patientEntity.setBirthDate(dto.birthDate());
+        patientMapper.updateEntityFromDto(patientEntity, dto);
         try {
             patientEntity = patientRepository.save(patientEntity);
             return patientEntity;

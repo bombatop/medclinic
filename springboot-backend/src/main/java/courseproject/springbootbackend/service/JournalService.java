@@ -6,8 +6,8 @@ import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
 
 import courseproject.springbootbackend.mapper.JournalMapper;
-import courseproject.springbootbackend.model.dto.JournalCreation;
-import courseproject.springbootbackend.model.dto.JournalLinkCreation;
+import courseproject.springbootbackend.model.dto.JournalData;
+import courseproject.springbootbackend.model.dto.JournalLinkData;
 import courseproject.springbootbackend.model.entity.DoctorEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.model.entity.PatientEntity;
@@ -63,7 +63,7 @@ public class JournalService {
                 .orElseThrow(JournalNotFoundException::new);
     }
 
-    public JournalEntity addJournal(final JournalCreation dto) {
+    public JournalEntity addJournal(final JournalData dto) {
         var patientEntity = patientRepository.findById(dto.patientId())
                 .orElseThrow(PatientNotFoundException::new);
         var doctorEntity = doctorRepository.findById(dto.doctorId())
@@ -78,7 +78,7 @@ public class JournalService {
     }
 
     // not used so far
-    public JournalEntity addJournalAndLinkJournalEntry(final JournalLinkCreation dto) {
+    public JournalEntity addJournalAndLinkJournalEntry(final JournalLinkData dto) {
         var currentJournalEntity = journalRepository.findById(dto.prevEntryId())
                 .orElseThrow(JournalNotFoundException::new);
         if (currentJournalEntity.getNextEntry() != null) {
@@ -150,7 +150,7 @@ public class JournalService {
                 journalEntity.getPatient().getId());
     }
 
-    public JournalEntity updateJournal(final Integer id, final JournalCreation dto) {
+    public JournalEntity updateJournal(final Integer id, final JournalData dto) {
         JournalEntity journalEntity = journalRepository.findById(id)
                 .orElseThrow(JournalNotFoundException::new);
         PatientEntity patientEntity = patientRepository.findById(dto.patientId())

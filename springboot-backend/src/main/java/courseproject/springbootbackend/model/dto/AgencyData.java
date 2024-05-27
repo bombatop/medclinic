@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record AgencyCreation(
+public record AgencyData(
         @NotBlank(message = "Name is required")
         String name,
 

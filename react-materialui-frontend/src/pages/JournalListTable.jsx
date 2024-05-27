@@ -21,7 +21,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
 import SortableTableCell from '../components/SortableTableCell';
-import JournalModal from '../components/JournalModal';
+import JournalModal from '../components/modals/JournalModal';
 
 const statusColors = {
     SCHEDULED: 'orange',
@@ -38,7 +38,7 @@ const statusLabels = {
 const JournalListTable = () => {
     const [journals, setJournals] = useState([]);
 
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
@@ -60,6 +60,7 @@ const JournalListTable = () => {
     const [selectedJournalId, setSelectedJournalId] = useState(null);
 
     const fetchJournals = async (page = 1, size = 10, sortField = 'date', sortOrder = 'asc') => {
+        // setLoading(true);
         try {
             const params = {
                 page: page - 1,
@@ -77,7 +78,7 @@ const JournalListTable = () => {
         } catch (error) {
             console.error('Error fetching journals:', error);
         }
-        setLoading(false);
+        // setLoading(false);
     };
 
     const fetchDoctors = async (query = '') => {
@@ -122,7 +123,7 @@ const JournalListTable = () => {
     }, []);
 
     useEffect(() => {
-        setLoading(true);
+        // setLoading(true);
         fetchJournals(page, size, sortField, sortOrder);
     }, [page, size, sortField, sortOrder, selectedDoctor, selectedPatient, startDate, endDate]);
 
@@ -270,7 +271,7 @@ const JournalListTable = () => {
                             <SortableTableCell field="patient.name" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
                                 Пациент
                             </SortableTableCell>
-                            <TableCell>Действия</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -284,7 +285,7 @@ const JournalListTable = () => {
                                     {statusLabels[journal.status]}
                                 </TableCell>
                                 <TableCell>{journal.patient.surname + ' ' + journal.patient.name + ' ' + journal.patient.patronymic}</TableCell>
-                                <TableCell>
+                                <TableCell sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     <IconButton onClick={() => handleOpenModal(journal.id)}>
                                         <EditIcon />
                                     </IconButton>

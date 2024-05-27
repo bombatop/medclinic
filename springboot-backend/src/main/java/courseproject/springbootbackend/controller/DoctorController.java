@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import courseproject.springbootbackend.model.dto.DoctorCreation;
+import courseproject.springbootbackend.model.dto.DoctorData;
 import courseproject.springbootbackend.model.entity.DoctorEntity;
 import courseproject.springbootbackend.service.DoctorService;
 import courseproject.springbootbackend.utility.PathsUtils;
@@ -54,12 +54,12 @@ public class DoctorController {
     @PutMapping("{id}")
     public DoctorEntity updateDoctor(
             @PathVariable Integer id,
-            @Valid @RequestBody DoctorCreation doctor) {
+            @Valid @RequestBody DoctorData doctor) {
         return service.updateDoctor(id, doctor);
     }
 
     @PostMapping
-    public DoctorEntity addDoctor(@Valid @RequestBody DoctorCreation doctor) {
+    public DoctorEntity addDoctor(@Valid @RequestBody DoctorData doctor) {
         return service.addDoctor(doctor);
     }
 

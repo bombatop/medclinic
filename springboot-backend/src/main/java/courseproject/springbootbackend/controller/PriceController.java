@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import courseproject.springbootbackend.model.dto.PriceCreation;
+import courseproject.springbootbackend.model.dto.PriceData;
 import courseproject.springbootbackend.model.entity.PriceEntity;
 import courseproject.springbootbackend.service.PriceService;
 import courseproject.springbootbackend.utility.PathsUtils;
@@ -30,7 +30,7 @@ public class PriceController {
     }
     
     @PostMapping
-    public PriceEntity addPriceForTreatment(@Valid @RequestBody PriceCreation dto) {
+    public PriceEntity addPriceForTreatment(@Valid @RequestBody PriceData dto) {
         return service.addPriceForTreatment(dto);
     }
     

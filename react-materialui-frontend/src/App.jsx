@@ -9,6 +9,9 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import PatientListTable from './pages/PatientListTable';
 import JournalListTable from './pages/JournalListTable';
+import TreatmentListTable from './pages/TreatmentListTable';
+import DiagnosisListTable from './pages/DiagnosisListTable';
+import AgencyListTable from './pages/AgencyListTable';
 import JournalCalendar from './pages/JournalCalendar';
 
 function App() {
@@ -31,6 +34,9 @@ function App() {
                                 <Route path="/patients" element={<PatientListTable />} />
                                 <Route path="/journals-table" element={<JournalListTable />} />
                                 <Route path="/journals-calendar" element={<JournalCalendar />} />
+                                <Route path="/treatments" element={<TreatmentListTable />} />
+                                <Route path="/diagnoses" element={<DiagnosisListTable />} />
+                                <Route path="/agencies" element={<AgencyListTable />} />
                             </Routes>
                         </Box>
                     </Box>

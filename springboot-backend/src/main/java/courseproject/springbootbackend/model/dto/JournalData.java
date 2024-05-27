@@ -5,11 +5,12 @@ import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import courseproject.springbootbackend.model.entity.misc.JournalStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record JournalLinkCreation (
+public record JournalData (
         @NotNull(message = "Patient id is required")
         Integer patientId,
 
@@ -24,7 +25,7 @@ public record JournalLinkCreation (
         @JsonFormat(pattern = "HH:mm")
         LocalTime timeEnd,
 
-        @NotNull(message = "Previous journal id for not linked journal is required")
-        Integer prevEntryId
+        @NotNull(message = "Status is required")
+        JournalStatus status
 ) {
 }

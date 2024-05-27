@@ -26,7 +26,7 @@ public class AgencyEntity {
     @Column(name = "name")
     private String name;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean loadedByDefault = false;
+    // @Column(nullable = false)
+    // @Builder.Default
+    // private Boolean loadedByDefault = false;
 }

@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import courseproject.springbootbackend.model.dto.JournalCreation;
-import courseproject.springbootbackend.model.dto.JournalLinkCreation;
+import courseproject.springbootbackend.model.dto.JournalData;
+import courseproject.springbootbackend.model.dto.JournalLinkData;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.model.entity.misc.JournalStatus;
 import courseproject.springbootbackend.service.JournalService;
@@ -66,13 +66,13 @@ public class JournalController {
     }
 
     @PostMapping
-    public JournalEntity addJournal(@Valid @RequestBody JournalCreation dto) {
+    public JournalEntity addJournal(@Valid @RequestBody JournalData dto) {
         return journalService.addJournal(dto);
     }
 
     // not used so far
     @PostMapping("link")
-    public JournalEntity addJournalAndLinkJournalEntry(@Valid @RequestBody JournalLinkCreation dto) {
+    public JournalEntity addJournalAndLinkJournalEntry(@Valid @RequestBody JournalLinkData dto) {
        return journalService.addJournalAndLinkJournalEntry(dto);
     }
 
@@ -90,7 +90,7 @@ public class JournalController {
 
     @PutMapping("{id}")
     public JournalEntity updateJournal(@PathVariable Integer id,
-            @Valid @RequestBody JournalCreation dto) {
+            @Valid @RequestBody JournalData dto) {
         return journalService.updateJournal(id, dto);
     }
 

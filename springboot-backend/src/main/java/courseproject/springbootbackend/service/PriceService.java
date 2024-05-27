@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import courseproject.springbootbackend.mapper.PriceMapper;
-import courseproject.springbootbackend.model.dto.PriceCreation;
+import courseproject.springbootbackend.model.dto.PriceData;
 import courseproject.springbootbackend.model.entity.PriceEntity;
 import courseproject.springbootbackend.model.entity.AgencyEntity;
 import courseproject.springbootbackend.model.entity.TreatmentEntity;
@@ -40,7 +40,7 @@ public class PriceService {
         return priceRepository.findByTreatmentIdOrderByDateDesc(id);
     }
 
-    public PriceEntity addPriceForTreatment(PriceCreation dto) {
+    public PriceEntity addPriceForTreatment(PriceData dto) {
         TreatmentEntity treatmentEntity = treatmentRepository.findById(dto.treatmentId()).orElseThrow(TreatmentNotFoundException::new);
         AgencyEntity agencyEntity = agencyRepository.findById(dto.agencyId()).orElseThrow(TreatmentNotFoundException::new);
         PriceEntity priceEntity = priceMapper.map(dto, treatmentEntity, agencyEntity);

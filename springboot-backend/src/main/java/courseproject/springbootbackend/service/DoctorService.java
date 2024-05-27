@@ -1,7 +1,7 @@
 package courseproject.springbootbackend.service;
 
 import courseproject.springbootbackend.mapper.DoctorMapper;
-import courseproject.springbootbackend.model.dto.DoctorCreation;
+import courseproject.springbootbackend.model.dto.DoctorData;
 import courseproject.springbootbackend.model.entity.DoctorEntity;
 
 
@@ -37,7 +37,7 @@ public class DoctorService {
         return doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
     }
 
-    public DoctorEntity addDoctor(final DoctorCreation dto) {
+    public DoctorEntity addDoctor(final DoctorData dto) {
         var doctorEntity = doctorMapper.map(dto);
         try {
             doctorEntity = doctorRepository.save(doctorEntity);
@@ -47,7 +47,7 @@ public class DoctorService {
         }
     }
 
-    public DoctorEntity updateDoctor(final Integer id, DoctorCreation dto) {
+    public DoctorEntity updateDoctor(final Integer id, DoctorData dto) {
         var doctorEntity = doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
         doctorEntity.setName(dto.name());
         doctorEntity.setPhoneNumber(dto.phoneNumber());

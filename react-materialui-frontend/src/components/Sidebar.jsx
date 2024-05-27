@@ -100,6 +100,13 @@ function Sidebar({ isOpen, toggleDrawer }) {
                     <List component="div" disablePadding>
                         <ListItemButton
                             component={Link}
+                            to="/diagnoses"
+                            sx={{ pl: 9, bgcolor: isCurrentPath('/diagnoses') ? 'action.selected' : 'inherit' }}
+                        >
+                            <ListItemText primary="Диагнозы" />
+                        </ListItemButton>
+                        <ListItemButton
+                            component={Link}
                             to="/treatments"
                             sx={{ pl: 9, bgcolor: isCurrentPath('/treatments') ? 'action.selected' : 'inherit' }}
                         >
@@ -118,13 +125,6 @@ function Sidebar({ isOpen, toggleDrawer }) {
                             sx={{ pl: 9, bgcolor: isCurrentPath('/prices') ? 'action.selected' : 'inherit' }}
                         >
                             <ListItemText primary="Цены" />
-                        </ListItemButton>
-                        <ListItemButton
-                            component={Link}
-                            to="/diagnoses"
-                            sx={{ pl: 9, bgcolor: isCurrentPath('/diagnoses') ? 'action.selected' : 'inherit' }}
-                        >
-                            <ListItemText primary="Диагнозы" />
                         </ListItemButton>
                     </List>
                 </Collapse>

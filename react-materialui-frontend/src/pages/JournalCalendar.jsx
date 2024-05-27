@@ -3,12 +3,12 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment/locale/ru';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './customCalendar.css';
+import './JournalCalendar.css';
 import api from '../utils/http-common';
 import debounce from 'lodash.debounce';
 import { Box, Button, TextField, CircularProgress, Autocomplete, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import JournalModal from '../components/JournalModal';
+import JournalModal from '../components/modals/JournalModal';
 
 const localizer = momentLocalizer(moment);
 

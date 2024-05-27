@@ -4,7 +4,7 @@ import { LocalizationProvider, DateTimePicker, TimePicker } from '@mui/x-date-pi
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/ru';
 import dayjs from 'dayjs';
-import api from '../utils/http-common';
+import api from '../../utils/http-common';
 import debounce from 'lodash.debounce';
 
 const statusOptions = [

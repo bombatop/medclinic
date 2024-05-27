@@ -2,21 +2,21 @@ package courseproject.springbootbackend.mapper;
 
 import org.springframework.stereotype.Component;
 
-import courseproject.springbootbackend.model.dto.DiagnosisCreation;
+import courseproject.springbootbackend.model.dto.DiagnosisData;
 import courseproject.springbootbackend.model.entity.DiagnosisEntity;
 
 @Component
 public class DiagnosisMapper {
 
-    public DiagnosisEntity map(final DiagnosisCreation dto) {
+    public DiagnosisEntity map(final DiagnosisData dto) {
         return DiagnosisEntity.builder()
                 .name(dto.name())
-                .icdCode(dto.icdCode())
+                .code(dto.code())
                 .build();
     }
 
-    public void updateEntityFromDto(final DiagnosisEntity entity, final DiagnosisCreation dto) {
+    public void updateEntityFromDto(final DiagnosisEntity entity, final DiagnosisData dto) {
         entity.setName(dto.name());
-        entity.setIcdCode(dto.icdCode());
+        entity.setCode(dto.code());
     }
 }

@@ -1,10 +1,8 @@
 package courseproject.springbootbackend.service;
 
 import courseproject.springbootbackend.mapper.AgencyMapper;
-import courseproject.springbootbackend.model.dto.AgencyCreation;
+import courseproject.springbootbackend.model.dto.AgencyData;
 import courseproject.springbootbackend.model.entity.AgencyEntity;
-
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,14 +24,6 @@ public class AgencyService {
 
     private final AgencyMapper agencyMapper;
 
-    public List<AgencyEntity> getAllAgencies() {
-        return agencyRepository.findAll();
-    }
-
-    public Page<AgencyEntity> getAllAgencies(final Pageable pageable) {
-        return agencyRepository.findAll(pageable);
-    }
-
     public Page<AgencyEntity> getAgencies(final String searchQuery, final Pageable pageable) {
         return agencyRepository.findByNameContaining(searchQuery, pageable);
     }
@@ -42,7 +32,7 @@ public class AgencyService {
         return agencyRepository.findById(id).orElseThrow(AgencyNotFoundException::new);
     }
 
-    public AgencyEntity addAgency(final AgencyCreation dto) {
+    public AgencyEntity addAgency(final AgencyData dto) {
         var agencyEntity = agencyMapper.map(dto);
         try {
             agencyEntity = agencyRepository.save(agencyEntity);
@@ -52,10 +42,9 @@ public class AgencyService {
         }
     }
 
-    public AgencyEntity updateAgency(final Integer id, AgencyCreation dto) {
+    public AgencyEntity updateAgency(final Integer id, AgencyData dto) {
         var agencyEntity = agencyRepository.findById(id).orElseThrow(AgencyNotFoundException::new);
-        agencyEntity.setName(dto.name());
-        agencyEntity.setLoadedByDefault(dto.loadedByDefault());
+        agencyMapper.updateEntityFromDto(agencyEntity, dto);
         try {
             agencyEntity = agencyRepository.save(agencyEntity);
             return agencyEntity;

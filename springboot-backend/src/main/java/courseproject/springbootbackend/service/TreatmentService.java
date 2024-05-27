@@ -4,17 +4,17 @@ import courseproject.springbootbackend.mapper.TreatmentMapper;
 import courseproject.springbootbackend.model.dto.TreatmentCreation;
 import courseproject.springbootbackend.model.entity.TreatmentEntity;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import courseproject.springbootbackend.repository.TreatmentRepository;
 import courseproject.springbootbackend.service.exception.TreatmentNotFoundException;
+import courseproject.springbootbackend.service.specification.TreatmentSpecification;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,16 +26,9 @@ public class TreatmentService {
 
     private final TreatmentMapper treatmentMapper;
 
-    public List<TreatmentEntity> getAllTreatments() {
-        return treatmentRepository.findAll();
-    }
-
-    public Page<TreatmentEntity> getAllTreatments(final Pageable pageable) {
-        return treatmentRepository.findAll(pageable);
-    }
-
     public Page<TreatmentEntity> getTreatments(final String searchQuery, final Pageable pageable) {
-        return treatmentRepository.findByNameContaining(searchQuery, pageable);
+        Specification<TreatmentEntity> spec = TreatmentSpecification.getTreatments(searchQuery);
+        return treatmentRepository.findAll(spec, pageable);
     }
 
     public TreatmentEntity getTreatmentById(final Integer id) {
@@ -54,7 +47,7 @@ public class TreatmentService {
 
     public TreatmentEntity updateTreatment(final Integer id, TreatmentCreation dto) {
         var treatmentEntity = treatmentRepository.findById(id).orElseThrow(TreatmentNotFoundException::new);
-        treatmentEntity.setName(dto.name());
+        treatmentMapper.updateEntityFromDto(treatmentEntity, dto);
         try {
             treatmentEntity = treatmentRepository.save(treatmentEntity);
             return treatmentEntity;

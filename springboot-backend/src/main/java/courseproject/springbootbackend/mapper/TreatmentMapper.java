@@ -11,6 +11,12 @@ public class TreatmentMapper {
     public TreatmentEntity map(final TreatmentCreation dto) {
         return TreatmentEntity.builder()
                 .name(dto.name())
+                .code(dto.code())
                 .build();
+    }
+
+    public void updateEntityFromDto(final TreatmentEntity entity, final TreatmentCreation dto) {
+        entity.setName(dto.name());
+        entity.setCode(dto.code());
     }
 }
