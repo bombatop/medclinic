@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { useNavigate } from 'react-router-dom';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/ru';
 import dayjs from 'dayjs';
@@ -7,15 +8,13 @@ import api from '../utils/http-common';
 import debounce from 'lodash.debounce';
 
 import {
-    Box, Table, TableBody, Button,
-    TableCell, TableContainer,
-    TableHead, TableRow, Paper,
-    TextField, IconButton,
-    Typography, Pagination,
-    Select, MenuItem,
-    CircularProgress,
-    Autocomplete
+    Box, Table, TableBody, Button, TableCell, TableContainer,
+    TableHead, TableRow, Paper, TextField, IconButton, Typography,
+    Pagination, Select, MenuItem, CircularProgress, Autocomplete
 } from '@mui/material';
+
+
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -58,6 +57,8 @@ const JournalListTable = () => {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedJournalId, setSelectedJournalId] = useState(null);
+
+    const navigate = useNavigate();
 
     const fetchJournals = async (page = 1, size = 10, sortField = 'date', sortOrder = 'asc') => {
         // setLoading(true);
@@ -152,6 +153,10 @@ const JournalListTable = () => {
         fetchJournals(page, size, sortField, sortOrder);
     };
 
+    const handleView = (journalId) => {
+        navigate(`/journals/${journalId}`);
+    };
+
     return (
         <Box sx={{ padding: 2 }}>
             <Typography variant="h4" gutterBottom>
@@ -196,6 +201,7 @@ const JournalListTable = () => {
                                     </>
                                 ),
                             }}
+                            size="small"
                         />
                     )}
                 />
@@ -206,6 +212,7 @@ const JournalListTable = () => {
                         maxDate={endDate}
                         onChange={(newValue) => setStartDate(newValue)}
                         sx={{ minWidth: 150 }}
+                        slotProps={{ textField: { size: 'small' } }}
                     />
                     <DatePicker
                         label="Конечная дата"
@@ -213,6 +220,7 @@ const JournalListTable = () => {
                         minDate={startDate}
                         onChange={(newValue) => setEndDate(newValue)}
                         sx={{ minWidth: 150 }}
+                        slotProps={{ textField: { size: 'small' } }}
                     />
                 </LocalizationProvider>
                 <Autocomplete sx={{ marginLeft: 'auto' }}
@@ -247,6 +255,7 @@ const JournalListTable = () => {
                             }}
                         />
                     )}
+                    size="small"
                 />
             </Box>
             <TableContainer component={Paper}>
@@ -286,6 +295,9 @@ const JournalListTable = () => {
                                 </TableCell>
                                 <TableCell>{journal.patient.surname + ' ' + journal.patient.name + ' ' + journal.patient.patronymic}</TableCell>
                                 <TableCell sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                    <IconButton onClick={() => handleView(journal.id)}>
+                                        <VisibilityIcon />
+                                    </IconButton>
                                     <IconButton onClick={() => handleOpenModal(journal.id)}>
                                         <EditIcon />
                                     </IconButton>

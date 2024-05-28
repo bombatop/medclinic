@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Box, FormControl, CircularProgress, MenuItem, Select, InputLabel, Autocomplete } from '@mui/material';
 import { LocalizationProvider, DateTimePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -34,6 +35,8 @@ const JournalForm = ({ entityData, onClose }) => {
     const doctorRef = useRef();
     const dateRef = useRef();
     const timeEndRef = useRef();
+    
+    const navigate = useNavigate();
 
     const fetchDoctors = async (query = '') => {
         setLoadingDoctors(true);
@@ -177,6 +180,9 @@ const JournalForm = ({ entityData, onClose }) => {
         }
     };
 
+    const handleNavigateToJournal = () => {
+        navigate(`/journals/${entityData.id}`);
+    };
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
@@ -219,7 +225,7 @@ const JournalForm = ({ entityData, onClose }) => {
                                         </>
                                     ),
                                 }}
-                                
+                                size="small"
                             />
                         )}
                     />
@@ -262,6 +268,7 @@ const JournalForm = ({ entityData, onClose }) => {
                                         </>
                                     ),
                                 }}
+                                size="small"
                             />
                         )}
                     />
@@ -272,13 +279,9 @@ const JournalForm = ({ entityData, onClose }) => {
                         value={journal.date}
                         onChange={handleDateChange}
                         textField={(params) => (
-                            <TextField {...params} required error={!!errors.date} helperText={errors.date} inputRef={dateRef} />
+                            <TextField {...params} required error={!!errors.date} helperText={errors.date} inputRef={dateRef} size="small" />
                         )}
-                        slotProps={{
-                            textField: {
-                                size: 'small'
-                            }
-                        }}
+                        slotProps={{ textField: { size: 'small' } }}
                     />
                 </FormControl>
                 <FormControl error={!!errors.timeEnd}>
@@ -287,13 +290,9 @@ const JournalForm = ({ entityData, onClose }) => {
                         value={journal.timeEnd}
                         onChange={handleTimeChange}
                         textField={(params) => (
-                            <TextField {...params} required error={!!errors.timeEnd} helperText={errors.timeEnd} inputRef={timeEndRef} />
+                            <TextField {...params} required error={!!errors.timeEnd} helperText={errors.timeEnd} inputRef={timeEndRef} size="small" />
                         )}
-                        slotProps={{
-                            textField: {
-                                size: 'small'
-                            }
-                        }}
+                        slotProps={{ textField: { size: 'small' } }}
                     />
                 </FormControl>
 
@@ -316,6 +315,15 @@ const JournalForm = ({ entityData, onClose }) => {
                 <Button type="submit" variant="contained" color="primary">
                     Сохранить
                 </Button>
+                {entityData.id && (
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={handleNavigateToJournal}
+                    >
+                        Дополнительно
+                    </Button>
+                )}
             </Box>
         </LocalizationProvider>
     );

@@ -189,6 +189,7 @@ const JournalCalendar = () => {
                             }}
                         />
                     )}
+                    size="small"
                 />
             </Box>
             <Calendar

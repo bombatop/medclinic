@@ -8,7 +8,7 @@ const AgencyModal = ({ open, handleClose, entityData }) => {
             open={open}
             handleClose={handleClose}
             entityData={entityData}
-            title="диагноз"
+            title="агентство"
             FormComponent={AgencyForm}
         />
     );

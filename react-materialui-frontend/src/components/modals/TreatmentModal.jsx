@@ -8,7 +8,7 @@ const TreatmentModal = ({ open, handleClose, entityData }) => {
             open={open}
             handleClose={handleClose}
             entityData={entityData}
-            title="лечение"
+            title="услугу"
             FormComponent={TreatmentForm}
         />
     );
