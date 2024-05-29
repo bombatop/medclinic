@@ -12,7 +12,7 @@ const upperTeeth = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 
 const lowerTeeth = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
 
 const JournalDiagnosesTab = () => {
-    const { journalData } = useOutletContext();
+    const { journalData, setJournalData } = useOutletContext();
     const [diagnoses, setDiagnoses] = useState(journalData.diagnoses);
     const [open, setOpen] = useState(false);
     const [currentDiagnosis, setCurrentDiagnosis] = useState(null);
@@ -62,7 +62,9 @@ const JournalDiagnosesTab = () => {
                 diagnosisId,
                 toothcodes: form.toothcodes
             }).then(response => {
-                setDiagnoses(diagnoses.map(d => d.id === currentDiagnosis.id ? response.data : d));
+                const updatedDiagnoses = diagnoses.map(t => t.id === currentDiagnosis.id ? response.data : t);
+                setDiagnoses(updatedDiagnoses);
+                setJournalData({ ...journalData, diagnoses: updatedDiagnoses });
                 handleClose();
             }).catch(error => {
                 if (error.response && error.response.status === 409) {
@@ -76,7 +78,9 @@ const JournalDiagnosesTab = () => {
                 diagnosisId,
                 toothcodes: form.toothcodes
             }).then(response => {
-                setDiagnoses([...diagnoses, response.data]);
+                const updatedDiagnoses = [...diagnoses, response.data];
+                setDiagnoses(updatedDiagnoses);
+                setJournalData({ ...journalData, diagnoses: updatedDiagnoses });
                 handleClose();
             }).catch(error => {
                 if (error.response && error.response.status === 409) {
@@ -109,7 +113,7 @@ const JournalDiagnosesTab = () => {
             <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => handleOpen(null)}>
                 Добавить диагноз
             </Button>
-            <List>
+            <List sx={{ maxWidth: 600 }}> 
                 {diagnoses.length > 0 ? diagnoses.map(diagnosis => (
                     <ListItem key={diagnosis.id}>
                         <ListItemText

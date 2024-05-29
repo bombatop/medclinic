@@ -20,7 +20,7 @@ import JournalTreatmentsTab from './components/tabs/JournalTreatmentsTab';
 import JournalFilesTab from './components/tabs/JournalFilesTab';
 
 function App() {
-    const [isDrawerOpen, setDrawerOpen] = useState(false);
+    const [isDrawerOpen, setDrawerOpen] = useState(true);
 
     const toggleDrawer = () => {
         setDrawerOpen(!isDrawerOpen);

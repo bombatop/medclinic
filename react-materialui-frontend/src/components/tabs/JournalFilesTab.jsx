@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import dayjs from 'dayjs';
@@ -7,9 +7,13 @@ import { Box, Button, CircularProgress, IconButton, List, ListItem, ListItemText
 import { Delete as DeleteIcon, Download as DownloadIcon, Upload as UploadIcon } from '@mui/icons-material';
 
 const JournalFilesTab = () => {
-    const { journalData } = useOutletContext();
+    const { journalData, setJournalData } = useOutletContext();
     const [files, setFiles] = useState(journalData.files);
     const [uploading, setUploading] = useState(false);
+
+    useEffect(() => {
+        setFiles(journalData.files);
+    }, [journalData.files]);
 
     const onDrop = useCallback((acceptedFiles) => {
         const formData = new FormData();
@@ -22,13 +26,14 @@ const JournalFilesTab = () => {
         axios_multipart.post(`/files/${journalData.id}`, formData)
             .then(response => {
                 setFiles(response.data);
+                setJournalData({ ...journalData, files: response.data });
                 setUploading(false);
             })
             .catch(error => {
                 console.error('Error uploading files:', error);
                 setUploading(false);
             });
-    }, [journalData.id]);
+    }, [journalData, setJournalData]);
 
     const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
@@ -50,7 +55,9 @@ const JournalFilesTab = () => {
     const handleDelete = (fileId) => {
         api.delete(`/files/${fileId}`)
             .then(() => {
-                setFiles(files.filter(file => file.id !== fileId));
+                const updatedFiles = files.filter(file => file.id !== fileId);
+                setFiles(updatedFiles);
+                setJournalData({ ...journalData, files: updatedFiles });
             })
             .catch(error => {
                 console.error('Error deleting file:', error);

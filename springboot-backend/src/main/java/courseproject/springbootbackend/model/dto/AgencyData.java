@@ -7,9 +7,9 @@ import lombok.Builder;
 @Builder
 public record AgencyData(
         @NotBlank(message = "Name is required")
-        String name,
+        String name
 
-        @NotNull
-        Boolean loadedByDefault
+        // @NotNull
+        // Boolean loadedByDefault
 ) {
 }
