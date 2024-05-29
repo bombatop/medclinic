@@ -82,6 +82,7 @@ const JournalForm = ({ entityData, onClose }) => {
 
     useEffect(() => {
         if (entityData) {
+            console.log(entityData);
             setJournal({
                 patientId: entityData.patient.id || '',
                 doctorId: entityData.doctor.id || '',
@@ -315,7 +316,7 @@ const JournalForm = ({ entityData, onClose }) => {
                 <Button type="submit" variant="contained" color="primary">
                     Сохранить
                 </Button>
-                {entityData.id && (
+                {entityData?.id && (
                     <Button
                         variant="outlined"
                         color="secondary"

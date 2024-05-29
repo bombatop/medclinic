@@ -68,7 +68,7 @@ const EntityForm = ({ entityData, endpoint, fields, onClose }) => {
                 return acc;
             }, {});
 
-            const request = entityData.id
+            const request = entityData?.id
                 ? api.put(`/${endpoint}/${entityData.id}`, formattedEntity)
                 : api.post(`/${endpoint}`, formattedEntity);
 

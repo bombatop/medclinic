@@ -5,17 +5,15 @@ import 'moment/locale/ru';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './JournalCalendar.css';
 import api from '../utils/http-common';
-import debounce from 'lodash.debounce';
-import { Box, Button, TextField, CircularProgress, Autocomplete, Typography } from '@mui/material';
+import { Box, Button, TextField, CircularProgress, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import JournalModal from '../components/modals/JournalModal';
+import DebouncedAutocomplete from '../components/DebouncedAutocomplete';  // Import the new component
 
 const localizer = momentLocalizer(moment);
 
 const JournalCalendar = () => {
     const [journals, setJournals] = useState([]);
-    // const [loadingJournals, setLoadingJournals] = useState(true);
-    const [doctors, setDoctors] = useState([]);
     const [loadingDoctors, setLoadingDoctors] = useState(false);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -25,7 +23,6 @@ const JournalCalendar = () => {
     const [currentView, setCurrentView] = useState('week');
 
     const fetchJournals = async (start, end) => {
-        // setLoadingJournals(true);
         try {
             const params = {
                 page: 0,
@@ -41,7 +38,6 @@ const JournalCalendar = () => {
         } catch (error) {
             console.error('Error fetching journals:', error);
         }
-        // setLoadingJournals(false);
     };
 
     const fetchDoctors = async (query = '') => {
@@ -50,20 +46,14 @@ const JournalCalendar = () => {
             const response = await api.get('/doctors', {
                 params: { searchQuery: query, page: 0, size: 7 }
             });
-            setDoctors(response.data.content);
+            return response.data;
         } catch (error) {
             console.error('Error fetching doctors:', error);
+            throw error;
+        } finally {
+            setLoadingDoctors(false);
         }
-        setLoadingDoctors(false);
     };
-
-    const debouncedFetchDoctors = useCallback(debounce((query) => {
-        fetchDoctors(query);
-    }, 300), []);
-
-    useEffect(() => {
-        fetchDoctors();
-    }, []);
 
     useEffect(() => {
         fetchJournals(startDate, endDate);
@@ -157,27 +147,18 @@ const JournalCalendar = () => {
                 <Button variant="contained" color="primary" onClick={() => handleOpenModal(null)} startIcon={<AddIcon />}>
                     Создать
                 </Button>
-                <Autocomplete
-                    options={doctors}
-                    getOptionLabel={(specialist) => `${specialist.surname} ${specialist.name} ${specialist.patronymic}`}
+                <DebouncedAutocomplete
+                    label="Специалист"
+                    fetchOptions={fetchDoctors}
+                    onChange={setSelectedDoctor}
                     value={selectedDoctor}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
-                    onInputChange={(event, newInputValue) => {
-                        setLoadingDoctors(true);
-                        debouncedFetchDoctors(newInputValue);
-                    }}
-                    onChange={(event, newValue) => {
-                        setSelectedDoctor(newValue);
-                    }}
+                    getOptionLabel={(specialist) => `${specialist.surname} ${specialist.name} ${specialist.patronymic}`}
+                    noOptionsText="Нет данных"
                     loading={loadingDoctors}
-                    loadingText={"Поиск..."}
-                    noOptionsText={"Нет данных"}
                     renderInput={(params) => (
                         <TextField
                             {...params}
-                            label="Специалист"
                             variant="outlined"
-                            sx={{ width: 300, minWidth: 150 }}
                             InputProps={{
                                 ...params.InputProps,
                                 endAdornment: (
@@ -190,6 +171,7 @@ const JournalCalendar = () => {
                         />
                     )}
                     size="small"
+                    sx={{ width: 300 }}
                 />
             </Box>
             <Calendar

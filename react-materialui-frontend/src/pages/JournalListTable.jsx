@@ -13,14 +13,16 @@ import {
     Pagination, Select, MenuItem, CircularProgress, Autocomplete
 } from '@mui/material';
 
-
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+import {
+    Delete as DeleteIcon,
+    Edit as EditIcon,
+    Add as AddIcon,
+    Visibility as VisibilityIcon
+} from '@mui/icons-material';
 
 import SortableTableCell from '../components/SortableTableCell';
 import JournalModal from '../components/modals/JournalModal';
+import DebouncedAutocomplete from '../components/DebouncedAutocomplete';
 
 const statusColors = {
     SCHEDULED: 'orange',
@@ -37,7 +39,6 @@ const statusLabels = {
 const JournalListTable = () => {
     const [journals, setJournals] = useState([]);
 
-    // const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
@@ -47,12 +48,7 @@ const JournalListTable = () => {
     const [startDate, setStartDate] = useState(dayjs());
     const [endDate, setEndDate] = useState(null);
 
-    const [patients, setPatients] = useState([]);
-    const [loadingPatients, setLoadingPatients] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
-
-    const [doctors, setDoctors] = useState([]);
-    const [loadingDoctors, setLoadingDoctors] = useState(false);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -61,7 +57,6 @@ const JournalListTable = () => {
     const navigate = useNavigate();
 
     const fetchJournals = async (page = 1, size = 10, sortField = 'date', sortOrder = 'asc') => {
-        // setLoading(true);
         try {
             const params = {
                 page: page - 1,
@@ -79,52 +74,23 @@ const JournalListTable = () => {
         } catch (error) {
             console.error('Error fetching journals:', error);
         }
-        // setLoading(false);
     };
 
     const fetchDoctors = async (query = '') => {
-        setLoadingDoctors(true);
-        try {
-            const response = await api.get('/doctors', {
-                params: { searchQuery: query, page: 0, size: 7 }
-            });
-            setDoctors(response.data.content);
-        } catch (error) {
-            console.error('Error fetching doctors:', error);
-        }
-        setLoadingDoctors(false);
+        const response = await api.get('/doctors', {
+            params: { searchQuery: query, page: 0, size: 7 }
+        });
+        return response;
     };
 
     const fetchPatients = async (query = '') => {
-        try {
-            const response = await api.get('/patients', {
-                params: { searchQuery: query, page: 0, size: 7 }
-            });
-            setPatients(response.data.content);
-        } catch (error) {
-            console.error('Error fetching patients:', error);
-        }
-        setLoadingPatients(false);
+        const response = await api.get('/patients', {
+            params: { searchQuery: query, page: 0, size: 7 }
+        });
+        return response;
     };
 
-    const debouncedFetchDoctors = useCallback(debounce((query) => {
-        fetchDoctors(query);
-    }, 300), []);
-
-    const debouncedFetchPatients = useCallback(debounce((query) => {
-        fetchPatients(query);
-    }, 300), []);
-
     useEffect(() => {
-        fetchPatients();
-    }, []);
-
-    useEffect(() => {
-        fetchDoctors();
-    }, []);
-
-    useEffect(() => {
-        // setLoading(true);
         fetchJournals(page, size, sortField, sortOrder);
     }, [page, size, sortField, sortOrder, selectedDoctor, selectedPatient, startDate, endDate]);
 
@@ -142,7 +108,7 @@ const JournalListTable = () => {
             console.error('Error deleting journal:', error);
         }
     };
-    
+
     const handleOpenModal = (journalId = null) => {
         setSelectedJournalId(journalId);
         setModalOpen(true);
@@ -172,39 +138,15 @@ const JournalListTable = () => {
                 >
                     Создать
                 </Button>
-                <Autocomplete
-                    options={doctors}
-                    getOptionLabel={(doctor) => `${doctor.surname} ${doctor.name} ${doctor.patronymic}`}
+                <DebouncedAutocomplete
+                    label="Специалист"
+                    fetchOptions={fetchDoctors}
+                    onChange={setSelectedDoctor}
                     value={selectedDoctor}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
-                    onInputChange={(event, newInputValue) => {
-                        setLoadingDoctors(true);
-                        debouncedFetchDoctors(newInputValue);
-                    }}
-                    onChange={(event, newValue) => {
-                        setSelectedDoctor(newValue);
-                    }}
-                    loading={loadingDoctors}
-                    loadingText={"Поиск..."}
+                    getOptionLabel={(doctor) => `${doctor.surname} ${doctor.name} ${doctor.patronymic}`}
                     noOptionsText={"Нет данных"}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            label="Специалист"
-                            variant="outlined"
-                            sx={{ minWidth: 300 }}
-                            InputProps={{
-                                ...params.InputProps,
-                                endAdornment: (
-                                    <>
-                                        {loadingDoctors ? <CircularProgress color="inherit" size={20} /> : null}
-                                        {params.InputProps.endAdornment}
-                                    </>
-                                ),
-                            }}
-                            size="small"
-                        />
-                    )}
+                    sx={{ width: 300 }}
+                    size="small"
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
                     <DatePicker
@@ -224,38 +166,14 @@ const JournalListTable = () => {
                         slotProps={{ textField: { size: 'small' } }}
                     />
                 </LocalizationProvider>
-                <Autocomplete sx={{ marginLeft: 'auto' }}
-                    options={patients}
-                    getOptionLabel={(patient) => `${patient.surname} ${patient.name} ${patient.patronymic}`}
+                <DebouncedAutocomplete
+                    label="Пациент"
+                    fetchOptions={fetchPatients}
+                    onChange={setSelectedPatient}
                     value={selectedPatient}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
-                    onInputChange={(event, newInputValue) => {
-                        setLoadingPatients(true);
-                        debouncedFetchPatients(newInputValue);
-                    }}
-                    onChange={(event, newValue) => {
-                        setSelectedPatient(newValue);
-                    }}
-                    loading={loadingPatients}
-                    loadingText={"Поиск..."}
+                    getOptionLabel={(patient) => `${patient.surname} ${patient.name} ${patient.patronymic}`}
                     noOptionsText={"Нет данных"}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            label="Пациент"
-                            variant="outlined"
-                            sx={{minWidth: 300 }}
-                            InputProps={{
-                                ...params.InputProps,
-                                endAdornment: (
-                                    <>
-                                        {loadingPatients ? <CircularProgress color="inherit" size={20} /> : null}
-                                        {params.InputProps.endAdornment}
-                                    </>
-                                ),
-                            }}
-                        />
-                    )}
+                    sx={{ width: 300, marginLeft: 'auto' }}
                     size="small"
                 />
             </Box>
@@ -287,14 +205,24 @@ const JournalListTable = () => {
                     <TableBody>
                         {journals.map((journal) => (
                             <TableRow key={journal.id}>
-                                <TableCell>{journal.doctor.surname + ' ' + journal.doctor.name + ' ' + journal.doctor.patronymic}</TableCell>
-                                <TableCell>{dayjs(journal.date).format('DD.MM.YYYY')}</TableCell>
-                                <TableCell>{dayjs(journal.date).format('HH:mm')}</TableCell>
-                                <TableCell>{journal.timeEnd}</TableCell>
+                                <TableCell>
+                                    {journal.doctor.surname + ' ' + journal.doctor.name + ' ' + journal.doctor.patronymic}
+                                </TableCell>
+                                <TableCell>
+                                    {dayjs(journal.date).format('DD.MM.YYYY')}
+                                </TableCell>
+                                <TableCell>
+                                    {dayjs(journal.date).format('HH:mm')}
+                                </TableCell>
+                                <TableCell>
+                                    {journal.timeEnd}
+                                </TableCell>
                                 <TableCell style={{ color: statusColors[journal.status] }}>
                                     {statusLabels[journal.status]}
                                 </TableCell>
-                                <TableCell>{journal.patient.surname + ' ' + journal.patient.name + ' ' + journal.patient.patronymic}</TableCell>
+                                <TableCell>
+                                    {journal.patient.surname + ' ' + journal.patient.name + ' ' + journal.patient.patronymic}
+                                </TableCell>
                                 <TableCell sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     <IconButton onClick={() => handleView(journal.id)}>
                                         <VisibilityIcon />
