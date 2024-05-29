@@ -25,7 +25,6 @@ const JournalFilesTab = () => {
 
         axios_multipart.post(`/files/${journalData.id}`, formData)
             .then(response => {
-                setFiles(response.data);
                 setJournalData({ ...journalData, files: response.data });
                 setUploading(false);
             })
@@ -56,7 +55,6 @@ const JournalFilesTab = () => {
         api.delete(`/files/${fileId}`)
             .then(() => {
                 const updatedFiles = files.filter(file => file.id !== fileId);
-                setFiles(updatedFiles);
                 setJournalData({ ...journalData, files: updatedFiles });
             })
             .catch(error => {

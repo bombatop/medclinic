@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { TextField, CircularProgress, Autocomplete } from '@mui/material';
 import debounce from 'lodash.debounce';
 
-const DebouncedAutocomplete = ({ label, fetchOptions, onChange, value, getOptionLabel, noOptionsText, ...rest }) => {
+const DebouncedAutocomplete = ({ label, fetchOptions, onChange, value, getOptionLabel, noOptionsText, inputRef, error, helperText, ...rest }) => {
     const [options, setOptions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
@@ -11,7 +11,7 @@ const DebouncedAutocomplete = ({ label, fetchOptions, onChange, value, getOption
         setLoading(true);
         try {
             const response = await fetchOptions(query);
-            setOptions(response.data.content);
+            setOptions(response || []);
         } catch (error) {
             console.error('Error fetching options:', error);
         }
@@ -54,7 +54,7 @@ const DebouncedAutocomplete = ({ label, fetchOptions, onChange, value, getOption
             loadingText="Поиск..."
             noOptionsText={noOptionsText}
             open={open}
-            onOpen={() => handleFocus()}
+            onOpen={handleFocus}
             onClose={() => setOpen(false)}
             {...rest}
             renderInput={(params) => (
@@ -63,6 +63,9 @@ const DebouncedAutocomplete = ({ label, fetchOptions, onChange, value, getOption
                     label={label}
                     variant="outlined"
                     onFocus={handleFocus}
+                    inputRef={inputRef}
+                    error={Boolean(error)}
+                    helperText={helperText}
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: (

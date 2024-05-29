@@ -22,7 +22,6 @@ const JournalPage = () => {
                 setLoading(false);
             }
         };
-
         fetchJournalData();
     }, [journalId]);
 

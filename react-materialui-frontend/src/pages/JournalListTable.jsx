@@ -77,17 +77,27 @@ const JournalListTable = () => {
     };
 
     const fetchDoctors = async (query = '') => {
-        const response = await api.get('/doctors', {
-            params: { searchQuery: query, page: 0, size: 7 }
-        });
-        return response;
+        try {
+            const response = await api.get('/doctors', {
+                params: { searchQuery: query, page: 0, size: 5 }
+            });
+            return response.data.content;
+        } catch (error) {
+            console.error('Error fetching doctors:', error);
+            return [];
+        }
     };
 
     const fetchPatients = async (query = '') => {
-        const response = await api.get('/patients', {
-            params: { searchQuery: query, page: 0, size: 7 }
-        });
-        return response;
+        try {
+            const response = await api.get('/patients', {
+                params: { searchQuery: query, page: 0, size: 5 }
+            });
+            return response.data.content;
+        } catch (error) {
+            console.error('Error fetching patients:', error);
+            return [];
+        }
     };
 
     useEffect(() => {

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Box, FormControl, CircularProgress, MenuItem, Select, InputLabel, Autocomplete } from '@mui/material';
+import { TextField, Button, Box, FormControl, CircularProgress, MenuItem, Select, InputLabel } from '@mui/material';
 import { LocalizationProvider, DateTimePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/ru';
 import dayjs from 'dayjs';
 import api from '../../utils/http-common';
-import debounce from 'lodash.debounce';
+import DebouncedAutocomplete from '../DebouncedAutocomplete';
 
 const statusOptions = [
     { value: 'SCHEDULED', label: 'Запланировано', color: 'orange' },
@@ -23,11 +23,7 @@ const JournalForm = ({ entityData, onClose }) => {
         status: 'SCHEDULED'
     });
 
-    const [patients, setPatients] = useState([]);
-    const [loadingPatients, setLoadingPatients] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
-    const [doctors, setDoctors] = useState([]);
-    const [loadingDoctors, setLoadingDoctors] = useState(false);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [errors, setErrors] = useState({});
 
@@ -35,50 +31,32 @@ const JournalForm = ({ entityData, onClose }) => {
     const doctorRef = useRef();
     const dateRef = useRef();
     const timeEndRef = useRef();
-    
+
     const navigate = useNavigate();
 
     const fetchDoctors = async (query = '') => {
-        setLoadingDoctors(true);
         try {
             const response = await api.get('/doctors', {
                 params: { searchQuery: query, page: 0, size: 5 }
             });
-            setDoctors(response.data.content);
+            return response.data.content;
         } catch (error) {
             console.error('Error fetching doctors:', error);
+            return [];
         }
-        setLoadingDoctors(false);
     };
 
     const fetchPatients = async (query = '') => {
-        setLoadingPatients(true);
         try {
             const response = await api.get('/patients', {
                 params: { searchQuery: query, page: 0, size: 5 }
             });
-            setPatients(response.data.content);
+            return response.data.content;
         } catch (error) {
             console.error('Error fetching patients:', error);
+            return [];
         }
-        setLoadingPatients(false);
     };
-
-    useEffect(() => {
-        fetchPatients();
-    }, []);
-
-    useEffect(() => {
-        fetchDoctors();
-    }, []);
-
-    const debouncedFetchDoctors = useCallback(debounce((query) => {
-        fetchDoctors(query);
-    }, 300), []);
-
-    const debouncedFetchPatients = useCallback(debounce((query) => {
-        fetchPatients(query);
-    }, 300), []);
 
     useEffect(() => {
         if (entityData) {
@@ -94,26 +72,6 @@ const JournalForm = ({ entityData, onClose }) => {
             setSelectedDoctor(entityData.doctor);
         }
     }, [entityData]);
-
-    const fetchJournal = async (id) => {
-        try {
-            const response = await api.get(`/journals/${id}`);
-            const data = response.data;
-            setJournal({
-                patientId: data.patient.id || '',
-                doctorId: data.doctor.id || '',
-                date: data.date ? dayjs(data.date) : dayjs(),
-                timeEnd: data.timeEnd ? dayjs(data.timeEnd, 'HH:mm') : dayjs().add(1, 'hour'),
-                status: data.status || 'SCHEDULED'
-            });
-            setSelectedPatient(data.patient);
-            setSelectedDoctor(data.doctor);
-            setPatients([data.patient]);
-            setDoctors([data.doctor]);
-        } catch (error) {
-            console.error('Error fetching journal:', error);
-        }
-    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -141,15 +99,12 @@ const JournalForm = ({ entityData, onClose }) => {
         let tempErrors = {};
         if (!journal.patientId) {
             tempErrors.patientId = "Пожалуйста, выберите пациента.";
-            patientRef.current.focus();
         }
         if (!journal.doctorId) {
             tempErrors.doctorId = "Пожалуйста, выберите доктора.";
-            doctorRef.current.focus();
         }
         if (!journal.date || !journal.date.isValid()) {
             tempErrors.date = "Пожалуйста, выберите дату и время начала.";
-            dateRef.current.focus();
         }
         if (!journal.timeEnd || !journal.timeEnd.isValid()) {
             tempErrors.timeEnd = "Пожалуйста, выберите время окончания.";
@@ -189,89 +144,45 @@ const JournalForm = ({ entityData, onClose }) => {
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
             <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <FormControl error={!!errors.patientId}>
-                    <Autocomplete
-                        options={patients}
-                        getOptionLabel={(patient) => `${patient.surname} ${patient.name} ${patient.patronymic}`}
+                    <DebouncedAutocomplete
+                        label="Пациент"
+                        fetchOptions={fetchPatients}
                         value={selectedPatient}
-                        isOptionEqualToValue={(option, value) => option.id === value.id}
-                        onInputChange={(event, newInputValue) => {
-                            setLoadingPatients(true);
-                            debouncedFetchPatients(newInputValue);
-                        }}
-                        onChange={(event, newValue) => {
+                        onChange={(newValue) => {
                             setSelectedPatient(newValue);
                             setJournal(prevState => ({
                                 ...prevState,
                                 patientId: newValue ? newValue.id : ''
                             }));
                         }}
-                        loading={loadingPatients}
-                        loadingText={"Поиск..."}
-                        noOptionsText={"Нет данных"}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Пациент"
-                                variant="outlined"
-                                required
-                                inputRef={patientRef}
-                                error={!!errors.patientId}
-                                helperText={errors.patientId}
-                                InputProps={{
-                                    ...params.InputProps,
-                                    endAdornment: (
-                                        <>
-                                            {loadingPatients ? <CircularProgress color="inherit" size={20} /> : null}
-                                            {params.InputProps.endAdornment}
-                                        </>
-                                    ),
-                                }}
-                                size="small"
-                            />
-                        )}
+                        getOptionLabel={(patient) => `${patient.surname} ${patient.name} ${patient.patronymic}`}
+                        noOptionsText="Нет данных"
+                        required
+                        inputRef={patientRef}
+                        error={!!errors.patientId}
+                        helperText={errors.patientId}
+                        size="small"
                     />
                 </FormControl>
                 <FormControl error={!!errors.doctorId}>
-                    <Autocomplete
-                        options={doctors}
-                        getOptionLabel={(doctor) => `${doctor.surname} ${doctor.name} ${doctor.patronymic}`}
+                    <DebouncedAutocomplete
+                        label="Доктор"
+                        fetchOptions={fetchDoctors}
                         value={selectedDoctor}
-                        isOptionEqualToValue={(option, value) => option.id === value.id}
-                        onInputChange={(event, newInputValue) => {
-                            setLoadingDoctors(true);
-                            debouncedFetchDoctors(newInputValue);
-                        }}
-                        onChange={(event, newValue) => {
+                        onChange={(newValue) => {
                             setSelectedDoctor(newValue);
                             setJournal(prevState => ({
                                 ...prevState,
                                 doctorId: newValue ? newValue.id : ''
                             }));
                         }}
-                        loading={loadingDoctors}
-                        loadingText={"Поиск..."}
-                        noOptionsText={"Нет данных"}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Доктор"
-                                variant="outlined"
-                                required
-                                inputRef={doctorRef}
-                                error={!!errors.doctorId}
-                                helperText={errors.doctorId}
-                                InputProps={{
-                                    ...params.InputProps,
-                                    endAdornment: (
-                                        <>
-                                            {loadingDoctors ? <CircularProgress color="inherit" size={20} /> : null}
-                                            {params.InputProps.endAdornment}
-                                        </>
-                                    ),
-                                }}
-                                size="small"
-                            />
-                        )}
+                        getOptionLabel={(doctor) => `${doctor.surname} ${doctor.name} ${doctor.patronymic}`}
+                        noOptionsText="Нет данных"
+                        required
+                        inputRef={doctorRef}
+                        error={!!errors.doctorId}
+                        helperText={errors.doctorId}
+                        size="small"
                     />
                 </FormControl>
                 <FormControl error={!!errors.date}>
@@ -291,7 +202,8 @@ const JournalForm = ({ entityData, onClose }) => {
                         value={journal.timeEnd}
                         onChange={handleTimeChange}
                         textField={(params) => (
-                            <TextField {...params} required error={!!errors.timeEnd} helperText={errors.timeEnd} inputRef={timeEndRef} size="small" />
+                            <TextField {...params} required error={!!errors.timeEnd} helperText={errors.timeEnd} input
+                                inputRef={timeEndRef} size="small" />
                         )}
                         slotProps={{ textField: { size: 'small' } }}
                     />
@@ -316,15 +228,6 @@ const JournalForm = ({ entityData, onClose }) => {
                 <Button type="submit" variant="contained" color="primary">
                     Сохранить
                 </Button>
-                {entityData?.id && (
-                    <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={handleNavigateToJournal}
-                    >
-                        Дополнительно
-                    </Button>
-                )}
             </Box>
         </LocalizationProvider>
     );

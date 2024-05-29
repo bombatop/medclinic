@@ -15,8 +15,6 @@ const JournalTreatmentsTab = () => {
     const [currentTreatment, setCurrentTreatment] = useState(null);
     const [form, setForm] = useState({ treatment: null, amount: 0 });
     const [errorOpen, setErrorOpen] = useState(false);
-
-    console.log(treatments);
     
     const fetchTreatments = async (query = '') => {
         return await api.get('/treatments', { params: { searchQuery: query, page: 0, size: 10 } });
@@ -87,7 +85,6 @@ const JournalTreatmentsTab = () => {
     };
 
     const handleDelete = (treatmentId) => {
-        console.log(journalData.id, treatmentId)
         api.delete(`/journals/${journalData.id}/treatments/${treatmentId}`)
             .then(() => {
                 setTreatments(treatments.filter(t => t.id !== treatmentId));
@@ -135,8 +132,8 @@ const JournalTreatmentsTab = () => {
                     <DebouncedAutocomplete
                         label="Наименование лечения"
                         fetchOptions={fetchTreatments}
-                        onChange={handleTreatmentChange}
                         value={form.treatment}
+                        onChange={handleTreatmentChange}
                         getOptionLabel={(option) => (option.code + ' ' + option.name)}
                         noOptionsText="Нет данных"
                         size="small"

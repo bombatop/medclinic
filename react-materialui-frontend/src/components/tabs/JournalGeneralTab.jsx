@@ -1,15 +1,15 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { Box } from '@mui/material';
 import JournalForm from '../forms/JournalForm';
 
 const JournalGeneralTab = () => {
-    const { journalData } = useOutletContext();
+    const { journalData, setJournalData } = useOutletContext();
 
     return (
-        <Box sx={{ width: '100%', maxWidth: 500 }}>
-            <JournalForm entityData={journalData} onClose={() => {}} />
-        </Box>
+        <JournalForm
+            entityData={journalData}
+            onClose={() => { }}
+        />
     );
 };
 
