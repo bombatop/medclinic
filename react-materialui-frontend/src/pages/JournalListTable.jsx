@@ -168,6 +168,7 @@ const JournalListTable = () => {
                     color="primary"
                     onClick={() => handleOpenModal(null)}
                     startIcon={<AddIcon />}
+                    sx={{ minWidth: 120 }}
                 >
                     Создать
                 </Button>
@@ -191,7 +192,7 @@ const JournalListTable = () => {
                             {...params}
                             label="Специалист"
                             variant="outlined"
-                            sx={{ width: 300, minWidth: 150 }}
+                            sx={{ minWidth: 300 }}
                             InputProps={{
                                 ...params.InputProps,
                                 endAdornment: (
@@ -211,7 +212,7 @@ const JournalListTable = () => {
                         value={startDate}
                         maxDate={endDate}
                         onChange={(newValue) => setStartDate(newValue)}
-                        sx={{ minWidth: 150 }}
+                        sx={{ minWidth: 165 }}
                         slotProps={{ textField: { size: 'small' } }}
                     />
                     <DatePicker
@@ -219,7 +220,7 @@ const JournalListTable = () => {
                         value={endDate}
                         minDate={startDate}
                         onChange={(newValue) => setEndDate(newValue)}
-                        sx={{ minWidth: 150 }}
+                        sx={{ minWidth: 165 }}
                         slotProps={{ textField: { size: 'small' } }}
                     />
                 </LocalizationProvider>
@@ -243,7 +244,7 @@ const JournalListTable = () => {
                             {...params}
                             label="Пациент"
                             variant="outlined"
-                            sx={{ width: 300, minWidth: 150 }}
+                            sx={{minWidth: 300 }}
                             InputProps={{
                                 ...params.InputProps,
                                 endAdornment: (

@@ -36,13 +36,14 @@ function App() {
                         <Sidebar isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
                         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                             <Routes>
-                                <Route path="/patients" element={<PatientListTable />} />
-                                <Route path="/treatments" element={<TreatmentListTable />} />
-                                <Route path="/diagnoses" element={<DiagnosisListTable />} />
-                                <Route path="/agencies" element={<AgencyListTable />} />
-                                <Route path="/journals-table" element={<JournalListTable />} />
-                                <Route path="/journals-calendar" element={<JournalCalendar />} />
-                                <Route path="/journals/:journalId" element={<JournalPage />}>
+                                <Route index element={<Navigate to="journals-table" replace />} />
+                                <Route path="patients" element={<PatientListTable />} />
+                                <Route path="treatments" element={<TreatmentListTable />} />
+                                <Route path="diagnoses" element={<DiagnosisListTable />} />
+                                <Route path="agencies" element={<AgencyListTable />} />
+                                <Route path="journals-table" element={<JournalListTable />} />
+                                <Route path="journals-calendar" element={<JournalCalendar />} />
+                                <Route path="journals/:journalId" element={<JournalPage />}>
                                     <Route index element={<Navigate to="general" replace />} />
                                     <Route path="general" element={<JournalGeneralTab />} />
                                     <Route path="diagnoses" element={<JournalDiagnosesTab />} />

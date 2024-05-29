@@ -14,6 +14,7 @@ const JournalPage = () => {
             try {
                 const response = await api.get(`/journals/${journalId}`);
                 setJournalData(response.data);
+                console.log(response.data);
             } catch (error) {
                 console.error('Error fetching journal data:', error);
             } finally {
