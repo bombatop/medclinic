@@ -66,12 +66,12 @@ public class JournalEntity {
     @OneToMany
     private Set<FileEntity> files;
 
-    @JsonIncludeProperties({ "id", "dateStart", "dateEnd" })
+    @JsonIncludeProperties({ "id", "date", "timeEnd", "status" })
     @OneToOne
     @JoinColumn(name = "previous_entry_id")
-    private JournalEntity previousEntry;
+    private JournalEntity prevEntry;
 
-    @JsonIncludeProperties({ "id", "dateStart", "dateEnd" })
-    @OneToOne(mappedBy = "previousEntry")
+    @JsonIncludeProperties({ "id", "date", "timeEnd", "status" })
+    @OneToOne(mappedBy = "prevEntry")
     private JournalEntity nextEntry;
 }

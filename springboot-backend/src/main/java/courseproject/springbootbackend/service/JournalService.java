@@ -101,7 +101,7 @@ public class JournalService {
         }
     }
 
-    public JournalEntity linkNextEntry(final Integer currentEntryId, final Integer nextEntryId) {
+    public void linkNextEntry(final Integer currentEntryId, final Integer nextEntryId) {
         var currentJournalEntity = journalRepository.findById(currentEntryId)
                 .orElseThrow(JournalNotFoundException::new);
         var nextJournalEntity = journalRepository.findById(nextEntryId)
@@ -110,18 +110,18 @@ public class JournalService {
         if (currentJournalEntity.getNextEntry() != null) {
             throw new JournalAlreadyLinkedException("Current entry already has a next entry.");
         }
-        if (nextJournalEntity.getPreviousEntry() != null) {
+        if (nextJournalEntity.getPrevEntry() != null) {
             throw new JournalAlreadyLinkedException("Next entry already has a previous entry.");
         }
 
         currentJournalEntity.setNextEntry(nextJournalEntity);
-        nextJournalEntity.setPreviousEntry(currentJournalEntity);
+        nextJournalEntity.setPrevEntry(currentJournalEntity);
 
         journalRepository.save(nextJournalEntity);
-        return journalRepository.save(currentJournalEntity);
+        journalRepository.save(currentJournalEntity);
     }
 
-    public JournalEntity unlinkNextEntry(final Integer currentEntryId) {
+    public void unlinkNextEntry(final Integer currentEntryId) {
         var currentJournalEntity = journalRepository.findById(currentEntryId)
                 .orElseThrow(JournalNotFoundException::new);
 
@@ -131,23 +131,30 @@ public class JournalService {
         }
 
         currentJournalEntity.setNextEntry(null);
-        nextJournalEntity.setPreviousEntry(null);
+        nextJournalEntity.setPrevEntry(null);
 
         journalRepository.save(nextJournalEntity);
-        return journalRepository.save(currentJournalEntity);
+        journalRepository.save(currentJournalEntity);
     }
 
     public List<JournalEntity> getAvailableNextEntries(final Integer journalId) {
         var journalEntity = journalRepository.findById(journalId)
                 .orElseThrow(JournalNotFoundException::new);
-        return journalRepository.findNextEntry(journalEntity.getDate(), journalEntity.getPatient().getId());
+        return journalRepository.findNextEntry(
+                journalEntity.getDate(), 
+                journalEntity.getPatient().getId(),
+                journalEntity.getId()
+        );
     }
 
     public List<JournalEntity> getAvailablePreviousEntries(final Integer journalId) {
         var journalEntity = journalRepository.findById(journalId)
                 .orElseThrow(JournalNotFoundException::new);
-        return journalRepository.findPreviousEntry(journalEntity.getDate(),
-                journalEntity.getPatient().getId());
+        return journalRepository.findPreviousEntry(
+                journalEntity.getDate(),
+                journalEntity.getPatient().getId(),
+                journalEntity.getId()
+        );
     }
 
     public JournalEntity updateJournal(final Integer id, final JournalData dto) {
@@ -157,9 +164,9 @@ public class JournalService {
                 .orElseThrow(PatientNotFoundException::new);
         DoctorEntity doctorEntity = doctorRepository.findById(dto.doctorId())
                 .orElseThrow(DoctorNotFoundException::new);
-        // if (!journalEntity.getPatient().equals(patientEntity)) {
-        //     throw new JournalAlreadyLinkedException("Can't change patient for a linked journal");
-        // }
+        if (!journalEntity.getPatient().equals(patientEntity)) {
+            throw new JournalAlreadyLinkedException("Can't change patient for a linked journal");
+        }
         journalEntity.setPatient(patientEntity);
         journalEntity.setDoctor(doctorEntity);
         journalEntity.setDate(dto.date());

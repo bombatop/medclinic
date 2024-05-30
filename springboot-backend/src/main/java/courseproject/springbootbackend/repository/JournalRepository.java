@@ -33,11 +33,11 @@ public interface JournalRepository extends JpaRepository<JournalEntity, Integer>
 
     Optional<JournalEntity> findByFilesContains(FileEntity file);
     
-    @Query("SELECT j FROM JournalEntity j WHERE j.previousEntry IS NULL AND j.date >= :date " +
-           "AND j.patient.id = :patientId ORDER BY j.date ASC")
-    List<JournalEntity> findNextEntry(@Param("date") LocalDateTime date, @Param("patientId") Integer patientId);
+    @Query("SELECT j FROM JournalEntity j WHERE j.prevEntry IS NULL AND j.date > :date " +
+           "AND j.patient.id = :patientId and j.id != :journalId ORDER BY j.date DESC")
+    List<JournalEntity> findNextEntry(@Param("date") LocalDateTime date, @Param("patientId") Integer patientId,  @Param("journalId") Integer journalId);
 
-    @Query("SELECT j FROM JournalEntity j WHERE j.nextEntry IS NULL AND j.date <= :date " +
-           "AND j.patient.id = :patientId ORDER BY j.date ASC")
-    List<JournalEntity> findPreviousEntry(@Param("date") LocalDateTime date, @Param("patientId") Integer patientId);
+    @Query("SELECT j FROM JournalEntity j WHERE j.nextEntry IS NULL AND j.date < :date " +
+           "AND j.patient.id = :patientId and j.id != :journalId ORDER BY j.date DESC")
+    List<JournalEntity> findPreviousEntry(@Param("date") LocalDateTime date, @Param("patientId") Integer patientId,  @Param("journalId") Integer journalId);
 }

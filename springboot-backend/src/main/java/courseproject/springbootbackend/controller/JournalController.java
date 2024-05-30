@@ -77,15 +77,15 @@ public class JournalController {
     }
 
     @PutMapping("{id}/next/{nextId}")
-    public JournalEntity linkNextJournal(
+    public void linkNextJournal(
             @PathVariable Integer id,
             @PathVariable Integer nextId) {
-        return journalService.linkNextEntry(id, nextId);
+        journalService.linkNextEntry(id, nextId);
     }
 
     @PutMapping("{id}/unlink-next")
-    public JournalEntity unlinkNextJournal(@PathVariable Integer id) {
-        return journalService.unlinkNextEntry(id);
+    public void unlinkNextJournal(@PathVariable Integer id) {
+        journalService.unlinkNextEntry(id);
     }
 
     @PutMapping("{id}")

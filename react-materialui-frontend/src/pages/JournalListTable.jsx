@@ -1,59 +1,39 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { useNavigate } from 'react-router-dom';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/ru';
 import dayjs from 'dayjs';
 import api from '../utils/http-common';
-import debounce from 'lodash.debounce';
-
 import {
     Box, Table, TableBody, Button, TableCell, TableContainer,
-    TableHead, TableRow, Paper, TextField, IconButton, Typography,
-    Pagination, Select, MenuItem, CircularProgress, Autocomplete
+    TableHead, TableRow, Paper, IconButton, Typography,
+    Pagination, Select, MenuItem,
 } from '@mui/material';
-
 import {
     Delete as DeleteIcon,
     Edit as EditIcon,
     Add as AddIcon,
     Visibility as VisibilityIcon
 } from '@mui/icons-material';
-
 import SortableTableCell from '../components/SortableTableCell';
 import JournalModal from '../components/modals/JournalModal';
 import DebouncedAutocomplete from '../components/DebouncedAutocomplete';
-
-const statusColors = {
-    SCHEDULED: 'orange',
-    COMPLETED: 'green',
-    CANCELLED: 'gray'
-};
-
-const statusLabels = {
-    SCHEDULED: 'Запланировано',
-    COMPLETED: 'Проведено',
-    CANCELLED: 'Отменено'
-};
+import { statusColors, statusLabels } from '../utils/scheduleSettings';
 
 const JournalListTable = () => {
     const [journals, setJournals] = useState([]);
-
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
     const [sortField, setSortField] = useState('date');
     const [sortOrder, setSortOrder] = useState('asc');
-
     const [startDate, setStartDate] = useState(dayjs());
     const [endDate, setEndDate] = useState(null);
-
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
-
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedJournalId, setSelectedJournalId] = useState(null);
-
     const navigate = useNavigate();
 
     const fetchJournals = async (page = 1, size = 10, sortField = 'date', sortOrder = 'asc') => {

@@ -1,18 +1,13 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Box, FormControl, CircularProgress, MenuItem, Select, InputLabel } from '@mui/material';
+import { TextField, Button, Box, FormControl, CircularProgress, MenuItem, Select, InputLabel, Typography } from '@mui/material';
 import { LocalizationProvider, DateTimePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/ru';
 import dayjs from 'dayjs';
 import api from '../../utils/http-common';
 import DebouncedAutocomplete from '../DebouncedAutocomplete';
-
-const statusOptions = [
-    { value: 'SCHEDULED', label: 'Запланировано', color: 'orange' },
-    { value: 'COMPLETED', label: 'Проведено', color: 'green' },
-    { value: 'CANCELLED', label: 'Отменено', color: 'gray' }
-];
+import { statusColors, statusLabels } from '../../utils/scheduleSettings';
 
 const JournalForm = ({ entityData, onClose }) => {
     const [journal, setJournal] = useState({
@@ -60,7 +55,6 @@ const JournalForm = ({ entityData, onClose }) => {
 
     useEffect(() => {
         if (entityData) {
-            console.log(entityData);
             setJournal({
                 patientId: entityData.patient.id || '',
                 doctorId: entityData.doctor.id || '',
@@ -116,7 +110,7 @@ const JournalForm = ({ entityData, onClose }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            const request = entityData.id
+            const request = entityData?.id
                 ? api.put(`/journals/${entityData.id}`, {
                     ...journal,
                     date: journal.date.format('YYYY-MM-DDTHH:mm'),
@@ -202,13 +196,11 @@ const JournalForm = ({ entityData, onClose }) => {
                         value={journal.timeEnd}
                         onChange={handleTimeChange}
                         textField={(params) => (
-                            <TextField {...params} required error={!!errors.timeEnd} helperText={errors.timeEnd} input
-                                inputRef={timeEndRef} size="small" />
+                            <TextField {...params} required error={!!errors.timeEnd} helperText={errors.timeEnd} inputRef={timeEndRef} size="small" />
                         )}
                         slotProps={{ textField: { size: 'small' } }}
                     />
                 </FormControl>
-
                 <FormControl>
                     <InputLabel>Статус</InputLabel>
                     <Select
@@ -218,9 +210,9 @@ const JournalForm = ({ entityData, onClose }) => {
                         onChange={handleChange}
                         size="small"
                     >
-                        {statusOptions.map(option => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
+                        {Object.keys(statusLabels).map(status => (
+                            <MenuItem key={status} value={status} style={{ color: statusColors[status] }}>
+                                {statusLabels[status]}
                             </MenuItem>
                         ))}
                     </Select>

@@ -18,6 +18,7 @@ import JournalGeneralTab from './components/tabs/JournalGeneralTab';
 import JournalDiagnosesTab from './components/tabs/JournalDiagnosesTab';
 import JournalTreatmentsTab from './components/tabs/JournalTreatmentsTab';
 import JournalFilesTab from './components/tabs/JournalFilesTab';
+import JournalLinkTab from './components/tabs/JournalLinkTab';
 
 function App() {
     const [isDrawerOpen, setDrawerOpen] = useState(true);
@@ -49,6 +50,7 @@ function App() {
                                     <Route path="diagnoses" element={<JournalDiagnosesTab />} />
                                     <Route path="services" element={<JournalTreatmentsTab />} />
                                     <Route path="files" element={<JournalFilesTab />} />
+                                    <Route path="links" element={<JournalLinkTab />} />
                                 </Route>
                             </Routes>
                         </Box>

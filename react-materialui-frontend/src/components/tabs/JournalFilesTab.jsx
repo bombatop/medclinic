@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import dayjs from 'dayjs';
 import api, { axios_multipart, axios_blob } from '../../utils/http-common';
-import { Box, Button, CircularProgress, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Box, CircularProgress, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { Delete as DeleteIcon, Download as DownloadIcon, Upload as UploadIcon } from '@mui/icons-material';
 
 const JournalFilesTab = () => {

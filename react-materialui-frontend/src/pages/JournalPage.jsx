@@ -36,8 +36,11 @@ const JournalPage = () => {
             case 'services':
                 setValue(2);
                 break;
-            case 'files':
+            case 'links':
                 setValue(3);
+                break;
+            case 'files':
+                setValue(4);
                 break;
             default:
                 setValue(0);
@@ -57,6 +60,7 @@ const JournalPage = () => {
                 <Tab label="Общее" component={Link} to={`/journals/${journalId}/general`} />
                 <Tab label="Диагнозы" component={Link} to={`/journals/${journalId}/diagnoses`} />
                 <Tab label="Услуги" component={Link} to={`/journals/${journalId}/services`} />
+                <Tab label="План лечения" component={Link} to={`/journals/${journalId}/links`} />
                 <Tab label="Файлы" component={Link} to={`/journals/${journalId}/files`} />
             </Tabs>
             <Box sx={{ p: 2 }}>

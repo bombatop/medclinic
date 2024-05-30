@@ -31,7 +31,7 @@ public class JournalMapper {
         return JournalEntity.builder()
                 .patient(patientEntity)
                 .doctor(doctorEntity)
-                .previousEntry(prevJournalEntity)
+                .prevEntry(prevJournalEntity)
                 .date(dto.date())
                 .timeEnd(dto.timeEnd())
                 .build();
