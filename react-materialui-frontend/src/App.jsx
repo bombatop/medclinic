@@ -12,6 +12,7 @@ import JournalListTable from './pages/JournalListTable';
 import TreatmentListTable from './pages/TreatmentListTable';
 import DiagnosisListTable from './pages/DiagnosisListTable';
 import AgencyListTable from './pages/AgencyListTable';
+import PricesListTable from './pages/PricesListTable';
 import JournalCalendar from './pages/JournalCalendar';
 import JournalPage from './pages/JournalPage';
 import JournalGeneralTab from './components/tabs/JournalGeneralTab';
@@ -42,6 +43,7 @@ function App() {
                                 <Route path="treatments" element={<TreatmentListTable />} />
                                 <Route path="diagnoses" element={<DiagnosisListTable />} />
                                 <Route path="agencies" element={<AgencyListTable />} />
+                                <Route path="prices" element={<PricesListTable />} />
                                 <Route path="journals-table" element={<JournalListTable />} />
                                 <Route path="journals-calendar" element={<JournalCalendar />} />
                                 <Route path="journals/:journalId" element={<JournalPage />}>

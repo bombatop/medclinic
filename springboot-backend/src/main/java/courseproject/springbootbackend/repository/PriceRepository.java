@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,8 @@ import courseproject.springbootbackend.model.entity.PriceEntity;
 import courseproject.springbootbackend.model.entity.TreatmentEntity;
 
 @Repository
-public interface PriceRepository extends JpaRepository<PriceEntity, Integer> {
+public interface PriceRepository extends JpaRepository<PriceEntity, Integer>, 
+        JpaSpecificationExecutor<PriceEntity> {
     
     // @Query("SELECT p FROM Price p JOIN p.agency a JOIN p.treatment t WHERE t.id = :id ORDER BY p.date DESC")
     List<PriceEntity> findByTreatmentIdOrderByDateDesc(Integer id);
