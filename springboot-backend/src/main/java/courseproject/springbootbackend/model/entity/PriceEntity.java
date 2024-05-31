@@ -29,7 +29,7 @@ public class PriceEntity {
 
     private Integer price;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime date;
 
     @ManyToOne(targetEntity = TreatmentEntity.class)

@@ -18,7 +18,7 @@ public record JournalData (
         Integer doctorId,
 
         @NotNull(message = "Start date and time is required")
-        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         LocalDateTime date,
 
         @NotNull(message = "End time is required")

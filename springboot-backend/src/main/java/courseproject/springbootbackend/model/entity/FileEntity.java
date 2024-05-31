@@ -41,7 +41,7 @@ public class FileEntity {
     @Column(name = "data", columnDefinition = "LONGBLOB")
     private byte[] data;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "upload_date")
     private LocalDateTime uploadDate;
 

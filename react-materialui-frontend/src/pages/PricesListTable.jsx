@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from "../utils/http-common";
 import {
     Box, Table, TableBody, Button, TableCell, TableContainer,
     TableHead, TableRow, Paper, IconButton, Typography,
-    Pagination, Select, MenuItem, CircularProgress, TextField, InputAdornment
+    Pagination, Select, MenuItem
 } from '@mui/material';
 import {
     Delete as DeleteIcon,
-    Edit as EditIcon,
-    Add as AddIcon,
-    Visibility as VisibilityIcon
+    Add as AddIcon
 } from '@mui/icons-material';
 import SortableTableCell from '../components/SortableTableCell';
 import DebouncedAutocomplete from '../components/DebouncedAutocomplete';
+import PriceModal from '../components/modals/PriceModal';
 
 const fetchPrices = (agencyId, treatmentId, page, size, sortField, sortOrder, latestOnly) => {
     const params = {
@@ -28,6 +27,9 @@ const fetchPrices = (agencyId, treatmentId, page, size, sortField, sortOrder, la
     if (treatmentId !== null) {
         params.treatmentId = treatmentId;
     }
+
+    console.log('Fetching prices with params:', params); // Log parameters for debugging
+
     return api.get('/prices', { params });
 };
 
@@ -63,11 +65,12 @@ const PricesListTable = () => {
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
-    const [sortField, setSortField] = useState('date');
+    const [sortField, setSortField] = useState('agency.name');
     const [sortOrder, setSortOrder] = useState('asc');
     const [latestOnly, setLatestOnly] = useState(true);
+    const [modalOpen, setModalOpen] = useState(false);
 
-    const fetchData = async (agencyId, treatmentId, page = 1, size = 10, sortField = 'date', sortOrder = 'asc', latestOnly = true) => {
+    const fetchData = async (agencyId, treatmentId, page = 1, size = 10, sortField = 'agency.name', sortOrder = 'asc', latestOnly = true) => {
         setLoading(true);
         try {
             const response = await fetchPrices(agencyId, treatmentId, page, size, sortField, sortOrder, latestOnly);
@@ -102,6 +105,14 @@ const PricesListTable = () => {
         }
     };
 
+    const handleOpenModal = () => {
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+    };
+
     return (
         <Box sx={{ padding: 2 }}>
             <Typography variant="h4" gutterBottom>
@@ -114,6 +125,7 @@ const PricesListTable = () => {
                     startIcon={<AddIcon />}
                     sx={{ minWidth: 120 }}
                     disabled={!selectedAgency}
+                    onClick={handleOpenModal}
                 >
                     Добавить
                 </Button>
@@ -157,7 +169,7 @@ const PricesListTable = () => {
                                 Код услуги
                             </SortableTableCell>
                             <SortableTableCell field="treatment.name" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
-                                Услуга
+                                Наименование услуги
                             </SortableTableCell>
                             <SortableTableCell field="agency.name" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
                                 Агентство
@@ -214,6 +226,11 @@ const PricesListTable = () => {
                     <MenuItem value={20}>20</MenuItem>
                 </Select>
             </Box>
+            <PriceModal
+                open={modalOpen}
+                onClose={handleCloseModal}
+                selectedAgency={selectedAgency}
+            />
         </Box>
     );
 };

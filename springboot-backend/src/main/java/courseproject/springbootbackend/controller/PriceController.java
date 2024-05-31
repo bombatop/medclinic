@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import courseproject.springbootbackend.model.dto.BulkPriceUpdateData;
 import courseproject.springbootbackend.model.dto.PriceData;
 import courseproject.springbootbackend.model.entity.PriceEntity;
 import courseproject.springbootbackend.service.PriceService;
@@ -51,6 +52,11 @@ public class PriceController {
     @PostMapping
     public PriceEntity addPriceForTreatment(@Valid @RequestBody PriceData dto) {
         return service.addPriceForTreatment(dto);
+    }
+
+    @PostMapping("/bulk")
+    public List<PriceEntity> bulkUpdatePrices(@Valid @RequestBody BulkPriceUpdateData dto) {
+        return service.bulkUpdatePrices(dto);
     }
     
     @DeleteMapping("{id}")

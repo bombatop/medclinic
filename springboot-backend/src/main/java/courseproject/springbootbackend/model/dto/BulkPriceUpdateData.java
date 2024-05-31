@@ -1,27 +1,24 @@
 package courseproject.springbootbackend.model.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record PriceData (
+public record BulkPriceUpdateData (
         @NotNull(message="Date is required")
         @JsonFormat(pattern="yyyy-MM-dd HH:mm")
         LocalDateTime date,
 
-        @NotNull(message = "Price is required")
-        @Min(value = 1, message = "Value must be a positive not null number")
-        Integer price,
-        
-        @NotNull(message="Treatment id is required")
-        Integer treatmentId,
-
         @NotNull(message = "Agency id is required")
-        Integer agencyId
+        Integer agencyId,
+
+        @NotEmpty(message = "Prices list cannot be empty")
+        List<TreatmentPriceData> prices
 ) {
 }
