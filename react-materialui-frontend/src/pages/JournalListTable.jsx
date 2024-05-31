@@ -46,8 +46,8 @@ const JournalListTable = () => {
                 doctorId: selectedDoctor ? selectedDoctor.id : '',
                 patientId: selectedPatient ? selectedPatient.id : ''
             };
-            if (startDate && startDate.isValid()) params.startDate = startDate.format('YYYY-MM-DD HH:mm');
-            if (endDate && endDate.isValid()) params.endDate = endDate.format('YYYY-MM-DD HH:mm');
+            if (startDate && startDate.isValid()) params.startDate = startDate.format('YYYY-MM-DDTHH:mm');
+            if (endDate && endDate.isValid()) params.endDate = endDate.format('YYYY-MM-DDTHH:mm');
             const response = await api.get('/journals', { params });
             setJournals(response.data.content);
             setTotalPages(response.data.totalPages);

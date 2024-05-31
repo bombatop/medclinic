@@ -30,8 +30,8 @@ const JournalCalendar = () => {
                 sortField: 'date',
                 sortOrder: 'asc',
                 ...(selectedDoctor && { doctorId: selectedDoctor.id }),
-                startDate: moment(start).format('YYYY-MM-DD HH:mm'),
-                endDate: moment(end).format('YYYY-MM-DD HH:mm'),
+                startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
+                endDate: moment(end).format('YYYY-MM-DDTHH:mm'),
             };
             const response = await api.get('/journals', { params });
             setJournals(response.data.content);

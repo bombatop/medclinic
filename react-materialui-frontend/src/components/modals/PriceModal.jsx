@@ -56,7 +56,7 @@ const PriceModal = ({ open, onClose, selectedAgency }) => {
     }, [open, selectedAgency]);
 
     useEffect(() => {
-        setPrices(prices.map(price => ({ ...price, date: date.format('YYYY-MM-DD HH:mm') })));
+        setPrices(prices.map(price => ({ ...price, date: date.format('YYYY-MM-DDTHH:mm') })));
     }, [date]);
 
     const handleDateChange = (newDate) => {
@@ -71,7 +71,7 @@ const PriceModal = ({ open, onClose, selectedAgency }) => {
 
     const handleSave = async () => {
         const bulkPriceUpdateData = {
-            date: date.format('YYYY-MM-DD HH:mm'),
+            date: date.format('YYYY-MM-DDTHH:mm'),
             agencyId: selectedAgency.id,
             prices: prices.map(price => ({
                 treatmentId: price.treatment.id,
