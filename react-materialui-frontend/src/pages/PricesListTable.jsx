@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from "../utils/http-common";
-import debounce from 'lodash.debounce';
 import {
     Box, Table, TableBody, Button, TableCell, TableContainer,
     TableHead, TableRow, Paper, IconButton, Typography,
@@ -15,9 +14,8 @@ import {
 import SortableTableCell from '../components/SortableTableCell';
 import DebouncedAutocomplete from '../components/DebouncedAutocomplete';
 
-const fetchPrices = (agencyId, query, page, size, sortField, sortOrder, latestOnly) => {
+const fetchPrices = (agencyId, treatmentId, page, size, sortField, sortOrder, latestOnly) => {
     const params = {
-        searchQuery: query,
         page: page - 1,
         size,
         sortField,
@@ -27,7 +25,9 @@ const fetchPrices = (agencyId, query, page, size, sortField, sortOrder, latestOn
     if (agencyId !== null) {
         params.agencyId = agencyId;
     }
-    console.log('fetch', params);
+    if (treatmentId !== null) {
+        params.treatmentId = treatmentId;
+    }
     return api.get('/prices', { params });
 };
 
@@ -43,10 +43,22 @@ const fetchAgencies = async (query = '') => {
     }
 };
 
+const fetchTreatments = async (query = '') => {
+    try {
+        const response = await api.get('/treatments', {
+            params: { searchQuery: query, page: 0, size: 5 }
+        });
+        return response.data.content;
+    } catch (error) {
+        console.error('Error fetching treatments:', error);
+        return [];
+    }
+};
+
 const PricesListTable = () => {
     const [prices, setPrices] = useState([]);
     const [selectedAgency, setSelectedAgency] = useState(null);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedTreatment, setSelectedTreatment] = useState(null);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
@@ -55,10 +67,10 @@ const PricesListTable = () => {
     const [sortOrder, setSortOrder] = useState('asc');
     const [latestOnly, setLatestOnly] = useState(true);
 
-    const fetchData = async (agencyId, query = '', page = 1, size = 10, sortField = 'date', sortOrder = 'asc', latestOnly = true) => {
+    const fetchData = async (agencyId, treatmentId, page = 1, size = 10, sortField = 'date', sortOrder = 'asc', latestOnly = true) => {
         setLoading(true);
         try {
-            const response = await fetchPrices(agencyId, query, page, size, sortField, sortOrder, latestOnly);
+            const response = await fetchPrices(agencyId, treatmentId, page, size, sortField, sortOrder, latestOnly);
             setPrices(response.data.content);
             setTotalPages(response.data.totalPages);
         } catch (error) {
@@ -67,26 +79,13 @@ const PricesListTable = () => {
         setLoading(false);
     };
 
-    const debouncedFetchData = useCallback(debounce((agencyId, query, latestOnly) => {
-        fetchData(agencyId, query, page, size, sortField, sortOrder, latestOnly);
-    }, 300), [page, size, sortField, sortOrder, latestOnly]);
-
     useEffect(() => {
-        if (selectedAgency) {
-            fetchData(selectedAgency.id, searchQuery, page, size, sortField, sortOrder, latestOnly);
-        } else {
-            fetchData(null, searchQuery, page, size, sortField, sortOrder, latestOnly);
-        }
-    }, [page, size, sortField, sortOrder, selectedAgency, latestOnly]);
-
-    useEffect(() => {
-        debouncedFetchData(selectedAgency ? selectedAgency.id : null, searchQuery, latestOnly);
-    }, [searchQuery, debouncedFetchData, selectedAgency, latestOnly]);
-
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
-        setPage(1);
-    };
+        fetchData(
+            selectedAgency?.id ?? null,
+            selectedTreatment?.id ?? null,
+            page, size, sortField, sortOrder, latestOnly
+        );
+    }, [page, size, sortField, sortOrder, selectedAgency, selectedTreatment, latestOnly]);
 
     const handleSort = (field) => {
         const isAsc = sortField === field && sortOrder === 'asc';
@@ -97,7 +96,7 @@ const PricesListTable = () => {
     const handleDelete = async (id) => {
         try {
             await api.delete(`/prices/${id}`);
-            fetchData(selectedAgency ? selectedAgency.id : null, searchQuery, page, size, sortField, sortOrder, latestOnly);
+            fetchData(selectedAgency?.id, selectedTreatment?.id, page, size, sortField, sortOrder, latestOnly);
         } catch (error) {
             console.error('Error deleting price:', error);
         }
@@ -125,22 +124,18 @@ const PricesListTable = () => {
                     value={selectedAgency}
                     getOptionLabel={(agency) => agency.name}
                     noOptionsText={"Нет данных"}
-                    sx={{ width: 300 }}
+                    sx={{ width: 400 }}
                     size="small"
                 />
-                <TextField
-                    variant="outlined"
-                    placeholder="Наименование или код услуги"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    sx={{ width: '100%' }}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                {loading && <CircularProgress size={25} />}
-                            </InputAdornment>
-                        ),
-                    }}
+                <DebouncedAutocomplete
+                    label="Услуга"
+                    fetchOptions={fetchTreatments}
+                    onChange={setSelectedTreatment}
+                    value={selectedTreatment}
+                    getOptionLabel={(treatment) => `${treatment.code} ${treatment.name}`}
+                    noOptionsText={"Нет данных"}
+                    sx={{ minWidth: 300 }}
+                    fullWidth
                     size="small"
                 />
                 <Select
@@ -219,7 +214,6 @@ const PricesListTable = () => {
                     <MenuItem value={20}>20</MenuItem>
                 </Select>
             </Box>
-            {/* <PriceModal open={modalOpen} handleClose={handleCloseModal} priceData={selectedPrice} agency={selectedAgency} /> */}
         </Box>
     );
 };

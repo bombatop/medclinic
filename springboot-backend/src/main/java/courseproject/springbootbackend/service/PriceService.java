@@ -36,8 +36,8 @@ public class PriceService {
 
     private final PriceMapper priceMapper;
 
-    public Page<PriceEntity> getPrices(String searchQuery, Pageable pageable, Integer agencyId, Boolean latestOnly) {
-        Specification<PriceEntity> spec = PriceSpecification.pricesByAgencyAndTreatment(searchQuery, agencyId, latestOnly);
+    public Page<PriceEntity> getPrices(Pageable pageable, Integer treatmentId, Integer agencyId, Boolean latestOnly) {
+        Specification<PriceEntity> spec = PriceSpecification.pricesByAgencyAndTreatment(treatmentId, agencyId, latestOnly);
         return priceRepository.findAll(spec, pageable);
     }
 

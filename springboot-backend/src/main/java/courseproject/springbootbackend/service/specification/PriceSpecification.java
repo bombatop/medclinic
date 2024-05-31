@@ -11,14 +11,12 @@ import jakarta.persistence.criteria.Subquery;
 
 public class PriceSpecification {
 
-    public static Specification<PriceEntity> pricesByAgencyAndTreatment(String searchQuery, Integer agencyId,
+    public static Specification<PriceEntity> pricesByAgencyAndTreatment(Integer treatmentId, Integer agencyId,
             boolean latestOnly) {
         return (root, query, criteriaBuilder) -> {
-            Predicate treatmentNamePredicate = criteriaBuilder.like(root.get("treatment").get("name"),
-                    "%" + searchQuery + "%");
-            Predicate treatmentCodePredicate = criteriaBuilder.like(root.get("treatment").get("code"),
-                    "%" + searchQuery + "%");
-            Predicate searchPredicate = criteriaBuilder.or(treatmentNamePredicate, treatmentCodePredicate);
+            Predicate treatmentPredicate = treatmentId != null
+                    ? criteriaBuilder.equal(root.get("treatment").get("id"), treatmentId)
+                    : criteriaBuilder.conjunction();
 
             Predicate agencyPredicate = agencyId != null
                     ? criteriaBuilder.equal(root.get("agency").get("id"), agencyId)
@@ -28,21 +26,17 @@ public class PriceSpecification {
                 Subquery<LocalDateTime> subquery = query.subquery(LocalDateTime.class);
                 Root<PriceEntity> subRoot = subquery.from(PriceEntity.class);
 
-                Predicate subqueryPredicate = criteriaBuilder.equal(subRoot.get("treatment"), root.get("treatment"));
-                if (agencyId != null) {
-                    subqueryPredicate = criteriaBuilder.and(subqueryPredicate,
-                            criteriaBuilder.equal(subRoot.get("agency").get("id"), agencyId));
-                } else {
-                    subqueryPredicate = criteriaBuilder.and(subqueryPredicate,
-                            criteriaBuilder.equal(subRoot.get("agency"), root.get("agency")));
-                }
+                Predicate subqueryPredicate =
+                        criteriaBuilder.equal(subRoot.get("treatment").get("id"), root.get("treatment").get("id"));
+                subqueryPredicate = criteriaBuilder.and(subqueryPredicate,
+                        criteriaBuilder.equal(subRoot.get("agency").get("id"), root.get("agency").get("id")));
 
                 subquery.select(criteriaBuilder.greatest(subRoot.get("date"))).where(subqueryPredicate);
 
                 Predicate mainPredicate = criteriaBuilder.equal(root.get("date"), subquery);
-                return criteriaBuilder.and(mainPredicate, searchPredicate, agencyPredicate);
+                return criteriaBuilder.and(mainPredicate, treatmentPredicate, agencyPredicate);
             } else {
-                return criteriaBuilder.and(searchPredicate, agencyPredicate);
+                return criteriaBuilder.and(treatmentPredicate, agencyPredicate);
             }
         };
     }

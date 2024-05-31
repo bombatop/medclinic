@@ -31,7 +31,7 @@ public class PriceController {
 
     @GetMapping
     public Page<PriceEntity> getPrices(
-            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false) Integer treatmentId,
             @RequestParam(required = false) Integer agencyId,
             @RequestParam Integer page,
             @RequestParam Integer size,
@@ -40,7 +40,7 @@ public class PriceController {
             @RequestParam(defaultValue = "false") boolean latestOnly) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortOrder), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
-        return service.getPrices(searchQuery, pageable, agencyId, latestOnly);
+        return service.getPrices(pageable, treatmentId, agencyId, latestOnly);
     }
 
     @GetMapping("{id}")

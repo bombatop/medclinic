@@ -89,23 +89,26 @@ const EntityListTable = ({ title, endpoint, fetchFunction, ModalComponent, colum
             <Typography variant="h4" gutterBottom>
                 {title}
             </Typography>
-            <Button variant="contained" color="primary" sx={{ mb: 2 }} onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
-                Добавить
-            </Button>
-            <TextField
-                variant="outlined"
-                placeholder={searchPlaceholder}
-                value={searchQuery}
-                onChange={handleSearchChange}
-                sx={{ mb: 2, width: '100%' }}
-                InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            {loading && <CircularProgress size={25} />}
-                        </InputAdornment>
-                    ),
-                }}
-            />
+            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                <Button variant="contained" color="primary" sx={{ mb: 2 }} onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+                    Добавить
+                </Button>
+                <TextField
+                    variant="outlined"
+                    placeholder={searchPlaceholder}
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    sx={{ mb: 2, width: '100%' }}
+                    size="small"
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                {loading && <CircularProgress size={25} />}
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+            </Box>
             <TableContainer component={Paper}>
                 <Table size="small">
                     <TableHead>
