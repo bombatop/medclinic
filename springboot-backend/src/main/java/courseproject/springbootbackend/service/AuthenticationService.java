@@ -16,6 +16,7 @@ import courseproject.springbootbackend.model.dto.authorization.JwtAuthentication
 import courseproject.springbootbackend.repository.RoleRepository;
 import courseproject.springbootbackend.repository.UserRepository;
 import courseproject.springbootbackend.service.exception.EntityAlreadyExistsException;
+import courseproject.springbootbackend.service.exception.RoleNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import org.slf4j.Logger;
@@ -60,7 +61,7 @@ public class AuthenticationService {
             };
             var userEntity = userMapper.map(userData);
 
-            final var roleEntity = roleRepository.findByName("User");
+            final var roleEntity = roleRepository.findByName("ROLE_USER").orElseThrow(RoleNotFoundException::new);
             userEntity.setRole(roleEntity);
             userEntity.setPassword(passwordEncoder.encode(userData.password()));
 

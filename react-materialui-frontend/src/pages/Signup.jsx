@@ -1,10 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { signUp, signIn } from '../store/authSlice';
+import { signUp } from '../store/authSlice';
 import { TextField, Button, Box, Typography, FormControl } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import api from '../utils/http-common';
 
 const SignUp = () => {
     const nameRef = useRef();
@@ -68,29 +66,18 @@ const SignUp = () => {
             const email = emailRef.current.value;
             const password = passwordRef.current.value;
             const phone = phoneRef.current.value;
-            const response = await dispatch(signUp({ name, surname, email, password, phonenumber: phone }));
+            try {
+                const response = await dispatch(signUp({ name, surname, email, password, phonenumber: phone })).unwrap();
 
-            if (response.payload && response.payload.token) {
-                const token = response.payload.token;
-                const decodedToken = jwtDecode(token);
-                const user = await getUserService(decodedToken.userId);
-                const loggedUser = { token, user, decodedToken };
-                dispatch(signIn(loggedUser));
-                navigate('/journals-table');
+                if (response.token) {
+                    navigate('/login', { replace: true });
+                }
+            } catch (error) {
+                console.error('Error during signup:', error);
+                setErrors({ submit: error.message });
             }
         }
     };
-
-    const getUserService = async (userId) => {
-        try {
-            const response = await api.get(`/users/${userId}`);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-            throw error;
-        }
-    };
-
 
     return (
         <Box sx={{
@@ -159,6 +146,7 @@ const SignUp = () => {
                 </Button>
                 {auth.status === 'loading' && <Typography sx={{ mt: 2 }}>Загрузка...</Typography>}
                 {auth.error && <Typography sx={{ mt: 2, color: 'red' }}>{auth.error}</Typography>}
+                {errors.submit && <Typography sx={{ mt: 2, color: 'red' }}>{errors.submit}</Typography>}
             </form>
         </Box>
     );

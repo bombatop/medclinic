@@ -57,13 +57,13 @@ public class UserController {
         return service.updateUser(id, user);
     }
 
-    // @PostMapping
-    // public UserEntity addUser(@Valid @RequestBody UserData user) {
-    //     return service.addUser(user);
-    // }
-
     @DeleteMapping("{id}")
     public void deleteUser(@PathVariable Integer id) {
         service.deleteUser(id);
     }
+
+    // @PostMapping
+    // public UserEntity addUser(@Valid @RequestBody UserData user) {
+    // return service.addUser(user);
+    // }
 }

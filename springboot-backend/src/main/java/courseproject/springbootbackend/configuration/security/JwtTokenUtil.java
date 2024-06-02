@@ -25,7 +25,7 @@ public class JwtTokenUtil {
     private final static String SECRET = "53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855";
 
     // @Value("${token.signing.expiration}")
-    private final static long EXPIRATION_TIME = 60;
+    private final static long EXPIRATION_TIME = 1800000;
 
     private Key key(String value) {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(value));

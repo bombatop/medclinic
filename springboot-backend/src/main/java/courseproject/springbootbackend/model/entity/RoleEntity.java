@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Table(name = "roles")
 @Builder

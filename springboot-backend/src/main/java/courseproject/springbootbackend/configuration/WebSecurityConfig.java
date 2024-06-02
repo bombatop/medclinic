@@ -37,8 +37,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(PathsUtils.AUTH_PATH + "/**")
-                        .permitAll()
+                        .requestMatchers(PathsUtils.AUTH_PATH + "/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling.authenticationEntryPoint(jwtAuthEntryPoint))
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

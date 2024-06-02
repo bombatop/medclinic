@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,6 +32,7 @@ public class UserService implements UserDetailsService {
 
     private final UserMapper userMapper;
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     public Page<UserEntity> getUsers(final String searchQuery, final Pageable pageable) {
         if (searchQuery == null || searchQuery.isEmpty()) {
             return userRepository.findAll(pageable);
@@ -39,23 +41,15 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     public UserEntity getUserById(final Integer id) {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     public UserEntity getUserByEmail(final String email) {
         return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }
-
-    // public UserEntity addUser(final UserData dto) {
-    //     var userEntity = userMapper.map(dto);
-    //     try {
-    //         userEntity = userRepository.save(userEntity);
-    //         return userEntity;
-    //     } catch (DataIntegrityViolationException e) {
-    //         throw new RuntimeException(e.getMessage());
-    //     }
-    // }
 
     public UserEntity updateUser(final Integer id, UserData dto) {
         var userEntity = userRepository.findById(id).orElseThrow(UserNotFoundException::new);

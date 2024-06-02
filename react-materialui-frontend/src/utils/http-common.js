@@ -19,5 +19,21 @@ const axios_blob = axios.create({
     responseType: 'blob',
 });
 
+// Add a request interceptor
+api.interceptors.request.use(
+    (config) => {
+        const { store } = require("../store/storeInstance"); // Lazy import to avoid circular dependency
+        const state = store.getState();
+        const token = state.auth.token;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 export default api;
 export { axios_multipart, axios_blob, api };

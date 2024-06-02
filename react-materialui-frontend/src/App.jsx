@@ -24,6 +24,7 @@ import JournalLinkTab from './components/tabs/JournalLinkTab';
 
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
+import PublicRoute from './components/PublicRoute';
 
 function App() {
     const [isDrawerOpen, setDrawerOpen] = useState(true);
@@ -50,8 +51,8 @@ function App() {
                         {auth.token && <Sidebar isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />}
                         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                             <Routes>
-                                <Route path="signup" element={<SignUp />} />
-                                <Route path="login" element={<SignIn />} />
+                                <Route path="signup" element={<PublicRoute><SignUp /></PublicRoute>} />
+                                <Route path="login" element={<PublicRoute><SignIn /></PublicRoute>} />
                                 <Route
                                     path="/*"
                                     element={

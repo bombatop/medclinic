@@ -50,10 +50,11 @@ const SignIn = () => {
                 if (response.token) {
                     const token = response.token;
                     const decodedToken = jwtDecode(token);
+                    console.log(decodedToken);
                     const user = await getUserService(decodedToken.userId);
                     const loggedUser = { token, user, decodedToken };
                     dispatch(signIn(loggedUser));
-                    navigate('/journals-table');
+                    navigate('/', { replace: true });
                 }
             } catch (error) {
                 setErrors({ submit: error.message });
