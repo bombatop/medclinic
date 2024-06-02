@@ -19,11 +19,11 @@ import javax.crypto.SecretKey;
 @Component
 public class JwtTokenUtil {
 
-    // @Value("${app.jwt-secret}")
-    private static String secret = "bazinga";
+    // @Value("${token.signing.key}")
+    private final static String SECRET = "bazinga";
 
-    // @Value("${app-jwt-expiration-milliseconds}")
-    private static long jwtExpirationDate = 1800000;
+    // @Value("${token.signing.expiration}")
+    // private final static long EXPIRATION_DATE = 1800000;
 
     private Key key(String value) {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(value));
@@ -39,29 +39,28 @@ public class JwtTokenUtil {
             .claims(claims)
             .subject(subject)
             .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + jwtExpirationDate))
-            .signWith(key(secret))
+            // .expiration(new Date(System.currentTimeMillis() + EXPIRATION_DATE))
+            .signWith(key(SECRET))
             .compact();
     }
 
-
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public Boolean validateToken(String token, String username) {
+        final String tokenUsername = extractUsername(token);
+        return (tokenUsername.equals(username)); // && !isTokenExpired(token));
     }
 
-    public String getUsernameFromToken(String token) {
+    public String extractUsername(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    private Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
-    }
+    // private Boolean isTokenExpired(String token) {
+    //     final Date expiration = getExpirationDateFromToken(token);
+    //     return expiration.before(new Date());
+    // }
 
-    private Date getExpirationDateFromToken(String token) {
-        return getClaimFromToken(token, Claims::getExpiration);
-    }
+    // private Date getExpirationDateFromToken(String token) {
+    //     return getClaimFromToken(token, Claims::getExpiration);
+    // }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
@@ -70,7 +69,7 @@ public class JwtTokenUtil {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-                .verifyWith((SecretKey) key(secret))
+                .verifyWith((SecretKey) key(SECRET))
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

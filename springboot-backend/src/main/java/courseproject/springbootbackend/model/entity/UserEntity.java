@@ -36,7 +36,7 @@ public class UserEntity {
     @Column(name = "patronymic")
     private String patronymic;
 
-    @Column(name = "phone_number", nullable = false, unique = true)
+    @Column(name = "phonenumber")
     private String phonenumber;
     
     @Column(nullable = false, unique = true)
