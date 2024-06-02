@@ -51,8 +51,8 @@ public class JournalEntity {
 
     @JsonIncludeProperties({ "id", "name", "surname", "patronymic" })
     @ManyToOne
-    @JoinColumn(name = "doctor_id")
-    private DoctorEntity doctor;
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @Enumerated(EnumType.STRING)
     private JournalStatus status;

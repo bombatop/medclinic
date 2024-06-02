@@ -10,12 +10,12 @@ import jakarta.persistence.criteria.Predicate;
 
 public class JournalSpecification {
 
-    public static Specification<JournalEntity> getJournals(Integer doctorId, Integer patientId, JournalStatus status, LocalDateTime start, LocalDateTime end) {
+    public static Specification<JournalEntity> getJournals(Integer userId, Integer patientId, JournalStatus status, LocalDateTime start, LocalDateTime end) {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
 
-            if (doctorId != null) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("doctor").get("id"), doctorId));
+            if (userId != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("user").get("id"), userId));
             }
 
             if (patientId != null) {

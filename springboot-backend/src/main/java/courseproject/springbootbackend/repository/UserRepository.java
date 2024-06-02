@@ -1,5 +1,7 @@
 package courseproject.springbootbackend.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,12 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import courseproject.springbootbackend.model.entity.DoctorEntity;
+import courseproject.springbootbackend.model.entity.UserEntity;
 
 @Repository
-public interface DoctorRepository extends JpaRepository<DoctorEntity, Integer> {
+public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
-    @Query("SELECT d FROM DoctorEntity d WHERE d.surname LIKE %:searchQuery% OR " +
+    Optional<UserEntity> findByEmailOrPhonenumber(String email, String phonenumber);
+
+    @Query("SELECT d FROM UserEntity d WHERE d.surname LIKE %:searchQuery% OR " +
            "d.name LIKE %:searchQuery% OR d.patronymic LIKE %:searchQuery%")
-    Page<DoctorEntity> searchDoctors(@Param("searchQuery") String searchQuery, Pageable pageable);
+    Page<UserEntity> searchUsers(@Param("searchQuery") String searchQuery, Pageable pageable);
 }

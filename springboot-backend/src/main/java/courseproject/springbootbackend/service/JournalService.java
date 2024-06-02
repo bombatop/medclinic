@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import courseproject.springbootbackend.mapper.JournalMapper;
 import courseproject.springbootbackend.model.dto.JournalData;
 import courseproject.springbootbackend.model.dto.JournalLinkData;
-import courseproject.springbootbackend.model.entity.DoctorEntity;
+import courseproject.springbootbackend.model.entity.UserEntity;
 import courseproject.springbootbackend.model.entity.JournalEntity;
 import courseproject.springbootbackend.model.entity.PatientEntity;
 import courseproject.springbootbackend.model.entity.misc.JournalStatus;
@@ -21,10 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import courseproject.springbootbackend.repository.DoctorRepository;
+import courseproject.springbootbackend.repository.UserRepository;
 import courseproject.springbootbackend.repository.JournalRepository;
 import courseproject.springbootbackend.repository.PatientRepository;
-import courseproject.springbootbackend.service.exception.DoctorNotFoundException;
+import courseproject.springbootbackend.service.exception.UserNotFoundException;
 import courseproject.springbootbackend.service.exception.EntityAlreadyExistsException;
 import courseproject.springbootbackend.service.exception.JournalAlreadyLinkedException;
 import courseproject.springbootbackend.service.exception.JournalNotFoundException;
@@ -41,11 +41,11 @@ public class JournalService {
 
     private final PatientRepository patientRepository;
 
-    private final DoctorRepository doctorRepository;
+    private final UserRepository userRepository;
 
     private final JournalMapper journalMapper;
 
-    public Page<JournalEntity> getJournals(Pageable pageable, Integer doctorId, Integer patientId, JournalStatus status, String startDateStr, String endDateStr) {
+    public Page<JournalEntity> getJournals(Pageable pageable, Integer userId, Integer patientId, JournalStatus status, String startDateStr, String endDateStr) {
         LocalDateTime start = startDateStr != null
             ? LocalDateTime.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME).truncatedTo(ChronoUnit.DAYS)
             : null;
@@ -54,7 +54,7 @@ public class JournalService {
             ? LocalDateTime.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME).truncatedTo(ChronoUnit.DAYS).plusDays(1).minusSeconds(1)
             : null;
 
-        Specification<JournalEntity> spec = JournalSpecification.getJournals(doctorId, patientId, status, start, end);
+        Specification<JournalEntity> spec = JournalSpecification.getJournals(userId, patientId, status, start, end);
         return journalRepository.findAll(spec, pageable);
     }
 
@@ -66,9 +66,9 @@ public class JournalService {
     public JournalEntity addJournal(final JournalData dto) {
         var patientEntity = patientRepository.findById(dto.patientId())
                 .orElseThrow(PatientNotFoundException::new);
-        var doctorEntity = doctorRepository.findById(dto.doctorId())
-                .orElseThrow(DoctorNotFoundException::new);
-        var journalEntity = journalMapper.map(dto, patientEntity, doctorEntity);
+        var userEntity = userRepository.findById(dto.userId())
+                .orElseThrow(UserNotFoundException::new);
+        var journalEntity = journalMapper.map(dto, patientEntity, userEntity);
         try {
             journalEntity = journalRepository.save(journalEntity);
             return journalEntity;
@@ -87,9 +87,9 @@ public class JournalService {
 
         var patientEntity = patientRepository.findById(dto.patientId())
                 .orElseThrow(PatientNotFoundException::new);
-        var doctorEntity = doctorRepository.findById(dto.doctorId())
-                .orElseThrow(DoctorNotFoundException::new);
-        var nextJournalEntity = journalMapper.map(dto, patientEntity, doctorEntity, currentJournalEntity);
+        var userEntity = userRepository.findById(dto.userId())
+                .orElseThrow(UserNotFoundException::new);
+        var nextJournalEntity = journalMapper.map(dto, patientEntity, userEntity, currentJournalEntity);
 
         currentJournalEntity.setNextEntry(nextJournalEntity);
         try {
@@ -162,13 +162,13 @@ public class JournalService {
                 .orElseThrow(JournalNotFoundException::new);
         PatientEntity patientEntity = patientRepository.findById(dto.patientId())
                 .orElseThrow(PatientNotFoundException::new);
-        DoctorEntity doctorEntity = doctorRepository.findById(dto.doctorId())
-                .orElseThrow(DoctorNotFoundException::new);
+        UserEntity userEntity = userRepository.findById(dto.userId())
+                .orElseThrow(UserNotFoundException::new);
         if (!journalEntity.getPatient().equals(patientEntity)) {
             throw new JournalAlreadyLinkedException("Can't change patient for a linked journal");
         }
         journalEntity.setPatient(patientEntity);
-        journalEntity.setDoctor(doctorEntity);
+        journalEntity.setUser(userEntity);
         journalEntity.setDate(dto.date());
         journalEntity.setTimeEnd(dto.timeEnd());
         journalEntity.setStatus(dto.status());

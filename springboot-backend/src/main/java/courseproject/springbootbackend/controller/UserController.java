@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import courseproject.springbootbackend.model.dto.DoctorData;
-import courseproject.springbootbackend.model.entity.DoctorEntity;
-import courseproject.springbootbackend.service.DoctorService;
+import courseproject.springbootbackend.model.dto.UserData;
+import courseproject.springbootbackend.model.entity.UserEntity;
+import courseproject.springbootbackend.service.UserService;
 import courseproject.springbootbackend.utility.PathsUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +24,12 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping(path = PathsUtils.DOCTORS_PATH)
 @RequiredArgsConstructor
-public class DoctorController {
+public class UserController {
     
-    private final DoctorService service;
+    private final UserService service;
 
     @GetMapping
-    public Page<DoctorEntity> getDoctors(
+    public Page<UserEntity> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String searchQuery,
@@ -43,28 +43,28 @@ public class DoctorController {
         }
         Sort sort = Sort.by(Sort.Order.by(sortField).with(Sort.Direction.fromString(sortOrder)));
         Pageable pageable = PageRequest.of(page, size, sort);
-        return service.getDoctors(searchQuery, pageable);
+        return service.getUsers(searchQuery, pageable);
     }
 
     @GetMapping("{id}")
-    public DoctorEntity getDoctorById(@PathVariable Integer id) {
-        return service.getDoctorById(id);
+    public UserEntity getUserById(@PathVariable Integer id) {
+        return service.getUserById(id);
     }
 
     @PutMapping("{id}")
-    public DoctorEntity updateDoctor(
+    public UserEntity updateUser(
             @PathVariable Integer id,
-            @Valid @RequestBody DoctorData doctor) {
-        return service.updateDoctor(id, doctor);
+            @Valid @RequestBody UserData user) {
+        return service.updateUser(id, user);
     }
 
     @PostMapping
-    public DoctorEntity addDoctor(@Valid @RequestBody DoctorData doctor) {
-        return service.addDoctor(doctor);
+    public UserEntity addUser(@Valid @RequestBody UserData user) {
+        return service.addUser(user);
     }
 
     @DeleteMapping("{id}")
-    public void deleteDoctor(@PathVariable Integer id) {
-        service.deleteDoctor(id);
+    public void deleteUser(@PathVariable Integer id) {
+        service.deleteUser(id);
     }
 }

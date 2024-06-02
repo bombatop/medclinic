@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 @Builder
-public record DoctorData(
+public record UserData(
         @NotBlank(message = "Name is required")
         @Pattern(regexp = "^[А-Яа-яЁё\\s]+$", message = "Name should contain only letters")
         String name,
@@ -19,6 +19,6 @@ public record DoctorData(
         String patronymic,
 
         @NotBlank(message = "Phone number is required")
-        String phoneNumber
+        String phonenumber
 ) {
 }

@@ -1,10 +1,13 @@
 package courseproject.springbootbackend.model.entity;
 
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import lombok.AccessLevel;
@@ -17,9 +20,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "doctor")
+@Table(name = "user")
 @Builder
-public class DoctorEntity {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -33,6 +36,15 @@ public class DoctorEntity {
     @Column(name = "patronymic")
     private String patronymic;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
+    @Column(name = "phone_number", nullable = false, unique = true)
+    private String phonenumber;
+    
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+    
+    @OneToMany
+    private Set<RoleEntity> roles;
 }

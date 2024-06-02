@@ -13,8 +13,8 @@ public record JournalLinkData (
         @NotNull(message = "Patient id is required")
         Integer patientId,
 
-        @NotNull(message = "Doctor id is required")
-        Integer doctorId,
+        @NotNull(message = "User id is required")
+        Integer userId,
 
         @NotNull(message = "Start date and time is required")
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
