@@ -11,6 +11,10 @@ public class UserMapper {
     public UserEntity map(final UserData dto) {
         return UserEntity.builder()
                 .name(dto.name())
+                .email(dto.email())
+                .password(dto.password())
+                .surname(dto.surname())
+                .patronymic(dto.patronymic())
                 .phonenumber(dto.phonenumber())
                 .build();
     }

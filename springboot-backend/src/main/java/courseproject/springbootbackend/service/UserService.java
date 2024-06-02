@@ -4,10 +4,16 @@ import courseproject.springbootbackend.mapper.UserMapper;
 import courseproject.springbootbackend.model.dto.UserData;
 import courseproject.springbootbackend.model.entity.UserEntity;
 
-
+import java.util.Collections;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,14 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import courseproject.springbootbackend.repository.UserRepository;
 import courseproject.springbootbackend.service.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,19 +30,6 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     private final UserMapper userMapper;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByEmailOrPhonenumber(username, username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email or phone: " + username));
-
-        return new User(
-                user.getEmail(),
-                user.getPassword(),
-                user.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority(role.getName()))
-                        .collect(Collectors.toList()));
-    }
 
     public Page<UserEntity> getUsers(final String searchQuery, final Pageable pageable) {
         if (searchQuery == null || searchQuery.isEmpty()) {
@@ -58,13 +43,17 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
+    public UserEntity getUserByEmail(final String email) {
+        return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    }
+
     public UserEntity addUser(final UserData dto) {
         var userEntity = userMapper.map(dto);
         try {
             userEntity = userRepository.save(userEntity);
             return userEntity;
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException(e.getMessage()); // change later
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -76,11 +65,25 @@ public class UserService implements UserDetailsService {
             userEntity = userRepository.save(userEntity);
             return userEntity;
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException(e.getMessage()); // change later
+            throw new RuntimeException(e.getMessage());
         }
     }
 
     public void deleteUser(final Integer id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity user = userRepository.findByEmail(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName()));
+        
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                authorities
+        );
     }
 }

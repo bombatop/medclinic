@@ -14,7 +14,8 @@ import courseproject.springbootbackend.model.entity.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
-    Optional<UserEntity> findByEmailOrPhonenumber(String email, String phonenumber);
+    Optional<UserEntity> findByEmail(String email);
+
 
     @Query("SELECT d FROM UserEntity d WHERE d.surname LIKE %:searchQuery% OR " +
            "d.name LIKE %:searchQuery% OR d.patronymic LIKE %:searchQuery%")

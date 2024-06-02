@@ -1,4 +1,4 @@
-package courseproject.springbootbackend.model.dto;
+package courseproject.springbootbackend.model.dto.authorization;
 
 import lombok.Builder;
 

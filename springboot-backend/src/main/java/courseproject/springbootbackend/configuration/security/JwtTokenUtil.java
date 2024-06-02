@@ -8,6 +8,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import courseproject.springbootbackend.model.dto.authorization.TokenData;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +22,7 @@ import javax.crypto.SecretKey;
 public class JwtTokenUtil {
 
     // @Value("${token.signing.key}")
-    private final static String SECRET = "bazinga";
+    private final static String SECRET = "53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855";
 
     // @Value("${token.signing.expiration}")
     // private final static long EXPIRATION_DATE = 1800000;
@@ -28,6 +30,24 @@ public class JwtTokenUtil {
     private Key key(String value) {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(value));
     }
+
+    public String generateToken(final TokenData tokenData) {
+        final Map<String, Object> claims = new HashMap<>();
+        claims.put("email", tokenData.email());
+        claims.put("userId", tokenData.userId());
+        claims.put("roleId", tokenData.roleId());
+        return createToken(claims);
+    }
+
+    public String createToken(Map<String, Object> claims) {
+        return Jwts.builder()
+                .claims(claims)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours expiration
+                .signWith(key(SECRET))
+                .compact();
+    }
+
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
