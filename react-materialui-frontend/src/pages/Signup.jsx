@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { signup } from '../store/authSlice';
+import { signUp, signIn } from '../store/authSlice';
 import { TextField, Button, Box, Typography, FormControl } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import api from '../utils/http-common';
 
-const Signup = () => {
+const SignUp = () => {
     const nameRef = useRef();
     const surnameRef = useRef();
     const emailRef = useRef();
@@ -66,14 +68,29 @@ const Signup = () => {
             const email = emailRef.current.value;
             const password = passwordRef.current.value;
             const phone = phoneRef.current.value;
-            const response = await dispatch(signup({ name: name, surname: surname, email: email, password: password, phonenumber: phone }));
-            
+            const response = await dispatch(signUp({ name, surname, email, password, phonenumber: phone }));
+
             if (response.payload && response.payload.token) {
-                localStorage.setItem('token', response.payload.token);
+                const token = response.payload.token;
+                const decodedToken = jwtDecode(token);
+                const user = await getUserService(decodedToken.userId);
+                const loggedUser = { token, user, decodedToken };
+                dispatch(signIn(loggedUser));
                 navigate('/journals-table');
             }
         }
     };
+
+    const getUserService = async (userId) => {
+        try {
+            const response = await api.get(`/users/${userId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+            throw error;
+        }
+    };
+
 
     return (
         <Box sx={{
@@ -147,4 +164,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default SignUp;

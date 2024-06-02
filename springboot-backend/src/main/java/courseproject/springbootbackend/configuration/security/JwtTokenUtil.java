@@ -25,7 +25,7 @@ public class JwtTokenUtil {
     private final static String SECRET = "53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855";
 
     // @Value("${token.signing.expiration}")
-    // private final static long EXPIRATION_DATE = 1800000;
+    private final static long EXPIRATION_TIME = 60;
 
     private Key key(String value) {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(value));
@@ -43,7 +43,7 @@ public class JwtTokenUtil {
         return Jwts.builder()
                 .claims(claims)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours expiration
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key(SECRET))
                 .compact();
     }

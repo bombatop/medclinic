@@ -47,15 +47,15 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }
 
-    public UserEntity addUser(final UserData dto) {
-        var userEntity = userMapper.map(dto);
-        try {
-            userEntity = userRepository.save(userEntity);
-            return userEntity;
-        } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+    // public UserEntity addUser(final UserData dto) {
+    //     var userEntity = userMapper.map(dto);
+    //     try {
+    //         userEntity = userRepository.save(userEntity);
+    //         return userEntity;
+    //     } catch (DataIntegrityViolationException e) {
+    //         throw new RuntimeException(e.getMessage());
+    //     }
+    // }
 
     public UserEntity updateUser(final Integer id, UserData dto) {
         var userEntity = userRepository.findById(id).orElseThrow(UserNotFoundException::new);

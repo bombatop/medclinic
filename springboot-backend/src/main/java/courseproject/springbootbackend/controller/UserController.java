@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,10 +57,10 @@ public class UserController {
         return service.updateUser(id, user);
     }
 
-    @PostMapping
-    public UserEntity addUser(@Valid @RequestBody UserData user) {
-        return service.addUser(user);
-    }
+    // @PostMapping
+    // public UserEntity addUser(@Valid @RequestBody UserData user) {
+    //     return service.addUser(user);
+    // }
 
     @DeleteMapping("{id}")
     public void deleteUser(@PathVariable Integer id) {

@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../store/authSlice';
+import { login, signIn } from '../store/authSlice';
 import { TextField, Button, Box, Typography, FormControl } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import api from '../utils/http-common';
 
-import { jwtDecode } from "jwt-decode";
-
-const Login = () => {
+const SignIn = () => {
     const emailRef = useRef();
     const passwordRef = useRef();
     const [errors, setErrors] = useState({});
@@ -44,13 +44,30 @@ const Login = () => {
         if (validate()) {
             const email = emailRef.current.value;
             const password = passwordRef.current.value;
-            const response = await dispatch(login({ email, password }));
+            try {
+                const response = await dispatch(login({ email, password })).unwrap();
 
-            if (response.payload && response.payload.token) {
-                const decodedToken = jwtDecode(response.payload.token);
-                localStorage.setItem('token', response.payload.token);
-                navigate('/journals-table');
+                if (response.token) {
+                    const token = response.token;
+                    const decodedToken = jwtDecode(token);
+                    const user = await getUserService(decodedToken.userId);
+                    const loggedUser = { token, user, decodedToken };
+                    dispatch(signIn(loggedUser));
+                    navigate('/journals-table');
+                }
+            } catch (error) {
+                setErrors({ submit: error.message });
             }
+        }
+    };
+
+    const getUserService = async (userId) => {
+        try {
+            const response = await api.get(`/users/${userId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+            throw error;
         }
     };
 
@@ -96,4 +113,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default SignIn;

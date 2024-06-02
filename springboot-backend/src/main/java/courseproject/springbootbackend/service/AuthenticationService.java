@@ -1,8 +1,12 @@
 package courseproject.springbootbackend.service;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import courseproject.springbootbackend.configuration.security.JwtTokenUtil;
 import courseproject.springbootbackend.mapper.TokenDataMapper;
 import courseproject.springbootbackend.mapper.UserMapper;
@@ -29,6 +33,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     private final TokenDataMapper tokenDataMapper;
@@ -36,12 +41,17 @@ public class AuthenticationService {
 
     public JwtAuthenticationResponse signIn(final AuthCredentials authCredentials) {
         logger.info("generatedToken: " + authCredentials.email() + " " + authCredentials.password());
-        final var userEntity = userService.getUserByEmail(authCredentials.email());
-        final var tokenData = tokenDataMapper.map(userEntity);
-        final var generatedToken = jwtTokenUtil.generateToken(tokenData);
-        logger.info("generatedToken: " + generatedToken);
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authCredentials.email(), authCredentials.password()));
-        return new JwtAuthenticationResponse(generatedToken);
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authCredentials.email(), authCredentials.password()));
+            final var userEntity = userService.getUserByEmail(authCredentials.email());
+            final var tokenData = tokenDataMapper.map(userEntity);
+            final var generatedToken = jwtTokenUtil.generateToken(tokenData);
+            logger.info("generatedToken: " + generatedToken);
+            return new JwtAuthenticationResponse(generatedToken);
+        } catch (BadCredentialsException e) {
+            System.out.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        }
     }
 
     public JwtAuthenticationResponse signUp(final UserData userData) {
@@ -49,9 +59,13 @@ public class AuthenticationService {
                 throw new EntityAlreadyExistsException("User with such email already exists");   
             };
             var userEntity = userMapper.map(userData);
+
             final var roleEntity = roleRepository.findByName("User");
             userEntity.setRole(roleEntity);
+            userEntity.setPassword(passwordEncoder.encode(userData.password()));
+
             userEntity = userRepository.save(userEntity);
+
             final var tokenData = tokenDataMapper.map(userEntity);
             final var generatedToken = jwtTokenUtil.generateToken(tokenData);
             logger.info("Generated Token: {}", generatedToken);
