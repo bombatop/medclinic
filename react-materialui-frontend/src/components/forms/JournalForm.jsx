@@ -12,7 +12,7 @@ import { statusColors, statusLabels } from '../../utils/scheduleSettings';
 const JournalForm = ({ entityData, onClose }) => {
     const [journal, setJournal] = useState({
         patientId: '',
-        doctorId: '',
+        userId: '',
         date: dayjs(),
         timeEnd: dayjs().add(1, 'hour'),
         status: 'SCHEDULED'
@@ -31,7 +31,7 @@ const JournalForm = ({ entityData, onClose }) => {
 
     const fetchDoctors = async (query = '') => {
         try {
-            const response = await api.get('/doctors', {
+            const response = await api.get('/users', {
                 params: { searchQuery: query, page: 0, size: 5 }
             });
             return response.data.content;
@@ -57,13 +57,14 @@ const JournalForm = ({ entityData, onClose }) => {
         if (entityData) {
             setJournal({
                 patientId: entityData.patient.id || '',
-                doctorId: entityData.doctor.id || '',
+                userId: entityData.doctor.id || '',
                 date: entityData.date ? dayjs(entityData.date) : dayjs(),
                 timeEnd: entityData.timeEnd ? dayjs(entityData.timeEnd, 'HH:mm') : dayjs().add(1, 'hour'),
                 status: entityData.status || 'SCHEDULED'
             });
             setSelectedPatient(entityData.patient);
             setSelectedDoctor(entityData.doctor);
+            console.log("толя иди нахуй");
         }
     }, [entityData]);
 
@@ -94,8 +95,8 @@ const JournalForm = ({ entityData, onClose }) => {
         if (!journal.patientId) {
             tempErrors.patientId = "Пожалуйста, выберите пациента.";
         }
-        if (!journal.doctorId) {
-            tempErrors.doctorId = "Пожалуйста, выберите доктора.";
+        if (!journal.userId) {
+            tempErrors.userId = "Пожалуйста, выберите доктора.";
         }
         if (!journal.date || !journal.date.isValid()) {
             tempErrors.date = "Пожалуйста, выберите дату и время начала.";
@@ -149,6 +150,7 @@ const JournalForm = ({ entityData, onClose }) => {
                                 patientId: newValue ? newValue.id : ''
                             }));
                         }}
+                        getOptionKey={(patient) => `${patient.id}`}
                         getOptionLabel={(patient) => `${patient.surname} ${patient.name} ${patient.patronymic}`}
                         noOptionsText="Нет данных"
                         required
@@ -158,7 +160,7 @@ const JournalForm = ({ entityData, onClose }) => {
                         size="small"
                     />
                 </FormControl>
-                <FormControl error={!!errors.doctorId}>
+                <FormControl error={!!errors.userId}>
                     <DebouncedAutocomplete
                         label="Доктор"
                         fetchOptions={fetchDoctors}
@@ -167,15 +169,16 @@ const JournalForm = ({ entityData, onClose }) => {
                             setSelectedDoctor(newValue);
                             setJournal(prevState => ({
                                 ...prevState,
-                                doctorId: newValue ? newValue.id : ''
+                                userId: newValue ? newValue.id : ''
                             }));
                         }}
+                        getOptionKey={(doctor) => `${doctor.id}`}
                         getOptionLabel={(doctor) => `${doctor.surname} ${doctor.name} ${doctor.patronymic}`}
                         noOptionsText="Нет данных"
                         required
                         inputRef={doctorRef}
-                        error={!!errors.doctorId}
-                        helperText={errors.doctorId}
+                        error={!!errors.userId}
+                        helperText={errors.userId}
                         size="small"
                     />
                 </FormControl>

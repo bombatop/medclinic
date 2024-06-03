@@ -5,8 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record AuthCredentials(
-        @NotBlank(message = "Email is required")
-        String email,
+        @NotBlank(message = "Username is required")
+        String username,
 
         @NotBlank(message = "Password is required")
         String password

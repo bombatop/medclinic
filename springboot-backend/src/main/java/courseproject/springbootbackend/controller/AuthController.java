@@ -26,14 +26,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public JwtAuthenticationResponse login(@Valid @RequestBody AuthCredentials authCredentials) {
-        logger.info("UserData controller logger: " + authCredentials.email() + "#" + authCredentials.password());
+        logger.info("UserData controller logger: " + authCredentials.username() + "#" + authCredentials.password());
         return authenticationService.signIn(authCredentials);
     }
 
     @PostMapping("/signup")
     public JwtAuthenticationResponse signUp(@RequestBody UserData userData) {
         logger.info(
-                "UserData controller logger: " + userData.name() + "#" + userData.email() + "#" + userData.password());
+                "UserData controller logger: " + userData.name() + "#" + userData.username() + "#" + userData.password());
         return authenticationService.signUp(userData);
     }
 }

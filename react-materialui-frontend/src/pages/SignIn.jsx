@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import api from '../utils/http-common';
 
 const SignIn = () => {
-    const emailRef = useRef();
+    const usernameRef = useRef();
     const passwordRef = useRef();
     const [errors, setErrors] = useState({});
 
@@ -21,14 +21,11 @@ const SignIn = () => {
 
     const validate = () => {
         const tempErrors = {};
-        const email = emailRef.current.value;
+        const username = usernameRef.current.value;
         const password = passwordRef.current.value;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (!email) {
-            tempErrors.email = "Требуется email.";
-        } else if (!emailRegex.test(email)) {
-            tempErrors.email = "Email некорректного формата.";
+        if (!username) {
+            tempErrors.username = "Требуется имя пользователя.";
         }
 
         if (!password) {
@@ -42,10 +39,10 @@ const SignIn = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (validate()) {
-            const email = emailRef.current.value;
+            const username = usernameRef.current.value;
             const password = passwordRef.current.value;
             try {
-                const response = await dispatch(login({ email, password })).unwrap();
+                const response = await dispatch(login({ username, password })).unwrap();
 
                 if (response.token) {
                     const token = response.token;
@@ -67,7 +64,7 @@ const SignIn = () => {
             const response = await api.get(`/users/${userId}`);
             return response.data;
         } catch (error) {
-            console.error('Error fetching user data:', error);
+            console.error('Error fetching user data');
             throw error;
         }
     };
@@ -83,13 +80,13 @@ const SignIn = () => {
         }}>
             <Typography variant="h4" sx={{ mb: 3 }}>Стоматология</Typography>
             <form onSubmit={handleSubmit} noValidate style={{ width: '100%', maxWidth: '400px' }}>
-                <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.email}>
+                <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.username}>
                     <TextField
-                        label="Email"
-                        inputRef={emailRef}
+                        label="Логин"
+                        inputRef={usernameRef}
                         required
-                        error={!!errors.email}
-                        helperText={errors.email}
+                        error={!!errors.username}
+                        helperText={errors.username}
                         fullWidth
                     />
                 </FormControl>
@@ -109,6 +106,7 @@ const SignIn = () => {
                 </Button>
                 {auth.status === 'loading' && <Typography sx={{ mt: 2 }}>Загрузка...</Typography>}
                 {auth.error && <Typography sx={{ mt: 2, color: 'red' }}>{auth.error}</Typography>}
+                {errors.submit && <Typography sx={{ mt: 2, color: 'red' }}>{errors.submit}</Typography>}
             </form>
         </Box>
     );

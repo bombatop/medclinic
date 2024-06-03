@@ -41,24 +41,27 @@ public class AuthenticationService {
     private final UserMapper userMapper;
 
     public JwtAuthenticationResponse signIn(final AuthCredentials authCredentials) {
-        logger.info("generatedToken: " + authCredentials.email() + " " + authCredentials.password());
+        logger.info("Signing in user with username: {}", authCredentials.username()); // ###
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authCredentials.email(), authCredentials.password()));
-            final var userEntity = userService.getUserByEmail(authCredentials.email());
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authCredentials.username(), authCredentials.password()));
+            final var userEntity = userService.getUserByUsername(authCredentials.username());
             final var tokenData = tokenDataMapper.map(userEntity);
             final var generatedToken = jwtTokenUtil.generateToken(tokenData);
-            logger.info("generatedToken: " + generatedToken);
+            logger.info("Generated JWT token for user: {}", authCredentials.username()); // ###
             return new JwtAuthenticationResponse(generatedToken);
         } catch (BadCredentialsException e) {
+            logger.error("Invalid credentials for user: {}", authCredentials.username()); // ###
             System.out.println(e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
     }
 
     public JwtAuthenticationResponse signUp(final UserData userData) {
-            if (userRepository.findByEmail(userData.email()).isPresent()) {
-                throw new EntityAlreadyExistsException("User with such email already exists");   
-            };
+            logger.info("Signing up new user with username: {}", userData.username()); // ###
+            if (userRepository.findByUsername(userData.username()).isPresent()) {
+                logger.error("User already exists with username: {}", userData.username()); // ###
+                throw new EntityAlreadyExistsException("User with such username already exists");
+            }
             var userEntity = userMapper.map(userData);
 
             final var roleEntity = roleRepository.findByName("ROLE_USER").orElseThrow(RoleNotFoundException::new);

@@ -6,7 +6,7 @@ import lombok.Builder;
 public record TokenData(
         long userId,
 
-        String email,
+        String username,
 
         long roleId
 ) {

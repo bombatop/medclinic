@@ -20,9 +20,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    private JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -30,13 +30,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String authorizationHeader = request.getHeader("Authorization");
 
-
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             chain.doFilter(request, response);
             return;
         }
         final var jwtToken = authorizationHeader.substring(7);
-        final var username = jwtTokenUtil.extractUsername(jwtToken);
+        final var username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             final var userDetails = userDetailsService.loadUserByUsername(username);

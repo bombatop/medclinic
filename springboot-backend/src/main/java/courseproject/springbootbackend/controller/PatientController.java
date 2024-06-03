@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class PatientController {
 
     private final PatientService service;
-
+    
     @GetMapping
     public Page<PatientEntity> getPatients(
             @RequestParam(defaultValue = "0") int page,
@@ -51,6 +52,7 @@ public class PatientController {
         return service.getPatientById(id);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("{id}")
     public PatientEntity updatePatient(
             @PathVariable Integer id,
@@ -58,6 +60,7 @@ public class PatientController {
         return service.updatePatient(id, patient);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping
     public PatientEntity addPatient(@Valid @RequestBody PatientData patient) {
         return service.addPatient(patient);

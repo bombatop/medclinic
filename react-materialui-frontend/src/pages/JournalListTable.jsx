@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { useNavigate } from 'react-router-dom';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -36,14 +36,14 @@ const JournalListTable = () => {
     const [selectedJournalId, setSelectedJournalId] = useState(null);
     const navigate = useNavigate();
 
-    const fetchJournals = async (page = 1, size = 10, sortField = 'date', sortOrder = 'asc') => {
+    const fetchJournals = useCallback(async (page = 1, size = 10, sortField = 'date', sortOrder = 'asc') => {
         try {
             const params = {
                 page: page - 1,
                 size,
                 sortField,
                 sortOrder,
-                doctorId: selectedDoctor ? selectedDoctor.id : '',
+                userId: selectedDoctor ? selectedDoctor.id : '',
                 patientId: selectedPatient ? selectedPatient.id : ''
             };
             if (startDate && startDate.isValid()) params.startDate = startDate.format('YYYY-MM-DDTHH:mm');
@@ -52,18 +52,18 @@ const JournalListTable = () => {
             setJournals(response.data.content);
             setTotalPages(response.data.totalPages);
         } catch (error) {
-            console.error('Error fetching journals:', error);
+            console.error('Error fetching journals');
         }
-    };
+    }, [selectedDoctor, selectedPatient, startDate, endDate]);
 
     const fetchDoctors = async (query = '') => {
         try {
-            const response = await api.get('/doctors', {
+            const response = await api.get('/users', {
                 params: { searchQuery: query, page: 0, size: 5 }
             });
             return response.data.content;
         } catch (error) {
-            console.error('Error fetching doctors:', error);
+            console.error('Error fetching doctors');
             return [];
         }
     };
@@ -75,14 +75,14 @@ const JournalListTable = () => {
             });
             return response.data.content;
         } catch (error) {
-            console.error('Error fetching patients:', error);
+            console.error('Error fetching patients');
             return [];
         }
     };
 
     useEffect(() => {
         fetchJournals(page, size, sortField, sortOrder);
-    }, [page, size, sortField, sortOrder, selectedDoctor, selectedPatient, startDate, endDate]);
+    }, [page, size, sortField, sortOrder, fetchJournals]);
 
     const handleSort = (field) => {
         const isAsc = sortField === field && sortOrder === 'asc';
@@ -133,6 +133,7 @@ const JournalListTable = () => {
                     fetchOptions={fetchDoctors}
                     onChange={setSelectedDoctor}
                     value={selectedDoctor}
+                    getOptionKey={(doctor) => `${doctor.id}`}
                     getOptionLabel={(doctor) => `${doctor.surname} ${doctor.name} ${doctor.patronymic}`}
                     noOptionsText={"Нет данных"}
                     sx={{ width: 300 }}
@@ -161,6 +162,7 @@ const JournalListTable = () => {
                     fetchOptions={fetchPatients}
                     onChange={setSelectedPatient}
                     value={selectedPatient}
+                    getOptionKey={(patient) => `${patient.id}`}
                     getOptionLabel={(patient) => `${patient.surname} ${patient.name} ${patient.patronymic}`}
                     noOptionsText={"Нет данных"}
                     sx={{ width: 300, marginLeft: 'auto' }}

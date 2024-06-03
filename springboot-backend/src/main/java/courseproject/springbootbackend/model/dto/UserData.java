@@ -15,18 +15,22 @@ public record UserData(
         @Pattern(regexp = "^[А-Яа-яЁё\\s]+$", message = "Surname should contain only letters")
         String surname,
 
-        @NotBlank(message = "Patronymic is required")
-        @Pattern(regexp = "^[А-Яа-яЁё\\s]+$", message = "Patronymic should contain only letters")
+        // @NotBlank(message = "Patronymic is required")
+        // @Pattern(regexp = "^[А-Яа-яЁё\\s]+$", message = "Patronymic should contain only letters")
         String patronymic,
 
         // @NotBlank(message = "Phone number is required")
         String phonenumber,
 
-        @NotBlank(message = "Email is required")
+        // @NotBlank(message = "Email is required")
         String email,
 
+
         @NotBlank(message = "Password is required")
-        String password
+        String password,
+
+        @NotBlank(message = "Username is required")
+        String username
 
 ) {
 }

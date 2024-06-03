@@ -30,7 +30,7 @@ const EntityListTable = ({ title, endpoint, fetchFunction, ModalComponent, colum
             setData(response.data.content);
             setTotalPages(response.data.totalPages);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Error fetching data');
         }
         setLoading(false);
     };

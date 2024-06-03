@@ -33,7 +33,7 @@ public class JwtTokenUtil {
 
     public String generateToken(final TokenData tokenData) {
         final Map<String, Object> claims = new HashMap<>();
-        claims.put("email", tokenData.email());
+        claims.put("username", tokenData.username());
         claims.put("userId", tokenData.userId());
         claims.put("roleId", tokenData.roleId());
         return createToken(claims);
@@ -42,12 +42,12 @@ public class JwtTokenUtil {
     public String createToken(Map<String, Object> claims) {
         return Jwts.builder()
                 .claims(claims)
+                .subject(claims.get("username").toString())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key(SECRET))
                 .compact();
     }
-
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -57,30 +57,31 @@ public class JwtTokenUtil {
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
             .claims(claims)
-            .subject(subject)
+            .subject(claims.get("username").toString())
             .issuedAt(new Date(System.currentTimeMillis()))
-            // .expiration(new Date(System.currentTimeMillis() + EXPIRATION_DATE))
+            .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
             .signWith(key(SECRET))
             .compact();
     }
 
     public Boolean validateToken(String token, String username) {
-        final String tokenUsername = extractUsername(token);
-        return (tokenUsername.equals(username)); // && !isTokenExpired(token));
+        final String tokenUsername = getUsernameFromToken(token);
+        return (tokenUsername.equals(username) && !isTokenExpired(token));
     }
 
-    public String extractUsername(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+    public String getUsernameFromToken(String token) {
+        String username = getClaimFromToken(token, Claims::getSubject);
+        return username;
     }
 
-    // private Boolean isTokenExpired(String token) {
-    //     final Date expiration = getExpirationDateFromToken(token);
-    //     return expiration.before(new Date());
-    // }
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
 
-    // private Date getExpirationDateFromToken(String token) {
-    //     return getClaimFromToken(token, Claims::getExpiration);
-    // }
+    private Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
+    }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);

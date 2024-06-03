@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class JournalController {
     
     private final JournalService journalService;
-    
+
     @GetMapping
     public Page<JournalEntity> getJournals(
             @RequestParam(defaultValue = "0") int page,
@@ -70,7 +70,6 @@ public class JournalController {
         return journalService.addJournal(dto);
     }
 
-    // not used so far
     @PostMapping("link")
     public JournalEntity addJournalAndLinkJournalEntry(@Valid @RequestBody JournalLinkData dto) {
        return journalService.addJournalAndLinkJournalEntry(dto);

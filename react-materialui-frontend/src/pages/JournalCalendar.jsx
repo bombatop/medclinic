@@ -29,7 +29,7 @@ const JournalCalendar = () => {
                 size: 1000,
                 sortField: 'date',
                 sortOrder: 'asc',
-                ...(selectedDoctor && { doctorId: selectedDoctor.id }),
+                ...(selectedDoctor && { userId: selectedDoctor.id }),
                 startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
                 endDate: moment(end).format('YYYY-MM-DDTHH:mm'),
             };
@@ -152,6 +152,7 @@ const JournalCalendar = () => {
                     fetchOptions={fetchDoctors}
                     onChange={setSelectedDoctor}
                     value={selectedDoctor}
+                    getOptionKey={(specialist) => `${specialist.id}`}
                     getOptionLabel={(specialist) => `${specialist.surname} ${specialist.name} ${specialist.patronymic}`}
                     noOptionsText="Нет данных"
                     loading={loadingDoctors}

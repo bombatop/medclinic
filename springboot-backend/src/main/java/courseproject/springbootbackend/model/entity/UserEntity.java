@@ -27,20 +27,18 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "surname")
     private String surname;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "patronymic")
     private String patronymic;
 
-    @Column(name = "phonenumber")
     private String phonenumber;
-    
-    @Column(nullable = false, unique = true)
+
     private String email;
+
+    @Column(nullable = false, unique = true)
+    private String username;
 
     @Column(nullable = false)
     @JsonIgnore

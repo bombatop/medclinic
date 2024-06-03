@@ -10,7 +10,7 @@ public class TokenDataMapper {
 
     public TokenData map(final UserEntity userEntity) {
         return TokenData.builder()
-                .email(userEntity.getEmail())
+                .username(userEntity.getUsername())
                 .userId(userEntity.getId())
                 .roleId(userEntity.getRole().getId())
                 .build();

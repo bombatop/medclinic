@@ -17,17 +17,17 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (roleRepository.findByName("ROLE_USER").isEmpty()) {
-            roleRepository.save(new RoleEntity(null, "ROLE_USER"));
+        if (roleRepository.findByName("USER").isEmpty()) {
+            roleRepository.save(new RoleEntity(null, "USER"));
         }
-        if (roleRepository.findByName("ROLE_REGISTRATOR").isEmpty()) {
-            roleRepository.save(new RoleEntity(null, "ROLE_REGISTRATOR"));
+        if (roleRepository.findByName("MANAGER").isEmpty()) {
+            roleRepository.save(new RoleEntity(null, "MANAGER"));
         }
-        if (roleRepository.findByName("ROLE_DOCTOR").isEmpty()) {
-            roleRepository.save(new RoleEntity(null, "ROLE_DOCTOR"));
+        if (roleRepository.findByName("DOCTOR").isEmpty()) {
+            roleRepository.save(new RoleEntity(null, "DOCTOR"));
         }
-        if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
-            roleRepository.save(new RoleEntity(null, "ROLE_ADMIN"));
+        if (roleRepository.findByName("ADMIN").isEmpty()) {
+            roleRepository.save(new RoleEntity(null, "ADMIN"));
         }
     }
 }

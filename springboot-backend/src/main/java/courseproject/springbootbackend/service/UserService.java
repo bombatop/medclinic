@@ -6,10 +6,10 @@ import courseproject.springbootbackend.model.entity.UserEntity;
 
 import java.util.Collections;
 import java.util.List;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.data.domain.Page;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,28 +27,24 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(isolation = Isolation.READ_COMMITTED)
 public class UserService implements UserDetailsService {
+  
 
     private final UserRepository userRepository;
 
     private final UserMapper userMapper;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     public Page<UserEntity> getUsers(final String searchQuery, final Pageable pageable) {
-        if (searchQuery == null || searchQuery.isEmpty()) {
-            return userRepository.findAll(pageable);
-        } else {
-            return userRepository.searchUsers(searchQuery, pageable);
-        }
+        Page<UserEntity> users = (searchQuery == null || searchQuery.isEmpty()) ? userRepository.findAll(pageable)
+                : userRepository.searchUsers(searchQuery, pageable);
+        return users;
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     public UserEntity getUserById(final Integer id) {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public UserEntity getUserByEmail(final String email) {
-        return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public UserEntity getUserByUsername(final String username) {
+        return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
     }
 
     public UserEntity updateUser(final Integer id, UserData dto) {
@@ -69,15 +65,15 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
-
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName()));
+        UserEntity user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
         
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()));
+        
+        return new User(
+                user.getUsername(),
                 user.getPassword(),
                 authorities
-        );
+        ); 
     }
 }

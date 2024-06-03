@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const SignUp = () => {
     const nameRef = useRef();
     const surnameRef = useRef();
+    const usernameRef = useRef();
     const emailRef = useRef();
     const passwordRef = useRef();
     const phoneRef = useRef();
@@ -20,6 +21,7 @@ const SignUp = () => {
         const tempErrors = {};
         const name = nameRef.current.value;
         const surname = surnameRef.current.value;
+        const username = usernameRef.current.value;
         const email = emailRef.current.value;
         const password = passwordRef.current.value;
         const phone = phoneRef.current.value;
@@ -36,6 +38,10 @@ const SignUp = () => {
             tempErrors.surname = "Требуется фамилия.";
         } else if (!/^[А-Яа-яЁё\s]+$/.test(surname)) {
             tempErrors.surname = "Фамилия должна содержать только буквы.";
+        }
+
+        if (!username) {
+            tempErrors.username = "Требуется имя пользователя.";
         }
 
         if (!email) {
@@ -63,17 +69,18 @@ const SignUp = () => {
         if (validate()) {
             const name = nameRef.current.value;
             const surname = surnameRef.current.value;
+            const username = usernameRef.current.value;
             const email = emailRef.current.value;
             const password = passwordRef.current.value;
             const phone = phoneRef.current.value;
             try {
-                const response = await dispatch(signUp({ name, surname, email, password, phonenumber: phone })).unwrap();
+                const response = await dispatch(signUp({ name, surname, username, email, password, phonenumber: phone })).unwrap();
 
                 if (response.token) {
                     navigate('/login', { replace: true });
                 }
             } catch (error) {
-                console.error('Error during signup:', error);
+                console.error('Error during signup');
                 setErrors({ submit: error.message });
             }
         }
@@ -107,6 +114,16 @@ const SignUp = () => {
                         required
                         error={!!errors.surname}
                         helperText={errors.surname}
+                        fullWidth
+                    />
+                </FormControl>
+                <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.username}>
+                    <TextField
+                        label="Имя пользователя"
+                        inputRef={usernameRef}
+                        required
+                        error={!!errors.username}
+                        helperText={errors.username}
                         fullWidth
                     />
                 </FormControl>
