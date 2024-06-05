@@ -8,7 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import courseproject.springbootbackend.model.dto.authorization.TokenData;
+import courseproject.springbootbackend.model.dto.authorization.TokenGenerationData;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class JwtTokenUtil {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(value));
     }
 
-    public String generateToken(final TokenData tokenData) {
+    public String generateToken(final TokenGenerationData tokenData) {
         final Map<String, Object> claims = new HashMap<>();
         claims.put("username", tokenData.username());
         claims.put("userId", tokenData.userId());
@@ -69,14 +69,17 @@ public class JwtTokenUtil {
         return (tokenUsername.equals(username) && !isTokenExpired(token));
     }
 
-    public String getUsernameFromToken(String token) {
-        String username = getClaimFromToken(token, Claims::getSubject);
-        return username;
-    }
-
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
+    }
+
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
+
+    public String getIdFromToken(String token) {
+        return getClaimFromToken(token, Claims::getId);
     }
 
     private Date getExpirationDateFromToken(String token) {

@@ -46,10 +46,10 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PathsUtils.AUTH_PATH + "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/roleHierarchy").hasRole("USER")
-                        .requestMatchers(HttpMethod.DELETE, "/roleHierarchy").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/roleHierarchy").hasRole("DOCTOR")
-                        .requestMatchers(HttpMethod.PUT, "/roleHierarchy").hasRole("DOCTOR")
+                        .requestMatchers(HttpMethod.GET).hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST).hasRole("DOCTOR")
+                        .requestMatchers(HttpMethod.PUT).hasRole("DOCTOR")
                         .requestMatchers(HttpMethod.GET, PathsUtils.JOURNALS_PATH + "/**").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, PathsUtils.PATIENTS_PATH + "/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, PathsUtils.JOURNALS_PATH + "/**").hasRole("MANAGER")
@@ -57,7 +57,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, PathsUtils.JOURNALS_PATH + "/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.PUT, PathsUtils.PATIENTS_PATH + "/**").hasRole("MANAGER")
                         .anyRequest().authenticated())
-                .exceptionHandling(handling -> handling.authenticationEntryPoint(jwtAuthEntryPoint))
+                .exceptionHandling(handling -> handling
+                        .authenticationEntryPoint(jwtAuthEntryPoint))
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

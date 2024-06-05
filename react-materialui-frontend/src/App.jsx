@@ -14,16 +14,16 @@ import TreatmentListTable from './pages/TreatmentListTable';
 import DiagnosisListTable from './pages/DiagnosisListTable';
 import AgencyListTable from './pages/AgencyListTable';
 import PricesListTable from './pages/PricesListTable';
-import JournalCalendar from './pages/JournalCalendar';
+import UserListTable from './pages/UserListTable';
 import JournalPage from './pages/JournalPage';
+import JournalCalendar from './pages/JournalCalendar';
 import JournalGeneralTab from './components/tabs/JournalGeneralTab';
 import JournalDiagnosesTab from './components/tabs/JournalDiagnosesTab';
 import JournalTreatmentsTab from './components/tabs/JournalTreatmentsTab';
 import JournalFilesTab from './components/tabs/JournalFilesTab';
 import JournalLinkTab from './components/tabs/JournalLinkTab';
 
-import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn';
+import AuthTabs from './pages/AuthTabs';
 import PublicRoute from './components/PublicRoute';
 
 function App() {
@@ -36,7 +36,7 @@ function App() {
 
     const ProtectedRoute = ({ children }) => {
         if (!auth.token) {
-            return <Navigate to="/login" replace />;
+            return <Navigate to="/auth" replace />;
         }
         return children;
     };
@@ -51,8 +51,7 @@ function App() {
                         {auth.token && <Sidebar isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />}
                         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                             <Routes>
-                                <Route path="signup" element={<PublicRoute><SignUp /></PublicRoute>} />
-                                <Route path="login" element={<PublicRoute><SignIn /></PublicRoute>} />
+                                <Route path="auth" element={<PublicRoute><AuthTabs /></PublicRoute>} />
                                 <Route
                                     path="/*"
                                     element={
@@ -64,6 +63,7 @@ function App() {
                                                 <Route path="diagnoses" element={<DiagnosisListTable />} />
                                                 <Route path="agencies" element={<AgencyListTable />} />
                                                 <Route path="prices" element={<PricesListTable />} />
+                                                <Route path="users" element={<UserListTable />} />
                                                 <Route path="journals-table" element={<JournalListTable />} />
                                                 <Route path="journals-calendar" element={<JournalCalendar />} />
                                                 <Route path="journals/:journalId" element={<JournalPage />}>

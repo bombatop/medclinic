@@ -1,14 +1,11 @@
 package courseproject.springbootbackend.service;
 
-import courseproject.springbootbackend.mapper.UserMapper;
-import courseproject.springbootbackend.model.dto.UserData;
 import courseproject.springbootbackend.model.entity.UserEntity;
 
 import java.util.Collections;
 import java.util.List;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.data.domain.Page;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,14 +24,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(isolation = Isolation.READ_COMMITTED)
 public class UserService implements UserDetailsService {
-  
 
     private final UserRepository userRepository;
 
-    private final UserMapper userMapper;
+    // private final UserMapper userMapper;
 
     public Page<UserEntity> getUsers(final String searchQuery, final Pageable pageable) {
-        Page<UserEntity> users = (searchQuery == null || searchQuery.isEmpty()) ? userRepository.findAll(pageable)
+        Page<UserEntity> users = (searchQuery == null || searchQuery.isEmpty())
+                ? userRepository.findAll(pageable)
                 : userRepository.searchUsers(searchQuery, pageable);
         return users;
     }
@@ -47,24 +44,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
     }
 
-    public UserEntity updateUser(final Integer id, UserData dto) {
-        var userEntity = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        userEntity.setName(dto.name());
-        userEntity.setPhonenumber(dto.phonenumber());
-        try {
-            userEntity = userRepository.save(userEntity);
-            return userEntity;
-        } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
     public void deleteUser(final Integer id) {
         userRepository.deleteById(id);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         UserEntity user = userRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
         

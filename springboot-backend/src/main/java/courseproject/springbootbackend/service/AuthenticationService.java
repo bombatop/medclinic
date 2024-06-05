@@ -10,22 +10,22 @@ import org.springframework.web.server.ResponseStatusException;
 import courseproject.springbootbackend.configuration.security.JwtTokenUtil;
 import courseproject.springbootbackend.mapper.TokenDataMapper;
 import courseproject.springbootbackend.mapper.UserMapper;
-import courseproject.springbootbackend.model.dto.UserData;
-import courseproject.springbootbackend.model.dto.authorization.AuthCredentials;
+import courseproject.springbootbackend.model.dto.authorization.UserSignin;
 import courseproject.springbootbackend.model.dto.authorization.JwtAuthenticationResponse;
+import courseproject.springbootbackend.model.dto.authorization.UserAuthModification;
+import courseproject.springbootbackend.model.dto.authorization.UserBasicModification;
+import courseproject.springbootbackend.model.dto.authorization.UserSignup;
+import courseproject.springbootbackend.model.entity.UserEntity;
 import courseproject.springbootbackend.repository.RoleRepository;
 import courseproject.springbootbackend.repository.UserRepository;
 import courseproject.springbootbackend.service.exception.EntityAlreadyExistsException;
 import courseproject.springbootbackend.service.exception.RoleNotFoundException;
+import courseproject.springbootbackend.service.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     private final JwtTokenUtil jwtTokenUtil;
 
@@ -40,39 +40,63 @@ public class AuthenticationService {
     private final TokenDataMapper tokenDataMapper;
     private final UserMapper userMapper;
 
-    public JwtAuthenticationResponse signIn(final AuthCredentials authCredentials) {
-        logger.info("Signing in user with username: {}", authCredentials.username()); // ###
+    public JwtAuthenticationResponse signIn(final UserSignin authCredentials) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authCredentials.username(), authCredentials.password()));
             final var userEntity = userService.getUserByUsername(authCredentials.username());
             final var tokenData = tokenDataMapper.map(userEntity);
             final var generatedToken = jwtTokenUtil.generateToken(tokenData);
-            logger.info("Generated JWT token for user: {}", authCredentials.username()); // ###
             return new JwtAuthenticationResponse(generatedToken);
         } catch (BadCredentialsException e) {
-            logger.error("Invalid credentials for user: {}", authCredentials.username()); // ###
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        }
+    }
+
+    public JwtAuthenticationResponse signUp(final UserSignup dto) {
+        try {
+            if (userRepository.findByUsername(dto.username()).isPresent()) {
+                throw new EntityAlreadyExistsException("User with such username already exists");
+            }
+            final var roleEntity = roleRepository.findByName("USER").orElseThrow(RoleNotFoundException::new);
+            var userEntity = userMapper.map(dto);
+            userEntity.setRole(roleEntity);
+            userEntity.setUsername(dto.username());
+            userEntity.setPassword(passwordEncoder.encode(dto.password()));
+
+            userEntity = userRepository.save(userEntity);
+            
+            final var tokenData = tokenDataMapper.map(userEntity);
+            final var generatedToken = jwtTokenUtil.generateToken(tokenData);
+
+            return new JwtAuthenticationResponse(generatedToken);
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
     }
 
-    public JwtAuthenticationResponse signUp(final UserData userData) {
-            logger.info("Signing up new user with username: {}", userData.username()); // ###
-            if (userRepository.findByUsername(userData.username()).isPresent()) {
-                logger.error("User already exists with username: {}", userData.username()); // ###
-                throw new EntityAlreadyExistsException("User with such username already exists");
-            }
-            var userEntity = userMapper.map(userData);
-
-            final var roleEntity = roleRepository.findByName("ROLE_USER").orElseThrow(RoleNotFoundException::new);
+    public JwtAuthenticationResponse updateUserAuthData(final UserAuthModification dto) {
+        var userEntity = userRepository.findById(dto.userId()).orElseThrow(UserNotFoundException::new);
+        if (dto.roleId() != null) {
+            final var roleEntity = roleRepository.findById(dto.roleId()).orElseThrow(RoleNotFoundException::new);
             userEntity.setRole(roleEntity);
-            userEntity.setPassword(passwordEncoder.encode(userData.password()));
+        }
+        userEntity.setPassword(passwordEncoder.encode(dto.password()));
 
-            userEntity = userRepository.save(userEntity);
+        final var tokenData = tokenDataMapper.map(userEntity);
+        final var generatedToken = jwtTokenUtil.generateToken(tokenData);
 
-            final var tokenData = tokenDataMapper.map(userEntity);
-            final var generatedToken = jwtTokenUtil.generateToken(tokenData);
-            logger.info("Generated Token: {}", generatedToken);
-            return new JwtAuthenticationResponse(generatedToken);
+        userEntity = userRepository.save(userEntity);
+        return new JwtAuthenticationResponse(generatedToken);
+    }
+
+    public UserEntity updateUserBasicData(final UserBasicModification dto) {
+        var userEntity = userRepository.findById(dto.userId()).orElseThrow(UserNotFoundException::new);
+        
+        userEntity = userMapper.map(userEntity, dto);
+
+        userEntity = userRepository.save(userEntity);
+        return userEntity;
     }
 }

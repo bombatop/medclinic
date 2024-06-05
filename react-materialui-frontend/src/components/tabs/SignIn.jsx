@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, signIn } from '../store/authSlice';
+import { login, signIn } from '../../store/authSlice';
 import { TextField, Button, Box, Typography, FormControl } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import api from '../utils/http-common';
+import api from '../../utils/http-common';
 
 const SignIn = () => {
     const usernameRef = useRef();
@@ -75,7 +75,7 @@ const SignIn = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            height: '100vh',
+            height: '80vh',
             padding: 2
         }}>
             <Typography variant="h4" sx={{ mb: 3 }}>Стоматология</Typography>

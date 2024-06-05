@@ -2,18 +2,23 @@ package courseproject.springbootbackend.controller;
 
 import lombok.RequiredArgsConstructor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import courseproject.springbootbackend.model.dto.UserData;
-import courseproject.springbootbackend.model.dto.authorization.AuthCredentials;
+import courseproject.springbootbackend.model.dto.authorization.UserSignin;
+import courseproject.springbootbackend.configuration.security.JwtTokenUtil;
 import courseproject.springbootbackend.model.dto.authorization.JwtAuthenticationResponse;
+import courseproject.springbootbackend.model.dto.authorization.UserAuthModification;
+import courseproject.springbootbackend.model.dto.authorization.UserBasicModification;
+import courseproject.springbootbackend.model.dto.authorization.UserSignup;
+import courseproject.springbootbackend.model.entity.UserEntity;
 import courseproject.springbootbackend.service.AuthenticationService;
+import courseproject.springbootbackend.service.exception.UserHasNoRightException;
 import courseproject.springbootbackend.utility.PathsUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -22,18 +27,52 @@ import jakarta.validation.Valid;
 public class AuthController {
 
     private final AuthenticationService authenticationService;
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
+
+    private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login")
-    public JwtAuthenticationResponse login(@Valid @RequestBody AuthCredentials authCredentials) {
-        logger.info("UserData controller logger: " + authCredentials.username() + "#" + authCredentials.password());
+    public JwtAuthenticationResponse login(@Valid @RequestBody UserSignin authCredentials, HttpServletRequest request) {
         return authenticationService.signIn(authCredentials);
     }
 
     @PostMapping("/signup")
-    public JwtAuthenticationResponse signUp(@RequestBody UserData userData) {
-        logger.info(
-                "UserData controller logger: " + userData.name() + "#" + userData.username() + "#" + userData.password());
+    public JwtAuthenticationResponse signUp(@Valid @RequestBody UserSignup userData) {
         return authenticationService.signUp(userData);
+    }
+
+    // @PutMapping("/update-auth")
+    // public JwtAuthenticationResponse updateUserAuthData(@Valid @RequestBody UserAuthModification userData) {
+    //     return authenticationService.updateUserAuthData(userData);
+    // }
+    
+    
+    @PutMapping("/update-auth")
+    public JwtAuthenticationResponse updateUserAuthData(
+            @Valid @RequestBody UserAuthModification userData,
+            HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        Integer userId = Integer.parseInt(jwtTokenUtil.getIdFromToken(token));
+        if (!userId.equals(userData.userId())) {
+            throw new UserHasNoRightException();
+        }
+        return authenticationService.updateUserAuthData(userData);
+    }
+
+    // @PutMapping("/update-info")
+    // public UserEntity updateUserBasicData(@Valid @RequestBody UserBasicModification userData) {
+    //     return authenticationService.updateUserBasicData(userData);
+    // }
+
+
+    @PutMapping("/update-info")
+    public UserEntity updateUserBasicData(
+            @Valid @RequestBody UserBasicModification userData,
+            HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        Integer userId = Integer.parseInt(jwtTokenUtil.getIdFromToken(token));
+        if (!userId.equals(userData.userId())) {
+            throw new UserHasNoRightException();
+        }
+        return authenticationService.updateUserBasicData(userData);
     }
 }

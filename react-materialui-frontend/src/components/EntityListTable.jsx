@@ -134,9 +134,11 @@ const EntityListTable = ({ title, endpoint, fetchFunction, ModalComponent, colum
                                     <TableCell key={column.field}>{column.format ? column.format(item[column.field]) : item[column.field]}</TableCell>
                                 ))}
                                 <TableCell sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                    <IconButton onClick={() => handleOpenModal(item.id)}>
-                                        <EditIcon />
-                                    </IconButton>
+                                    { ModalComponent && 
+                                        <IconButton onClick={() => handleOpenModal(item.id)}>
+                                            <EditIcon />
+                                        </IconButton>
+                                    }
                                     <IconButton onClick={() => handleDelete(item.id)}>
                                         <DeleteIcon />
                                     </IconButton>
@@ -161,7 +163,9 @@ const EntityListTable = ({ title, endpoint, fetchFunction, ModalComponent, colum
                     <MenuItem value={20}>20</MenuItem>
                 </Select>
             </Box>
-            <ModalComponent open={modalOpen} handleClose={handleCloseModal} entityData={selectedEntity}/>
+            { ModalComponent && 
+                <ModalComponent open={modalOpen} handleClose={handleCloseModal} entityData={selectedEntity}/>
+            }
         </Box>
     );
 };

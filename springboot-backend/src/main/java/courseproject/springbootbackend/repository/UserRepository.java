@@ -16,7 +16,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     Optional<UserEntity> findByUsername(String username);
 
-
     @Query("SELECT d FROM UserEntity d WHERE d.surname LIKE %:searchQuery% OR " +
            "d.name LIKE %:searchQuery% OR d.patronymic LIKE %:searchQuery%")
     Page<UserEntity> searchUsers(@Param("searchQuery") String searchQuery, Pageable pageable);

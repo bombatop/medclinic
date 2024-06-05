@@ -38,7 +38,7 @@ public class JournalController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "dateStart") String sortField,
             @RequestParam(defaultValue = "asc") String sortOrder,
-            @RequestParam(required = false) Integer doctorId,
+            @RequestParam(required = false) Integer userId,
             @RequestParam(required = false) Integer patientId,
             @RequestParam(required = false) JournalStatus status,
             @RequestParam(required = false) String startDate,
@@ -47,7 +47,7 @@ public class JournalController {
         Sort sort = Sort.by(Sort.Direction.fromString(sortOrder), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return journalService.getJournals(pageable, doctorId, patientId, status, startDate, endDate);
+        return journalService.getJournals(pageable, userId, patientId, status, startDate, endDate);
     }
 
     @GetMapping("{id}")

@@ -4,11 +4,17 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
-public record AuthCredentials(
+public record UserAuthModification(
         @NotBlank(message = "Username is required")
         String username,
 
         @NotBlank(message = "Password is required")
-        String password
+        String password,
+        
+        @NotBlank(message = "User id is required")
+        Integer userId,
+
+        // @NotBlank(message = "Role id is required")
+        Integer roleId
 ) {
 }

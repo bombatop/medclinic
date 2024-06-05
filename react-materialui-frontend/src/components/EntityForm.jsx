@@ -76,7 +76,7 @@ const EntityForm = ({ entityData, endpoint, fields, onClose }) => {
                 .then(response => {
                     onClose();
                 })
-                .catch(error => console.error(`Error saving ${endpoint}:`, error));
+                .catch(error => console.error(`Error saving ${endpoint}`));
         }
     };
 

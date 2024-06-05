@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import courseproject.springbootbackend.model.entity.misc.JournalStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,9 +59,11 @@ public class JournalEntity {
     private JournalStatus status;
 
     @OneToMany
+    //(fetch = FetchType.EAGER)
     private Set<JournalTreatmentEntity> treatments;
 
     @OneToMany
+    //(fetch = FetchType.EAGER)
     private Set<JournalDiagnosisEntity> diagnoses;
 
     @OneToMany

@@ -5,19 +5,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import courseproject.springbootbackend.model.dto.UserData;
 import courseproject.springbootbackend.model.entity.UserEntity;
 import courseproject.springbootbackend.service.UserService;
 import courseproject.springbootbackend.utility.PathsUtils;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -50,20 +46,8 @@ public class UserController {
         return service.getUserById(id);
     }
 
-    @PutMapping("{id}")
-    public UserEntity updateUser(
-            @PathVariable Integer id,
-            @Valid @RequestBody UserData user) {
-        return service.updateUser(id, user);
-    }
-
     @DeleteMapping("{id}")
     public void deleteUser(@PathVariable Integer id) {
         service.deleteUser(id);
     }
-
-    // @PostMapping
-    // public UserEntity addUser(@Valid @RequestBody UserData user) {
-    // return service.addUser(user);
-    // }
 }
