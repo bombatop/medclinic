@@ -14,14 +14,15 @@ import TreatmentListTable from './pages/TreatmentListTable';
 import DiagnosisListTable from './pages/DiagnosisListTable';
 import AgencyListTable from './pages/AgencyListTable';
 import PricesListTable from './pages/PricesListTable';
-import UserListTable from './pages/UserListTable';
-import JournalPage from './pages/JournalPage';
+import JournalPage from './pages/JournalDetails';
 import JournalCalendar from './pages/JournalCalendar';
 import JournalGeneralTab from './components/tabs/JournalGeneralTab';
 import JournalDiagnosesTab from './components/tabs/JournalDiagnosesTab';
 import JournalTreatmentsTab from './components/tabs/JournalTreatmentsTab';
 import JournalFilesTab from './components/tabs/JournalFilesTab';
 import JournalLinkTab from './components/tabs/JournalLinkTab';
+import UserListTable from './pages/UserListTable';
+import UserDetails from './pages/UserDetails';
 
 import AuthTabs from './pages/AuthTabs';
 import PublicRoute from './components/PublicRoute';
@@ -74,6 +75,7 @@ function App() {
                                                     <Route path="files" element={<JournalFilesTab />} />
                                                     <Route path="links" element={<JournalLinkTab />} />
                                                 </Route>
+                                                <Route path="users/:userId" element={<UserDetails />} />
                                             </Routes>
                                         </ProtectedRoute>
                                     }

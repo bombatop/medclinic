@@ -13,6 +13,7 @@ import courseproject.springbootbackend.configuration.security.JwtTokenUtil;
 import courseproject.springbootbackend.model.dto.authorization.JwtAuthenticationResponse;
 import courseproject.springbootbackend.model.dto.authorization.UserAuthModification;
 import courseproject.springbootbackend.model.dto.authorization.UserBasicModification;
+import courseproject.springbootbackend.model.dto.authorization.UserRoleModification;
 import courseproject.springbootbackend.model.dto.authorization.UserSignup;
 import courseproject.springbootbackend.model.entity.UserEntity;
 import courseproject.springbootbackend.service.AuthenticationService;
@@ -31,7 +32,10 @@ public class AuthController {
     private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login")
-    public JwtAuthenticationResponse login(@Valid @RequestBody UserSignin authCredentials, HttpServletRequest request) {
+    public JwtAuthenticationResponse login(
+        @Valid @RequestBody UserSignin authCredentials, 
+        HttpServletRequest request
+    ) {
         return authenticationService.signIn(authCredentials);
     }
 
@@ -39,40 +43,43 @@ public class AuthController {
     public JwtAuthenticationResponse signUp(@Valid @RequestBody UserSignup userData) {
         return authenticationService.signUp(userData);
     }
-
-    // @PutMapping("/update-auth")
-    // public JwtAuthenticationResponse updateUserAuthData(@Valid @RequestBody UserAuthModification userData) {
-    //     return authenticationService.updateUserAuthData(userData);
-    // }
-    
     
     @PutMapping("/update-auth")
     public JwtAuthenticationResponse updateUserAuthData(
             @Valid @RequestBody UserAuthModification userData,
-            HttpServletRequest request) {
+            HttpServletRequest request
+    ) {
         String token = request.getHeader("Authorization").substring(7);
-        Integer userId = Integer.parseInt(jwtTokenUtil.getIdFromToken(token));
-        if (!userId.equals(userData.userId())) {
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        if (!username.equals(userData.username())) {
             throw new UserHasNoRightException();
         }
         return authenticationService.updateUserAuthData(userData);
     }
 
-    // @PutMapping("/update-info")
-    // public UserEntity updateUserBasicData(@Valid @RequestBody UserBasicModification userData) {
-    //     return authenticationService.updateUserBasicData(userData);
-    // }
-
-
     @PutMapping("/update-info")
     public UserEntity updateUserBasicData(
             @Valid @RequestBody UserBasicModification userData,
-            HttpServletRequest request) {
+            HttpServletRequest request
+    ) {
         String token = request.getHeader("Authorization").substring(7);
-        Integer userId = Integer.parseInt(jwtTokenUtil.getIdFromToken(token));
-        if (!userId.equals(userData.userId())) {
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        if (!username.equals(userData.username())) {
             throw new UserHasNoRightException();
         }
         return authenticationService.updateUserBasicData(userData);
+    }
+
+    @PutMapping("/update-role")
+    public UserEntity updateUserRole(
+            @Valid @RequestBody UserRoleModification userData,
+            HttpServletRequest request
+    ) {
+        String token = request.getHeader("Authorization").substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        if (!username.equals(userData.username())) {
+            throw new UserHasNoRightException();
+        }
+        return authenticationService.updateUserRole(userData);
     }
 }

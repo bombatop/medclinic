@@ -7,8 +7,8 @@ import lombok.Builder;
 
 @Builder
 public record UserBasicModification(
-        @NotBlank(message = "User id is required")
-        Integer userId,
+        @NotBlank(message = "Username is required")
+        String username,
         
         @NotBlank(message = "Name is required")
         @Pattern(regexp = "^[А-Яа-яЁё\\s]+$", message = "Name should contain only letters")

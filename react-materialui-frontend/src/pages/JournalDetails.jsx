@@ -3,7 +3,7 @@ import { useParams, Link, Outlet, useLocation } from 'react-router-dom';
 import { Box, Tabs, Tab, Typography, CircularProgress } from '@mui/material';
 import api from '../utils/http-common';
 
-const JournalPage = () => {
+const JournalDetails = () => {
     const { journalId } = useParams();
     const location = useLocation();
     const [value, setValue] = useState(0);
@@ -70,4 +70,4 @@ const JournalPage = () => {
     );
 };
 
-export default JournalPage;
+export default JournalDetails;

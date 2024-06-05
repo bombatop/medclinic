@@ -26,4 +26,6 @@ public class PathsUtils {
     public static final String TREATMENTS_PATH = API + "treatments";
     
     public static final String DIAGNOSIS_PATH = API + "diagnoses";
+    
+    public static final String ROLES_PATH = API + "roles";
 }

@@ -1,14 +1,15 @@
 package courseproject.springbootbackend.model.dto.authorization;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record UserAuthModification(
+public record UserRoleModification(
         @NotBlank(message = "Username is required")
         String username,
 
-        @NotBlank(message = "Password is required")
-        String password
+        @NotNull(message = "Role id is required")
+        Integer roleId
 ) {
 }

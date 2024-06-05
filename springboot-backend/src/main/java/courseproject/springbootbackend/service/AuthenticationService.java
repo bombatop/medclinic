@@ -14,6 +14,7 @@ import courseproject.springbootbackend.model.dto.authorization.UserSignin;
 import courseproject.springbootbackend.model.dto.authorization.JwtAuthenticationResponse;
 import courseproject.springbootbackend.model.dto.authorization.UserAuthModification;
 import courseproject.springbootbackend.model.dto.authorization.UserBasicModification;
+import courseproject.springbootbackend.model.dto.authorization.UserRoleModification;
 import courseproject.springbootbackend.model.dto.authorization.UserSignup;
 import courseproject.springbootbackend.model.entity.UserEntity;
 import courseproject.springbootbackend.repository.RoleRepository;
@@ -28,21 +29,18 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationService {
 
     private final JwtTokenUtil jwtTokenUtil;
-
     private final UserService userService;
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
     private final TokenDataMapper tokenDataMapper;
     private final UserMapper userMapper;
 
     public JwtAuthenticationResponse signIn(final UserSignin authCredentials) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authCredentials.username(), authCredentials.password()));
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authCredentials.username(), authCredentials.password()));
             final var userEntity = userService.getUserByUsername(authCredentials.username());
             final var tokenData = tokenDataMapper.map(userEntity);
             final var generatedToken = jwtTokenUtil.generateToken(tokenData);
@@ -64,24 +62,19 @@ public class AuthenticationService {
             userEntity.setPassword(passwordEncoder.encode(dto.password()));
 
             userEntity = userRepository.save(userEntity);
-            
+
             final var tokenData = tokenDataMapper.map(userEntity);
             final var generatedToken = jwtTokenUtil.generateToken(tokenData);
 
             return new JwtAuthenticationResponse(generatedToken);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
     }
 
     public JwtAuthenticationResponse updateUserAuthData(final UserAuthModification dto) {
-        var userEntity = userRepository.findById(dto.userId()).orElseThrow(UserNotFoundException::new);
-        if (dto.roleId() != null) {
-            final var roleEntity = roleRepository.findById(dto.roleId()).orElseThrow(RoleNotFoundException::new);
-            userEntity.setRole(roleEntity);
-        }
+        var userEntity = userRepository.findByUsername(dto.username()).orElseThrow(UserNotFoundException::new);
         userEntity.setPassword(passwordEncoder.encode(dto.password()));
 
         final var tokenData = tokenDataMapper.map(userEntity);
@@ -92,9 +85,16 @@ public class AuthenticationService {
     }
 
     public UserEntity updateUserBasicData(final UserBasicModification dto) {
-        var userEntity = userRepository.findById(dto.userId()).orElseThrow(UserNotFoundException::new);
-        
+        var userEntity = userRepository.findByUsername(dto.username()).orElseThrow(UserNotFoundException::new);
         userEntity = userMapper.map(userEntity, dto);
+        userEntity = userRepository.save(userEntity);
+        return userEntity;
+    }
+
+    public UserEntity updateUserRole(final UserRoleModification dto) {
+        var userEntity = userRepository.findByUsername(dto.username()).orElseThrow(UserNotFoundException::new);
+        final var roleEntity = roleRepository.findById(dto.roleId()).orElseThrow(RoleNotFoundException::new);
+        userEntity.setRole(roleEntity);
 
         userEntity = userRepository.save(userEntity);
         return userEntity;
