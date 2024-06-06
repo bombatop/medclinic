@@ -32,7 +32,7 @@ const JournalForm = ({ entityData, onClose }) => {
     const fetchDoctors = async (query = '') => {
         try {
             const response = await api.get('/users', {
-                params: { searchQuery: query, page: 0, size: 5 }
+                params: { searchQuery: query, page: 0, size: 10, isSpecialist: true }
             });
             return response.data.content;
         } catch (error) {
@@ -44,7 +44,7 @@ const JournalForm = ({ entityData, onClose }) => {
     const fetchPatients = async (query = '') => {
         try {
             const response = await api.get('/patients', {
-                params: { searchQuery: query, page: 0, size: 5 }
+                params: { searchQuery: query, page: 0, size: 10 }
             });
             return response.data.content;
         } catch (error) {
@@ -64,7 +64,6 @@ const JournalForm = ({ entityData, onClose }) => {
             });
             setSelectedPatient(entityData.patient);
             setSelectedDoctor(entityData.doctor);
-            console.log("толя иди нахуй");
         }
     }, [entityData]);
 

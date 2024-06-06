@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import courseproject.springbootbackend.repository.UserRepository;
 import courseproject.springbootbackend.service.exception.UserNotFoundException;
+import courseproject.springbootbackend.service.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -27,13 +29,9 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    // private final UserMapper userMapper;
-
-    public Page<UserEntity> getUsers(final String searchQuery, final Pageable pageable) {
-        Page<UserEntity> users = (searchQuery == null || searchQuery.isEmpty())
-                ? userRepository.findAll(pageable)
-                : userRepository.searchUsers(searchQuery, pageable);
-        return users;
+    public Page<UserEntity> getUsers(final String searchQuery, final Boolean isSpecialist, final Pageable pageable) {
+        Specification<UserEntity> spec = UserSpecification.getUsers(searchQuery, isSpecialist);
+        return userRepository.findAll(spec, pageable);
     }
 
     public UserEntity getUserById(final Integer id) {

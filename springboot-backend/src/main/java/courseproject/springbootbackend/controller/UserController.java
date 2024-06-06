@@ -28,17 +28,12 @@ public class UserController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String searchQuery,
-            @RequestParam(required = false) String sortField,
-            @RequestParam(required = false) String sortOrder) {
-        if (sortField == null || sortField.isEmpty()) {
-            sortField = "surname";
-        }
-        if (sortOrder == null || sortOrder.isEmpty()) {
-            sortOrder = "asc";
-        }
+            @RequestParam(required = false) Boolean isSpecialist,
+            @RequestParam(defaultValue = "surname") String sortField,
+            @RequestParam(defaultValue = "asc") String sortOrder) {
         Sort sort = Sort.by(Sort.Order.by(sortField).with(Sort.Direction.fromString(sortOrder)));
         Pageable pageable = PageRequest.of(page, size, sort);
-        return service.getUsers(searchQuery, pageable);
+        return service.getUsers(searchQuery, isSpecialist, pageable);
     }
 
     @GetMapping("{id}")
