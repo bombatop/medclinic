@@ -10,7 +10,7 @@ const theme = createTheme({
         },
     },
     typography: {
-        fontFamily: "Raleway, Open Sans, sans-serif",
+        fontFamily: "Montserrat, Raleway, Open Sans, sans-serif"
     },
 });
 
