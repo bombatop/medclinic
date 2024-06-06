@@ -18,9 +18,11 @@ import courseproject.springbootbackend.model.dto.authorization.UserRoleModificat
 import courseproject.springbootbackend.model.dto.authorization.UserSignup;
 import courseproject.springbootbackend.model.entity.UserEntity;
 import courseproject.springbootbackend.repository.RoleRepository;
+import courseproject.springbootbackend.repository.SpecialtyRepository;
 import courseproject.springbootbackend.repository.UserRepository;
 import courseproject.springbootbackend.service.exception.EntityAlreadyExistsException;
 import courseproject.springbootbackend.service.exception.RoleNotFoundException;
+import courseproject.springbootbackend.service.exception.SpecialtyNotFoundException;
 import courseproject.springbootbackend.service.exception.UserHasNoRightException;
 import courseproject.springbootbackend.service.exception.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +36,7 @@ public class AuthenticationService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final SpecialtyRepository specialtyRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final TokenDataMapper tokenDataMapper;
@@ -117,7 +120,13 @@ public class AuthenticationService {
         if (!userEntity.equals(tokenUserEntity) && !tokenUserEntity.getRole().equals(adminRole)) {
             throw new UserHasNoRightException();
         }
+
         userEntity = userMapper.map(userEntity, dto);
+        if (dto.specialtyId() != null) {
+            final var specialtyEntity = specialtyRepository.findById(dto.specialtyId())
+                    .orElseThrow(SpecialtyNotFoundException::new);
+            userEntity.setSpecialty(specialtyEntity);
+        }
         userEntity = userRepository.save(userEntity);
         return userEntity;
     }

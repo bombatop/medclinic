@@ -22,6 +22,9 @@ public record UserBasicModification(
         @Pattern(regexp = "^[А-Яа-яЁё\\s]+$", message = "Patronymic should contain only letters")
         String patronymic,
 
+        // @NotNull(message = "Specialty id is required")
+        Integer specialtyId,
+
         @NotBlank(message = "Phone number is required")
         String phonenumber,
 

@@ -27,6 +27,7 @@ const UserDetails = () => {
         username: '',
         password: '',
         role: null,
+        specialty: null,
     });
     const [formData, setFormData] = useState({ ...user });
     const [tabIndex, setTabIndex] = useState(0);
@@ -79,6 +80,18 @@ const UserDetails = () => {
         }
     };
 
+    const fetchSpecialties = async (query = '') => {
+        try {
+            const response = await api.get('/specialties', {
+                params: { searchQuery: query, page: 0, size: 9999 }
+            });
+            return response.data.content;
+        } catch (error) {
+            console.error('Error fetching specialties:');
+            return [];
+        }
+    };
+
     const validate = () => {
         let tempErrors = {};
         if (!validateName(formData.name)) tempErrors.name = "Имя должно содержать только буквы.";
@@ -101,7 +114,8 @@ const UserDetails = () => {
                     patronymic: formData.patronymic,
                     phonenumber: formData.phonenumber,
                     email: formData.email,
-                    username: formData.username
+                    username: formData.username,
+                    specialtyId: formData.specialty ? formData.specialty.id : null,
                 });
                 alert("User info updated successfully");
                 setUser({ ...formData });
@@ -208,6 +222,22 @@ const UserDetails = () => {
                                 onChange={handleChange}
                                 error={!!errors.email}
                                 helperText={errors.email}
+                                required
+                                size="small"
+                            />
+                            <DebouncedAutocomplete
+                                label="Специальность"
+                                fetchOptions={fetchSpecialties}
+                                value={formData.specialty}
+                                onChange={(newValue) => {
+                                    setFormData(prevState => ({
+                                        ...prevState,
+                                        specialty: newValue
+                                    }));
+                                }}
+                                getOptionKey={(specialty) => `${specialty.id}`}
+                                getOptionLabel={(specialty) => `${specialty.name}`}
+                                noOptionsText={"Нет данных"}
                                 required
                                 size="small"
                             />

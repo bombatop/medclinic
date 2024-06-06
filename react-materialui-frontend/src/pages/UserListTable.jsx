@@ -32,6 +32,7 @@ const UserListTable = () => {
                 roleId: selectedRole ? selectedRole.id : ''
             };
             const response = await api.get('/users', { params });
+            console.log(response.data.content);
             setUsers(response.data.content);
             setTotalPages(response.data.totalPages);
         } catch (error) {
@@ -96,6 +97,9 @@ const UserListTable = () => {
                             <SortableTableCell field="patronymic" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
                                 Отчество
                             </SortableTableCell>
+                            <SortableTableCell field="specialty.name" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
+                                Специальность
+                            </SortableTableCell>
                             <SortableTableCell field="username" sortField={sortField} sortOrder={sortOrder} handleSort={handleSort}>
                                 Логин
                             </SortableTableCell>
@@ -119,6 +123,9 @@ const UserListTable = () => {
                                 </TableCell>
                                 <TableCell>
                                     {user.patronymic}
+                                </TableCell>
+                                <TableCell>
+                                    {user?.specialty?.name}
                                 </TableCell>
                                 <TableCell>
                                     {user.username}

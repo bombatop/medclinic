@@ -46,4 +46,7 @@ public class UserEntity {
     
     @ManyToOne
     private RoleEntity role;
+
+    @ManyToOne
+    private SpecialtyEntity specialty;
 }

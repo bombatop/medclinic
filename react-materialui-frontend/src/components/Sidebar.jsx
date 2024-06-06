@@ -100,6 +100,13 @@ function Sidebar({ isOpen, toggleDrawer }) {
                     <List component="div" disablePadding>
                         <ListItemButton
                             component={Link}
+                            to="/specialties"
+                            sx={{ pl: 9, bgcolor: isCurrentPath('/specialties') ? 'action.selected' : 'inherit' }}
+                        >
+                            <ListItemText primary="Специальности" />
+                        </ListItemButton>
+                        <ListItemButton
+                            component={Link}
                             to="/diagnoses"
                             sx={{ pl: 9, bgcolor: isCurrentPath('/diagnoses') ? 'action.selected' : 'inherit' }}
                         >

@@ -12,6 +12,7 @@ import PatientListTable from './pages/PatientListTable';
 import JournalListTable from './pages/JournalListTable';
 import TreatmentListTable from './pages/TreatmentListTable';
 import DiagnosisListTable from './pages/DiagnosisListTable';
+import SpecialtyListTable from './pages/SpecialtyListTable';
 import AgencyListTable from './pages/AgencyListTable';
 import PricesListTable from './pages/PricesListTable';
 import JournalPage from './pages/JournalDetails';
@@ -62,6 +63,7 @@ function App() {
                                                 <Route path="patients" element={<PatientListTable />} />
                                                 <Route path="treatments" element={<TreatmentListTable />} />
                                                 <Route path="diagnoses" element={<DiagnosisListTable />} />
+                                                <Route path="specialties" element={<SpecialtyListTable />} />
                                                 <Route path="agencies" element={<AgencyListTable />} />
                                                 <Route path="prices" element={<PricesListTable />} />
                                                 <Route path="users" element={<UserListTable />} />
