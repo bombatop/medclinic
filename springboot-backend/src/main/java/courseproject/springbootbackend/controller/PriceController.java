@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import courseproject.springbootbackend.model.dto.BulkPriceUpdateData;
+import courseproject.springbootbackend.model.dto.JournalReportDTO;
+import courseproject.springbootbackend.model.dto.JournalReportRequestDTO;
 import courseproject.springbootbackend.model.dto.PriceData;
 import courseproject.springbootbackend.model.entity.PriceEntity;
 import courseproject.springbootbackend.service.PriceService;
@@ -34,19 +36,14 @@ public class PriceController {
     public Page<PriceEntity> getPrices(
             @RequestParam(required = false) Integer treatmentId,
             @RequestParam(required = false) Integer agencyId,
-            @RequestParam Integer page,
-            @RequestParam Integer size,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "date") String sortField,
             @RequestParam(defaultValue = "asc") String sortOrder,
             @RequestParam(defaultValue = "false") boolean latestOnly) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortOrder), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
         return service.getPrices(pageable, treatmentId, agencyId, latestOnly);
-    }
-
-    @GetMapping("{id}")
-    public List<PriceEntity> getPricesByTreatmentId(@PathVariable("id") Integer id) {
-        return service.getPricesByTreatmentId(id);
     }
     
     @PostMapping
@@ -57,6 +54,13 @@ public class PriceController {
     @PostMapping("/bulk")
     public List<PriceEntity> bulkUpdatePrices(@Valid @RequestBody BulkPriceUpdateData dto) {
         return service.bulkUpdatePrices(dto);
+    }
+
+    @PostMapping("report/{id}")
+    public JournalReportDTO generateJournalReport(
+            @PathVariable Integer id,
+            @RequestBody @Valid JournalReportRequestDTO requestDTO) {
+        return service.generateJournalReport(id, requestDTO.agencyIds());
     }
     
     @DeleteMapping("{id}")

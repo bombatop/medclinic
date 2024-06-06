@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { Box, Button, CircularProgress, Typography, MenuItem, Select } from '@mui/material';
+import { Box, Button, CircularProgress, Typography, MenuItem, Select, Paper } from '@mui/material';
 import { statusLabels } from '../../utils/scheduleSettings';
 import api from '../../utils/http-common';
 import dayjs from 'dayjs';
+import AgencySelectionModal from '../modals/AgencySelectionModal';
 
 const formatDate = (dateStr, timeEnd, status) => {
     const date = dayjs(dateStr);
@@ -17,9 +18,10 @@ const JournalLinkTab = () => {
     const [selectedNext, setSelectedNext] = useState(journalData.nextEntry ? journalData.nextEntry.id : "");
     const [selectedPrev, setSelectedPrev] = useState(journalData.prevEntry ? journalData.prevEntry.id : "");
     const [loading, setLoading] = useState(true);
+    const [reportLoading, setReportLoading] = useState(false);
+    const [reportData, setReportData] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
 
-    console.log('selectedNext', selectedNext, journalData.nextEntry);
-    console.log('selectedPrev', selectedPrev, journalData.prevEntry);
     const fetchLinks = async () => {
         try {
             const nextResponse = await api.get(`/journals/all-next/${journalData.id}`);
@@ -77,6 +79,35 @@ const JournalLinkTab = () => {
         }
     };
 
+    const handleOpenModal = () => {
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+    };
+
+    const handleSaveModal = async (selectedAgencies) => {
+        setModalOpen(false);
+        fetchReport(selectedAgencies);
+    };
+
+    const fetchReport = async (selectedAgencies) => {
+        setReportLoading(true);
+        try {
+            console.log("###", selectedAgencies, journalData.date);
+            const response = await api.post(`/prices/report/${journalData.id}`, {
+                agencyIds: selectedAgencies,
+                date: journalData.date ?? null
+            });
+            setReportData(response.data);
+        } catch (error) {
+            console.error('Error fetching report');
+        } finally {
+            setReportLoading(false);
+        }
+    };
+
     if (loading) {
         return <CircularProgress />;
     }
@@ -92,7 +123,7 @@ const JournalLinkTab = () => {
                 {prevEntries.length === 0 &&
                     <MenuItem value="" disabled>Нет подходящих записей</MenuItem>
                 }
-                {journalData.prevEntry && 
+                {journalData.prevEntry &&
                     <MenuItem key={journalData.prevEntry.id} value={journalData.prevEntry.id}>
                         {formatDate(journalData.prevEntry.date, journalData.prevEntry.timeEnd, journalData.prevEntry.status)}
                     </MenuItem>
@@ -122,7 +153,7 @@ const JournalLinkTab = () => {
                 value={selectedNext}
                 onChange={(e) => setSelectedNext(e.target.value)}
                 fullWidth
-            >   
+            >
                 {nextEntries.length === 0 &&
                     <MenuItem value="" disabled>Нет подходящих записей</MenuItem>
                 }
@@ -150,6 +181,52 @@ const JournalLinkTab = () => {
             >
                 Удалить связь
             </Button>
+
+            <Typography variant="h6" sx={{ mt: 2 }}>Результаты по серии актов приема</Typography>
+            <Button
+                onClick={handleOpenModal}
+                disabled={reportLoading}
+                sx={{ mt: 2 }}
+            >
+                {reportLoading ? 'Загрузка отчета...' : 'Получить отчет'}
+            </Button>
+
+            <AgencySelectionModal
+                open={modalOpen}
+                onClose={handleCloseModal}
+                onSave={handleSaveModal}
+            />
+
+            {reportData && (
+                <Paper sx={{ mt: 3, p: 2 }}>
+                    <Typography variant="h6">Отчет</Typography>
+                    <Typography variant="body1">
+                        Пациент: {reportData.patient.name} {reportData.patient.surname}
+                    </Typography>
+                    <Typography variant="body1">
+                        Врачи: {reportData.doctors.map(doctor => `${doctor.name} ${doctor.surname}`).join(', ')}
+                    </Typography>
+                    <Typography variant="body1">Поставленные диагнозы:</Typography>
+                    <ul>
+                        {reportData.diagnoses.map(diagnosis => (
+                            <li key={diagnosis.id}>
+                                {diagnosis.diagnosis.name}
+                            </li>
+                        ))}
+                    </ul>
+                    <Typography variant="body1">Проведенные услуги:</Typography>
+                    <ul>
+                        {reportData.treatments.map(treatment => (
+                            <li key={treatment.id}>
+                                {treatment.treatment.name} - {treatment.amount} раз
+                                {Object.entries(treatment.prices).map(([agencyId, price]) => (
+                                    <div key={agencyId}>Агентство {agencyId}: {price} рублей</div>
+                                ))}
+                            </li>
+                        ))}
+                    </ul>
+                </Paper>
+            )}
         </Box>
     );
 };

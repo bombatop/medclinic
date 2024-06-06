@@ -19,24 +19,24 @@ const JournalForm = ({ entityData, onClose }) => {
     });
 
     const [selectedPatient, setSelectedPatient] = useState(null);
-    const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
     const [errors, setErrors] = useState({});
 
     const patientRef = useRef();
-    const doctorRef = useRef();
+    const userRef = useRef();
     const dateRef = useRef();
     const timeEndRef = useRef();
 
     const navigate = useNavigate();
 
-    const fetchDoctors = async (query = '') => {
+    const fetchUsers = async (query = '') => {
         try {
             const response = await api.get('/users', {
                 params: { searchQuery: query, page: 0, size: 10, isSpecialist: true }
             });
             return response.data.content;
         } catch (error) {
-            console.error('Error fetching doctors:', error);
+            console.error('Error fetching users:', error);
             return [];
         }
     };
@@ -57,13 +57,13 @@ const JournalForm = ({ entityData, onClose }) => {
         if (entityData) {
             setJournal({
                 patientId: entityData.patient.id || '',
-                userId: entityData.doctor.id || '',
+                userId: entityData.user.id || '',
                 date: entityData.date ? dayjs(entityData.date) : dayjs(),
                 timeEnd: entityData.timeEnd ? dayjs(entityData.timeEnd, 'HH:mm') : dayjs().add(1, 'hour'),
                 status: entityData.status || 'SCHEDULED'
             });
             setSelectedPatient(entityData.patient);
-            setSelectedDoctor(entityData.doctor);
+            setSelectedUser(entityData.user);
         }
     }, [entityData]);
 
@@ -162,20 +162,20 @@ const JournalForm = ({ entityData, onClose }) => {
                 <FormControl error={!!errors.userId}>
                     <DebouncedAutocomplete
                         label="Доктор"
-                        fetchOptions={fetchDoctors}
-                        value={selectedDoctor}
+                        fetchOptions={fetchUsers}
+                        value={selectedUser}
                         onChange={(newValue) => {
-                            setSelectedDoctor(newValue);
+                            setSelectedUser(newValue);
                             setJournal(prevState => ({
                                 ...prevState,
                                 userId: newValue ? newValue.id : ''
                             }));
                         }}
-                        getOptionKey={(doctor) => `${doctor.id}`}
-                        getOptionLabel={(doctor) => `${doctor.surname} ${doctor.name} ${doctor.patronymic}`}
+                        getOptionKey={(user) => `${user.id}`}
+                        getOptionLabel={(user) => `${user.surname} ${user.name} ${user.patronymic}`}
                         noOptionsText="Нет данных"
                         required
-                        inputRef={doctorRef}
+                        inputRef={userRef}
                         error={!!errors.userId}
                         helperText={errors.userId}
                         size="small"

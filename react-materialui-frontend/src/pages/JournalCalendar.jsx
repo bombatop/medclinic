@@ -14,8 +14,8 @@ const localizer = momentLocalizer(moment);
 
 const JournalCalendar = () => {
     const [journals, setJournals] = useState([]);
-    const [loadingDoctors, setLoadingDoctors] = useState(false);
-    const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [loadingUsers, setLoadingUsers] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedJournalId, setSelectedJournalId] = useState(null);
     const [startDate, setStartDate] = useState(moment().startOf('week').toDate());
@@ -29,7 +29,7 @@ const JournalCalendar = () => {
                 size: 1000,
                 sortField: 'date',
                 sortOrder: 'asc',
-                ...(selectedDoctor && { userId: selectedDoctor.id }),
+                ...(selectedUser && { userId: selectedUser.id }),
                 startDate: moment(start).format('YYYY-MM-DDTHH:mm'),
                 endDate: moment(end).format('YYYY-MM-DDTHH:mm'),
             };
@@ -40,24 +40,24 @@ const JournalCalendar = () => {
         }
     };
 
-    const fetchDoctors = async (query = '') => {
-        setLoadingDoctors(true);
+    const fetchUsers = async (query = '') => {
+        setLoadingUsers(true);
         try {
-            const response = await api.get('/doctors', {
+            const response = await api.get('/users', {
                 params: { searchQuery: query, page: 0, size: 7 }
             });
             return response.data;
         } catch (error) {
-            console.error('Error fetching doctors:', error);
+            console.error('Error fetching users:', error);
             throw error;
         } finally {
-            setLoadingDoctors(false);
+            setLoadingUsers(false);
         }
     };
 
     useEffect(() => {
         fetchJournals(startDate, endDate);
-    }, [selectedDoctor, startDate, endDate]);
+    }, [selectedUser, startDate, endDate]);
 
     const handleOpenModal = (journalId = null) => {
         setSelectedJournalId(journalId);
@@ -72,7 +72,7 @@ const JournalCalendar = () => {
     const events = journals.map(journal => ({
         id: journal.id,
         patientName: `${journal.patient.surname} ${journal.patient.name}`,
-        doctorName: `${journal.doctor.surname} ${journal.doctor.name}`,
+        userName: `${journal.user.surname} ${journal.user.name}`,
         start: moment(journal.date).toDate(),
         end: moment(journal.date).set({
             hour: moment(journal.timeEnd, 'HH:mm').hour(),
@@ -149,13 +149,13 @@ const JournalCalendar = () => {
                 </Button>
                 <DebouncedAutocomplete
                     label="Специалист"
-                    fetchOptions={fetchDoctors}
-                    onChange={setSelectedDoctor}
-                    value={selectedDoctor}
+                    fetchOptions={fetchUsers}
+                    onChange={setSelectedUser}
+                    value={selectedUser}
                     getOptionKey={(specialist) => `${specialist.id}`}
                     getOptionLabel={(specialist) => `${specialist.surname} ${specialist.name} ${specialist.patronymic}`}
                     noOptionsText="Нет данных"
-                    loading={loadingDoctors}
+                    loading={loadingUsers}
                     renderInput={(params) => (
                         <TextField
                             {...params}
@@ -164,7 +164,7 @@ const JournalCalendar = () => {
                                 ...params.InputProps,
                                 endAdornment: (
                                     <>
-                                        {loadingDoctors ? <CircularProgress color="inherit" size={20} /> : null}
+                                        {loadingUsers ? <CircularProgress color="inherit" size={20} /> : null}
                                         {params.InputProps.endAdornment}
                                     </>
                                 ),
@@ -193,7 +193,7 @@ const JournalCalendar = () => {
                 components={{
                     event: ({ event }) => (
                         <>
-                            <span>{event.doctorName}</span>
+                            <span>{event.userName}</span>
                         </>
                     ),
                     toolbar: CustomToolbar

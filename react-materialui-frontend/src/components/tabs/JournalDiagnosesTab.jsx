@@ -19,8 +19,16 @@ const JournalDiagnosesTab = () => {
     const [form, setForm] = useState({ diagnosis: null, toothcodes: [] });
     const [errorOpen, setErrorOpen] = useState(false);
 
-    const fetchDiagnoses = async (query = '') => {
-        return await api.get('/diagnoses', { params: { searchQuery: query, page: 0, size: 10 } });
+    const fetchDiagnoses= async (query = '') => {
+        try {
+            const response = await api.get('/diagnoses', {
+                params: { searchQuery: query, page: 0, size: 10 }
+            });
+            return response.data.content;
+        } catch (error) {
+            console.error('Error fetching diagnoses:', error);
+            return [];
+        }
     };
 
     const handleOpen = (diagnosis = null) => {
@@ -142,7 +150,8 @@ const JournalDiagnosesTab = () => {
                         fetchOptions={fetchDiagnoses}
                         onChange={handleDiagnosisChange}
                         value={form.diagnosis}
-                        getOptionLabel={(option) => (option.code + ' ' + option.name)}
+                        getOptionKey={(option) => `${option.id}`}
+                        getOptionLabel={(option) => `${option.code} ${option.name}`}
                         noOptionsText="Нет данных"
                         size="small"
                         sx={{ marginY: 1 }}

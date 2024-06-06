@@ -198,7 +198,7 @@ const JournalListTable = () => {
                         {journals.map((journal) => (
                             <TableRow key={journal.id}>
                                 <TableCell>
-                                    {journal.doctor.surname + ' ' + journal.doctor.name + ' ' + journal.doctor.patronymic}
+                                    {journal.user.surname + ' ' + journal.user.name + ' ' + journal.user.patronymic}
                                 </TableCell>
                                 <TableCell>
                                     {dayjs(journal.date).format('DD.MM.YYYY')}

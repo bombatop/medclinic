@@ -31,8 +31,8 @@ public class DiagnosisController {
     @GetMapping
     public Page<DiagnosisEntity> getDiagnoses(
             @RequestParam(required = false) String searchQuery,
-            @RequestParam Integer page,
-            @RequestParam Integer size,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortField,
             @RequestParam(defaultValue = "asc") String sortOrder) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortOrder), sortField);

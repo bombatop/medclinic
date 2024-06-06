@@ -17,7 +17,15 @@ const JournalTreatmentsTab = () => {
     const [errorOpen, setErrorOpen] = useState(false);
     
     const fetchTreatments = async (query = '') => {
-        return await api.get('/treatments', { params: { searchQuery: query, page: 0, size: 10 } });
+        try {
+            const response = await api.get('/treatments', {
+                params: { searchQuery: query, page: 0, size: 10 }
+            });
+            return response.data.content;
+        } catch (error) {
+            console.error('Error fetching treatments:', error);
+            return [];
+        }
     };
 
     const handleOpen = (treatment = null) => {
@@ -134,7 +142,8 @@ const JournalTreatmentsTab = () => {
                         fetchOptions={fetchTreatments}
                         value={form.treatment}
                         onChange={handleTreatmentChange}
-                        getOptionLabel={(option) => (option.code + ' ' + option.name)}
+                        getOptionKey={(option) => `${option.id}`}
+                        getOptionLabel={(option) => `${option.code} ${option.name}`}
                         noOptionsText="Нет данных"
                         size="small"
                         sx={{ marginY: 1 }}

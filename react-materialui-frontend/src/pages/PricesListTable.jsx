@@ -36,7 +36,7 @@ const fetchPrices = (agencyId, treatmentId, page, size, sortField, sortOrder, la
 const fetchAgencies = async (query = '') => {
     try {
         const response = await api.get('/agencies', {
-            params: { searchQuery: query, page: 0, size: 5 }
+            params: { searchQuery: query}
         });
         return response.data.content;
     } catch (error) {
@@ -48,7 +48,7 @@ const fetchAgencies = async (query = '') => {
 const fetchTreatments = async (query = '') => {
     try {
         const response = await api.get('/treatments', {
-            params: { searchQuery: query, page: 0, size: 5 }
+            params: { searchQuery: query }
         });
         return response.data.content;
     } catch (error) {
