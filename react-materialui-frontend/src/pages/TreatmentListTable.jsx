@@ -18,7 +18,7 @@ const fetchTreatments = (query, page, size, sortField, sortOrder) => {
 const TreatmentListTable = () => {
     const columns = [
         { field: 'code', label: 'Код' },
-        { field: 'name', label: 'Название' },
+        { field: 'name', label: 'Наименование' },
     ];
 
     return (

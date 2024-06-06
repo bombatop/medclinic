@@ -95,11 +95,12 @@ const JournalLinkTab = () => {
     const fetchReport = async (selectedAgencies) => {
         setReportLoading(true);
         try {
-            console.log("###", selectedAgencies, journalData.date);
-            const response = await api.post(`/prices/report/${journalData.id}`, {
+            const requestBody = {
                 agencyIds: selectedAgencies,
-                date: journalData.date ?? null
-            });
+                date: journalData.date ? journalData.date.split('T')[0] : null
+            };
+
+            const response = await api.post(`/prices/report/${journalData.id}`, requestBody);
             setReportData(response.data);
         } catch (error) {
             console.error('Error fetching report');
@@ -201,7 +202,7 @@ const JournalLinkTab = () => {
                 <Paper sx={{ mt: 3, p: 2 }}>
                     <Typography variant="h6">Отчет</Typography>
                     <Typography variant="body1">
-                        Пациент: {reportData.patient.name} {reportData.patient.surname}
+                        Пациент: {reportData.patient.surname} {reportData.patient.name} {reportData.patient.patronymic}
                     </Typography>
                     <Typography variant="body1">
                         Врачи: {reportData.doctors.map(doctor => `${doctor.name} ${doctor.surname}`).join(', ')}
@@ -216,11 +217,13 @@ const JournalLinkTab = () => {
                     </ul>
                     <Typography variant="body1">Проведенные услуги:</Typography>
                     <ul>
-                        {reportData.treatments.map(treatment => (
-                            <li key={treatment.id}>
-                                {treatment.treatment.name} - {treatment.amount} раз
-                                {Object.entries(treatment.prices).map(([agencyId, price]) => (
-                                    <div key={agencyId}>Агентство {agencyId}: {price} рублей</div>
+                        {Object.entries(reportData.treatments).map(([treatmentId, treatmentData]) => (
+                            <li key={treatmentId}>
+                                {treatmentId} - {treatmentData.amount} раз
+                                {Object.entries(treatmentData.prices).map(([agencyId, price]) => (
+                                    <div key={agencyId}>
+                                        {agencyId}: {price} рублей
+                                    </div>
                                 ))}
                             </li>
                         ))}

@@ -46,7 +46,7 @@ const JournalCalendar = () => {
             const response = await api.get('/users', {
                 params: { searchQuery: query, page: 0, size: 7 }
             });
-            return response.data;
+            return response.data.content;
         } catch (error) {
             console.error('Error fetching users:', error);
             throw error;

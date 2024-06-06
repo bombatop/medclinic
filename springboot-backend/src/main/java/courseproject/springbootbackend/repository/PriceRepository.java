@@ -27,4 +27,4 @@ public interface PriceRepository extends JpaRepository<PriceEntity, Integer>,
         List<PriceEntity> prices = findPricesByTreatmentAndDateAndAgency(treatmentId, agencyId, date);
         return prices.isEmpty() ? null : prices.get(0);
     }
-} 
+}

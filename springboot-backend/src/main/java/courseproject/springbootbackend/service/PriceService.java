@@ -87,26 +87,27 @@ public class PriceService {
     public JournalReportDTO generateJournalReport(Integer journalId, List<Integer> agencyIds) {
         JournalEntity startJournal = journalRepository.findById(journalId)
                 .orElseThrow(JournalNotFoundException::new);
-        // Init report and fields
         JournalReportDTO report = new JournalReportDTO();
         Set<JournalDiagnosisEntity> allDiagnoses = new HashSet<>();
-        Set<JournalTreatmentEntity> allTreatments = new HashSet<>();
+        Map<TreatmentEntity, Integer> allTreatments = new HashMap<>();
         Set<UserEntity> allDoctors = new HashSet<>();
-        // Traverse linked journals forwards to get date
+
         JournalEntity lastJournal = startJournal;
         while (lastJournal.getNextEntry() != null) {
             lastJournal = lastJournal.getNextEntry();
         }
         LocalDateTime lastJournalDate = lastJournal.getDate();
-        // Traverse linked journals backwards to collect all data
+
         JournalEntity current = lastJournal;
         while (current != null) {
             allDiagnoses.addAll(current.getDiagnoses());
-            allTreatments.addAll(current.getTreatments());
+            for (JournalTreatmentEntity treatment : current.getTreatments()) {
+                allTreatments.merge(treatment.getTreatment(), treatment.getAmount(), Integer::sum);
+            }
             allDoctors.add(current.getUser());
             current = current.getPrevEntry();
         }
-        // Populate report
+
         report.setPatient(startJournal.getPatient());
         report.setDoctors(new ArrayList<>(allDoctors));
         report.setDiagnoses(new ArrayList<>(allDiagnoses));
@@ -114,27 +115,29 @@ public class PriceService {
         return report;
     }
 
-    private List<JournalReportDTO.JournalTreatmentReportDTO> calculateTreatmentPrices(
-            Set<JournalTreatmentEntity> treatments,
+    private Map<TreatmentEntity, JournalReportDTO.TreatmentReportData> calculateTreatmentPrices(
+            Map<TreatmentEntity, Integer> treatments,
             List<Integer> agencyIds,
             LocalDateTime lastJournalDate) {
-        List<JournalReportDTO.JournalTreatmentReportDTO> treatmentReports = new ArrayList<>();
-        for (JournalTreatmentEntity treatment : treatments)
-        {
-            JournalReportDTO.JournalTreatmentReportDTO treatmentReport = new JournalReportDTO.JournalTreatmentReportDTO();
-            treatmentReport.setTreatment(treatment.getTreatment());
-            treatmentReport.setAmount(treatment.getAmount());
+        Map<TreatmentEntity, JournalReportDTO.TreatmentReportData> treatmentReports = new HashMap<>();
 
-            Map<Integer, Integer> prices = new HashMap<>();
+        for (Map.Entry<TreatmentEntity, Integer> entry : treatments.entrySet()) {
+            TreatmentEntity treatment = entry.getKey();
+            int amount = entry.getValue();
+
+            JournalReportDTO.TreatmentReportData treatmentReportData = new JournalReportDTO.TreatmentReportData();
+            treatmentReportData.setAmount(amount);
+
+            Map<AgencyEntity, Integer> prices = new HashMap<>();
             for (Integer agencyId : agencyIds) {
                 var priceEntity = priceRepository
-                        .findLatestPriceByTreatmentAndDateAndAgency(treatment.getTreatment().getId(), agencyId, lastJournalDate);
+                        .findLatestPriceByTreatmentAndDateAndAgency(treatment.getId(), agencyId, lastJournalDate);
                 if (priceEntity != null) {
-                    prices.put(agencyId, priceEntity.getPrice());
+                    prices.put(priceEntity.getAgency(), priceEntity.getPrice());
                 }
             }
-            treatmentReport.setPrices(prices);
-            treatmentReports.add(treatmentReport);
+            treatmentReportData.setPrices(prices);
+            treatmentReports.put(treatment, treatmentReportData);
         }
         return treatmentReports;
     }

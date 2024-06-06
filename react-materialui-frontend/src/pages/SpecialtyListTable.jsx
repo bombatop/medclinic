@@ -17,7 +17,7 @@ const fetchSpecialties = (query, page, size, sortField, sortOrder) => {
 
 const DiagnosisListTable = () => {
     const columns = [
-        { field: 'name', label: 'Название' },
+        { field: 'name', label: 'Наименование' },
     ];
 
     return (

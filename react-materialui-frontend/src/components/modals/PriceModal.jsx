@@ -71,7 +71,7 @@ const PriceModal = ({ open, onClose, selectedAgency }) => {
 
     const handleSave = async () => {
         const bulkPriceUpdateData = {
-            date: date.format('YYYY-MM-DDTHH:mm'),
+            date: date.format('YYYY-MM-DDT00:00'),
             agencyId: selectedAgency.id,
             prices: prices.map(price => ({
                 treatmentId: price.treatment.id,
