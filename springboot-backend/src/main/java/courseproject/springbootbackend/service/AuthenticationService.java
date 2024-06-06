@@ -21,7 +21,9 @@ import courseproject.springbootbackend.repository.RoleRepository;
 import courseproject.springbootbackend.repository.UserRepository;
 import courseproject.springbootbackend.service.exception.EntityAlreadyExistsException;
 import courseproject.springbootbackend.service.exception.RoleNotFoundException;
+import courseproject.springbootbackend.service.exception.UserHasNoRightException;
 import courseproject.springbootbackend.service.exception.UserNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -73,8 +75,23 @@ public class AuthenticationService {
         }
     }
 
-    public JwtAuthenticationResponse updateUserAuthData(final UserAuthModification dto) {
-        var userEntity = userRepository.findByUsername(dto.username()).orElseThrow(UserNotFoundException::new);
+    public JwtAuthenticationResponse updateUserAuthData(final UserAuthModification dto, final HttpServletRequest request) {
+        final var token = jwtTokenUtil.getToken(request);
+
+        var userEntity = userRepository
+                .findByUsername(dto.username())
+                .orElseThrow(UserNotFoundException::new);
+        var tokenUserEntity = userRepository
+                .findByUsername(jwtTokenUtil.getUsernameFromToken(token))
+                .orElseThrow(UserNotFoundException::new);
+        var adminRole = roleRepository
+                .findByName("ADMIN")
+                .orElseThrow(RoleNotFoundException::new);
+
+        if (!userEntity.equals(tokenUserEntity) && !tokenUserEntity.getRole().equals(adminRole)) {
+            throw new UserHasNoRightException();
+        }
+        userEntity.setUsername(dto.username());
         userEntity.setPassword(passwordEncoder.encode(dto.password()));
 
         final var tokenData = tokenDataMapper.map(userEntity);
@@ -84,19 +101,47 @@ public class AuthenticationService {
         return new JwtAuthenticationResponse(generatedToken);
     }
 
-    public UserEntity updateUserBasicData(final UserBasicModification dto) {
-        var userEntity = userRepository.findByUsername(dto.username()).orElseThrow(UserNotFoundException::new);
+    public UserEntity updateUserBasicData(final UserBasicModification dto, final HttpServletRequest request) {
+        final var token = jwtTokenUtil.getToken(request);
+
+        var userEntity = userRepository
+                .findByUsername(dto.username())
+                .orElseThrow(UserNotFoundException::new);
+        var tokenUserEntity = userRepository
+                .findByUsername(jwtTokenUtil.getUsernameFromToken(token))
+                .orElseThrow(UserNotFoundException::new);
+        var adminRole = roleRepository
+                .findByName("ADMIN")
+                .orElseThrow(RoleNotFoundException::new);
+
+        if (!userEntity.equals(tokenUserEntity) && !tokenUserEntity.getRole().equals(adminRole)) {
+            throw new UserHasNoRightException();
+        }
         userEntity = userMapper.map(userEntity, dto);
         userEntity = userRepository.save(userEntity);
         return userEntity;
     }
 
-    public UserEntity updateUserRole(final UserRoleModification dto) {
-        var userEntity = userRepository.findByUsername(dto.username()).orElseThrow(UserNotFoundException::new);
+    public UserEntity updateUserRole(final UserRoleModification dto, final HttpServletRequest request) {
+        final var token = jwtTokenUtil.getToken(request);
+
+        var userEntity = userRepository
+                .findByUsername(dto.username())
+                .orElseThrow(UserNotFoundException::new);
+        var tokenUserEntity = userRepository
+                .findByUsername(jwtTokenUtil.getUsernameFromToken(token))
+                .orElseThrow(UserNotFoundException::new);
+        var adminRole = roleRepository
+                .findByName("ADMIN")
+                .orElseThrow(RoleNotFoundException::new);
+
+        if (!tokenUserEntity.getRole().equals(adminRole)) {
+            throw new UserHasNoRightException();
+        }
+        
         final var roleEntity = roleRepository.findById(dto.roleId()).orElseThrow(RoleNotFoundException::new);
         userEntity.setRole(roleEntity);
 
-        userEntity = userRepository.save(userEntity);
-        return userEntity;
+        return userRepository.save(userEntity);
     }
 }

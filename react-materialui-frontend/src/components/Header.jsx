@@ -53,7 +53,7 @@ function Header({ toggleDrawer }) {
                 {auth.token && (
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <Typography variant="body1" noWrap sx={{ marginRight: 2 }}>
-                            {`${auth.user.surname} ${auth.user.name} ${auth.user.patronymic}`}
+                            {`${auth?.user?.surname?? ''} ${auth?.user?.name ?? ''} ${auth?.user?.patronymic ?? ''}`}
                         </Typography>
                         <IconButton
                             aria-label="account of current user"

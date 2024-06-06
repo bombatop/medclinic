@@ -86,7 +86,7 @@ const SignUp = () => {
                 const response = await dispatch(signUp({ name, surname, patronymic, username, email, password, phonenumber: phone })).unwrap();
 
                 if (response.token) {
-                    navigate('/journals-table', { replace: true });
+                    navigate('/singin', { replace: true });
                 }
             } catch (error) {
                 console.error('Error during signup');

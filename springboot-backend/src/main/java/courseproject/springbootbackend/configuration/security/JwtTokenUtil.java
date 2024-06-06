@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -37,6 +38,10 @@ public class JwtTokenUtil {
         claims.put("userId", tokenData.userId());
         claims.put("roleId", tokenData.roleId());
         return createToken(claims);
+    }
+
+    public String getToken(final HttpServletRequest request) {
+        return request.getHeader("Authorization").substring(7);
     }
 
     public String createToken(Map<String, Object> claims) {

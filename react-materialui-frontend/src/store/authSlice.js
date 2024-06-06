@@ -31,7 +31,7 @@ const authSlice = createSlice({
         signIn: (state, action) => {
             state.user = action.payload.user;
             state.token = action.payload.token;
-            state.status = 'succeeded';
+            state.status = 'Успешно';
             state.error = null;
         },
         signOut: (state) => {
@@ -44,27 +44,27 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(signUp.pending, (state) => {
-                state.status = 'loading';
+                state.status = 'Загрузка';
             })
             .addCase(signUp.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.user = action.payload.user;
-                state.token = action.payload.token;
+                state.status = 'Успешно';
+                // state.user = action.payload.user;
+                // state.token = action.payload.token;
             })
             .addCase(signUp.rejected, (state, action) => {
-                state.status = 'failed';
+                state.status = 'Ошибка';
                 state.error = action.payload;
             })
             .addCase(login.pending, (state) => {
-                state.status = 'loading';
+                state.status = 'Загрузка';
             })
             .addCase(login.fulfilled, (state, action) => {
-                state.status = 'succeeded';
+                state.status = 'Успешно';
                 state.user = action.payload.user;
                 state.token = action.payload.token;
             })
             .addCase(login.rejected, (state, action) => {
-                state.status = 'failed';
+                state.status = 'Ошибка';
                 state.error = action.payload;
             });
     },

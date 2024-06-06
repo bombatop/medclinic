@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
     Box, Tabs, Tab, TextField, Button, Typography, Paper, CircularProgress
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/ru';
+import { useDispatch, useSelector } from 'react-redux';
 import api from '../utils/http-common';
 import DebouncedAutocomplete from '../components/DebouncedAutocomplete';
 import { validateEmail, validatePhoneNumber, validateName } from '../utils/validation';
+import { signOut } from '../store/authSlice';
 
 const UserDetails = () => {
     const { userId } = useParams();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const auth = useSelector((state) => state.auth);
+
     const [user, setUser] = useState({
         surname: '',
         name: '',
@@ -108,13 +114,16 @@ const UserDetails = () => {
     const handleSecuritySubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.put(`/auth/update-auth`, {
+            const response = await api.put(`/auth/update-auth`, {
                 userId,
                 username: formData.username,
                 password: formData.password,
             });
             alert("User security details updated successfully");
-            setUser({ ...formData });
+            if (userId === auth.user.id.toString()) {
+                dispatch(signOut());
+                navigate('/login');
+            }
         } catch (error) {
             console.error('Error updating user security details:', error);
         }
@@ -124,7 +133,7 @@ const UserDetails = () => {
         e.preventDefault();
         try {
             await api.put(`/auth/update-role`, {
-                userId,
+                username: formData.username,
                 roleId: formData.role ? formData.role.id : null
             });
             alert("User role updated successfully");
@@ -210,7 +219,7 @@ const UserDetails = () => {
                     {tabIndex === 1 && (
                         <Box component="form" onSubmit={handleSecuritySubmit} noValidate sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                             <TextField
-                                label="Имя пользователя"
+                                label="Логин"
                                 name="username"
                                 value={formData.username}
                                 onChange={handleChange}
