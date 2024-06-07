@@ -15,11 +15,18 @@ public class JournalReportDTO {
     private PatientEntity patient;
     private List<UserEntity> doctors;
     private List<JournalDiagnosisEntity> diagnoses;
-    private Map<TreatmentEntity, TreatmentReportData> treatments;
+    private Map<Integer, TreatmentReportData> treatments; // Use treatment ID as key
 
     @Data
     public static class TreatmentReportData {
+        private TreatmentEntity treatment; // Include treatment details
         private int amount;
-        private Map<AgencyEntity, Integer> prices; // Key is agency, value is price
+        private Map<Integer, AgencyPriceData> prices; // Use agency ID as key
+
+        @Data
+        public static class AgencyPriceData {
+            private AgencyEntity agency; // Include agency details
+            private int price;
+        }
     }
 }

@@ -15,8 +15,8 @@ const JournalLinkTab = () => {
     const { journalData, setJournalData } = useOutletContext();
     const [nextEntries, setNextEntries] = useState([]);
     const [prevEntries, setPrevEntries] = useState([]);
-    const [selectedNext, setSelectedNext] = useState(journalData.nextEntry ? journalData.nextEntry.id : "");
-    const [selectedPrev, setSelectedPrev] = useState(journalData.prevEntry ? journalData.prevEntry.id : "");
+    const [selectedNext, setSelectedNext] = useState(journalData?.nextEntry ? journalData.nextEntry.id : "");
+    const [selectedPrev, setSelectedPrev] = useState(journalData?.prevEntry ? journalData.prevEntry.id : "");
     const [loading, setLoading] = useState(true);
     const [reportLoading, setReportLoading] = useState(false);
     const [reportData, setReportData] = useState(null);
@@ -205,13 +205,13 @@ const JournalLinkTab = () => {
                         Пациент: {reportData.patient.surname} {reportData.patient.name} {reportData.patient.patronymic}
                     </Typography>
                     <Typography variant="body1">
-                        Врачи: {reportData.doctors.map(doctor => `${doctor.name} ${doctor.surname}`).join(', ')}
+                        Врачи: {reportData.doctors.map(doctor => `${doctor.surname} ${doctor.name} ${doctor.patronymic}`).join(', ')}
                     </Typography>
                     <Typography variant="body1">Поставленные диагнозы:</Typography>
                     <ul>
                         {reportData.diagnoses.map(diagnosis => (
                             <li key={diagnosis.id}>
-                                {diagnosis.diagnosis.name}
+                                {diagnosis.diagnosis.code} {diagnosis.diagnosis.name}
                             </li>
                         ))}
                     </ul>
@@ -219,10 +219,10 @@ const JournalLinkTab = () => {
                     <ul>
                         {Object.entries(reportData.treatments).map(([treatmentId, treatmentData]) => (
                             <li key={treatmentId}>
-                                {treatmentId} - {treatmentData.amount} раз
-                                {Object.entries(treatmentData.prices).map(([agencyId, price]) => (
-                                    <div key={agencyId}>
-                                        {agencyId}: {price} рублей
+                                {treatmentData.treatment.code} {treatmentData.treatment.name} - {treatmentData.amount} раз
+                                {Object.values(treatmentData.prices).map(priceData => (
+                                    <div key={priceData.agency.id}>
+                                        {priceData.agency.name}: {priceData.price} рублей
                                     </div>
                                 ))}
                             </li>

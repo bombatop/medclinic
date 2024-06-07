@@ -89,7 +89,7 @@ public class PriceService {
                 .orElseThrow(JournalNotFoundException::new);
         JournalReportDTO report = new JournalReportDTO();
         Set<JournalDiagnosisEntity> allDiagnoses = new HashSet<>();
-        Map<TreatmentEntity, Integer> allTreatments = new HashMap<>();
+        Map<Integer, JournalReportDTO.TreatmentReportData> allTreatments = new HashMap<>();
         Set<UserEntity> allDoctors = new HashSet<>();
 
         JournalEntity lastJournal = startJournal;
@@ -102,7 +102,13 @@ public class PriceService {
         while (current != null) {
             allDiagnoses.addAll(current.getDiagnoses());
             for (JournalTreatmentEntity treatment : current.getTreatments()) {
-                allTreatments.merge(treatment.getTreatment(), treatment.getAmount(), Integer::sum);
+                allTreatments.computeIfAbsent(treatment.getTreatment().getId(), k -> {
+                    JournalReportDTO.TreatmentReportData data = new JournalReportDTO.TreatmentReportData();
+                    data.setTreatment(treatment.getTreatment());
+                    data.setAmount(0);
+                    data.setPrices(new HashMap<>());
+                    return data;
+                }).setAmount(allTreatments.get(treatment.getTreatment().getId()).getAmount() + treatment.getAmount());
             }
             allDoctors.add(current.getUser());
             current = current.getPrevEntry();
@@ -115,31 +121,23 @@ public class PriceService {
         return report;
     }
 
-    private Map<TreatmentEntity, JournalReportDTO.TreatmentReportData> calculateTreatmentPrices(
-            Map<TreatmentEntity, Integer> treatments,
+    private Map<Integer, JournalReportDTO.TreatmentReportData> calculateTreatmentPrices(
+            Map<Integer, JournalReportDTO.TreatmentReportData> treatments,
             List<Integer> agencyIds,
             LocalDateTime lastJournalDate) {
-        Map<TreatmentEntity, JournalReportDTO.TreatmentReportData> treatmentReports = new HashMap<>();
-
-        for (Map.Entry<TreatmentEntity, Integer> entry : treatments.entrySet()) {
-            TreatmentEntity treatment = entry.getKey();
-            int amount = entry.getValue();
-
-            JournalReportDTO.TreatmentReportData treatmentReportData = new JournalReportDTO.TreatmentReportData();
-            treatmentReportData.setAmount(amount);
-
-            Map<AgencyEntity, Integer> prices = new HashMap<>();
+        for (JournalReportDTO.TreatmentReportData treatmentData : treatments.values()) {
             for (Integer agencyId : agencyIds) {
                 var priceEntity = priceRepository
-                        .findLatestPriceByTreatmentAndDateAndAgency(treatment.getId(), agencyId, lastJournalDate);
+                        .findLatestPriceByTreatmentAndDateAndAgency(treatmentData.getTreatment().getId(), agencyId, lastJournalDate);
                 if (priceEntity != null) {
-                    prices.put(priceEntity.getAgency(), priceEntity.getPrice());
+                    JournalReportDTO.TreatmentReportData.AgencyPriceData priceData = new JournalReportDTO.TreatmentReportData.AgencyPriceData();
+                    priceData.setAgency(priceEntity.getAgency());
+                    priceData.setPrice(priceEntity.getPrice());
+                    treatmentData.getPrices().put(agencyId, priceData);
                 }
             }
-            treatmentReportData.setPrices(prices);
-            treatmentReports.put(treatment, treatmentReportData);
         }
-        return treatmentReports;
+        return treatments;
     }
 
     public void deletePrice(Integer id) {
